@@ -64,81 +64,81 @@ const Wallet = () => {
       <div className="pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-5xl">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-gaming font-bold mb-4 text-glow-cyan">
+          <div className="text-center mb-8 md:mb-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-gaming font-bold mb-3 md:mb-4 text-glow-cyan">
               My Wallet
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
               Manage your funds and track transactions
             </p>
           </div>
 
           {/* Balance Card */}
-          <div className="glass-panel rounded-2xl p-8 mb-8 neon-border-cyan neon-glow-cyan">
+          <div className="glass-panel rounded-2xl p-6 sm:p-8 mb-6 md:mb-8 neon-border-cyan neon-glow-cyan">
             <div className="text-center mb-6">
-              <div className="text-sm text-muted-foreground mb-2">Available Balance</div>
-              <div className="flex items-center justify-center text-6xl font-gaming font-bold text-primary text-glow-cyan">
-                <IndianRupee className="w-12 h-12" />
+              <div className="text-xs sm:text-sm text-muted-foreground mb-2 md:mb-3">Available Balance</div>
+              <div className="flex items-center justify-center text-4xl sm:text-5xl md:text-6xl font-gaming font-bold text-primary text-glow-cyan">
+                <IndianRupee className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
                 570
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <Button 
                 variant="gaming" 
                 size="lg" 
-                className="w-full hover:scale-105 transition-transform"
+                className="w-full hover:scale-105 transition-transform text-sm sm:text-base"
                 onClick={() => setDepositModalOpen(true)}
               >
-                <Plus className="w-5 h-5 mr-2" />
+                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Add Money
               </Button>
-              <Button variant="neonOrange" size="lg" className="w-full hover:scale-105 transition-transform">
-                <ArrowDownToLine className="w-5 h-5 mr-2" />
+              <Button variant="neonOrange" size="lg" className="w-full hover:scale-105 transition-transform text-sm sm:text-base">
+                <ArrowDownToLine className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Withdraw
               </Button>
             </div>
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="glass-panel rounded-xl p-6">
-              <div className="text-sm text-muted-foreground mb-2">Total Deposits</div>
-              <div className="text-2xl font-heading font-bold text-primary">₹100</div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
+            <div className="glass-panel rounded-xl p-4 md:p-6">
+              <div className="text-xs sm:text-sm text-muted-foreground mb-1 md:mb-2">Total Deposits</div>
+              <div className="text-xl md:text-2xl font-heading font-bold text-primary">₹100</div>
             </div>
-            <div className="glass-panel rounded-xl p-6">
-              <div className="text-sm text-muted-foreground mb-2">Total Winnings</div>
-              <div className="text-2xl font-heading font-bold text-success">₹1,000</div>
+            <div className="glass-panel rounded-xl p-4 md:p-6">
+              <div className="text-xs sm:text-sm text-muted-foreground mb-1 md:mb-2">Total Winnings</div>
+              <div className="text-xl md:text-2xl font-heading font-bold text-success">₹1,000</div>
             </div>
-            <div className="glass-panel rounded-xl p-6">
-              <div className="text-sm text-muted-foreground mb-2">Total Withdrawn</div>
-              <div className="text-2xl font-heading font-bold text-secondary">₹500</div>
+            <div className="glass-panel rounded-xl p-4 md:p-6">
+              <div className="text-xs sm:text-sm text-muted-foreground mb-1 md:mb-2">Total Withdrawn</div>
+              <div className="text-xl md:text-2xl font-heading font-bold text-secondary">₹500</div>
             </div>
           </div>
 
           {/* Transaction History */}
-          <div className="glass-panel rounded-xl p-6">
-            <div className="flex items-center gap-2 mb-6">
-              <History className="w-5 h-5 text-primary" />
-              <h2 className="text-2xl font-heading font-bold">Transaction History</h2>
+          <div className="glass-panel rounded-xl p-4 sm:p-6">
+            <div className="flex items-center gap-2 mb-4 sm:mb-6">
+              <History className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+              <h2 className="text-xl sm:text-2xl font-heading font-bold">Transaction History</h2>
             </div>
 
             <div className="space-y-3">
               {transactions.map((transaction) => (
                 <div
                   key={transaction.id}
-                  className="glass-panel rounded-lg p-4 hover:bg-card/60 transition-colors"
+                  className="glass-panel rounded-lg p-3 sm:p-4 hover:bg-card/60 transition-colors"
                 >
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="font-medium mb-1">{transaction.description}</div>
-                      <div className="text-sm text-muted-foreground">
+                  <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium mb-1 text-sm sm:text-base truncate">{transaction.description}</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">
                         {transaction.date}
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-3 flex-shrink-0">
                       <div
-                        className={`text-xl font-heading font-bold ${getTransactionColor(
+                        className={`text-lg sm:text-xl font-heading font-bold ${getTransactionColor(
                           transaction.type
                         )}`}
                       >

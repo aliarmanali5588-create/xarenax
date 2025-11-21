@@ -8,9 +8,18 @@ import WithdrawalSettings from "@/components/profile/WithdrawalSettings";
 import SupportCard from "@/components/support/SupportCard";
 import { useAuth } from "@/contexts/AuthContext";
 import TournamentRoomDetails from "@/components/tournaments/TournamentRoomDetails";
+import ProfileStatsSkeleton from "@/components/profile/ProfileStatsSkeleton";
+import { useState } from "react";
 
 const Profile = () => {
   const { user } = useAuth();
+  const [statsLoading, setStatsLoading] = useState(true);
+  
+  // Simulate loading stats (replace with actual data fetch)
+  useState(() => {
+    const timer = setTimeout(() => setStatsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  });
   
   const stats = [
     { label: "Tournaments Played", value: "12", icon: Trophy },
@@ -106,8 +115,11 @@ const Profile = () => {
               </div>
 
               {/* Gaming Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                {stats.map((stat) => (
+              {statsLoading ? (
+                <ProfileStatsSkeleton />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                  {stats.map((stat) => (
                   <div
                     key={stat.label}
                     className="glass-panel-hover rounded-xl p-4 sm:p-6 text-center group"
@@ -122,6 +134,7 @@ const Profile = () => {
                   </div>
                 ))}
               </div>
+              )}
             </TabsContent>
 
             {/* My Matches Tab */}

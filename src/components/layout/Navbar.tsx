@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
 import NotificationBell from "./NotificationBell";
 import UserMenu from "./UserMenu";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   const navItems = [
     { name: "Tournaments", path: "/tournaments", icon: Trophy },
@@ -51,30 +53,55 @@ const Navbar = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
-            {/* Desktop Actions */}
-            <div className="hidden lg:flex items-center gap-2">
-              <NotificationBell />
-              <Button variant="ghost" size="icon" asChild>
-                <Link to="/wallet">
-                  <Wallet className="w-5 h-5" />
-                </Link>
-              </Button>
-              <UserMenu />
-              <Button variant="neon" size="sm" asChild>
-                <Link to="/tournaments">Join Now</Link>
-              </Button>
-            </div>
+            {/* Desktop Actions - Authenticated */}
+            {user && (
+              <div className="hidden lg:flex items-center gap-2">
+                <NotificationBell />
+                <Button variant="ghost" size="icon" asChild>
+                  <Link to="/wallet">
+                    <Wallet className="w-5 h-5" />
+                  </Link>
+                </Button>
+                <UserMenu />
+                <Button variant="neon" size="sm" asChild>
+                  <Link to="/tournaments">Join Now</Link>
+                </Button>
+              </div>
+            )}
 
-            {/* Mobile Icons (Tablet and below) */}
-            <div className="flex lg:hidden items-center gap-2">
-              <NotificationBell />
-              <Button variant="ghost" size="icon" asChild className="hidden sm:flex">
-                <Link to="/wallet">
-                  <Wallet className="w-5 h-5" />
-                </Link>
-              </Button>
-              <UserMenu />
-            </div>
+            {/* Desktop Actions - Guest */}
+            {!user && (
+              <div className="hidden lg:flex items-center gap-2">
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/auth">Login</Link>
+                </Button>
+                <Button variant="gaming" size="sm" asChild>
+                  <Link to="/auth">Signup</Link>
+                </Button>
+              </div>
+            )}
+
+            {/* Mobile Icons (Tablet and below) - Authenticated */}
+            {user && (
+              <div className="flex lg:hidden items-center gap-2">
+                <NotificationBell />
+                <Button variant="ghost" size="icon" asChild className="hidden sm:flex">
+                  <Link to="/wallet">
+                    <Wallet className="w-5 h-5" />
+                  </Link>
+                </Button>
+                <UserMenu />
+              </div>
+            )}
+
+            {/* Mobile Icons - Guest */}
+            {!user && (
+              <div className="flex lg:hidden items-center gap-2">
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/auth">Login</Link>
+                </Button>
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
             <button
@@ -106,26 +133,46 @@ const Navbar = () => {
                 </div>
               </Link>
             ))}
-            <div className="border-t border-border/30 pt-3 mt-3 space-y-2 px-4">
-              <Button variant="outline" size="sm" className="w-full justify-start sm:hidden" asChild>
-                <Link to="/wallet" onClick={() => setMobileMenuOpen(false)}>
-                  <Wallet className="w-4 h-4 mr-2" />
-                  Wallet
-                </Link>
-              </Button>
-              <Button variant="outline" size="sm" className="w-full justify-start sm:hidden" asChild>
-                <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-                  <User className="w-4 h-4 mr-2" />
-                  Profile
-                </Link>
-              </Button>
-              <Button variant="neon" size="sm" className="w-full" asChild>
-                <Link to="/tournaments" onClick={() => setMobileMenuOpen(false)}>
-                  <Trophy className="w-4 h-4 mr-2" />
-                  Join Tournament
-                </Link>
-              </Button>
-            </div>
+            
+            {/* Authenticated User Actions */}
+            {user && (
+              <div className="border-t border-border/30 pt-3 mt-3 space-y-2 px-4">
+                <Button variant="outline" size="sm" className="w-full justify-start sm:hidden" asChild>
+                  <Link to="/wallet" onClick={() => setMobileMenuOpen(false)}>
+                    <Wallet className="w-4 h-4 mr-2" />
+                    Wallet
+                  </Link>
+                </Button>
+                <Button variant="outline" size="sm" className="w-full justify-start sm:hidden" asChild>
+                  <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
+                    <User className="w-4 h-4 mr-2" />
+                    Profile
+                  </Link>
+                </Button>
+                <Button variant="neon" size="sm" className="w-full" asChild>
+                  <Link to="/tournaments" onClick={() => setMobileMenuOpen(false)}>
+                    <Trophy className="w-4 h-4 mr-2" />
+                    Join Tournament
+                  </Link>
+                </Button>
+              </div>
+            )}
+
+            {/* Guest Actions */}
+            {!user && (
+              <div className="border-t border-border/30 pt-3 mt-3 space-y-2 px-4">
+                <Button variant="outline" size="sm" className="w-full" asChild>
+                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                    Login
+                  </Link>
+                </Button>
+                <Button variant="gaming" size="sm" className="w-full" asChild>
+                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                    Signup
+                  </Link>
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>

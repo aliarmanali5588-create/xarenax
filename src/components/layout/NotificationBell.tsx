@@ -182,7 +182,7 @@ const NotificationBell = () => {
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground whitespace-pre-wrap">
                   {notification.message}
                 </p>
                 <span className="text-xs text-muted-foreground/70">

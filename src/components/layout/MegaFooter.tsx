@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Trophy, Mail, MapPin } from "lucide-react";
+import { Trophy, Mail, MapPin, MessageCircle } from "lucide-react";
 
 const MegaFooter = () => {
   const footerSections = [
@@ -56,6 +56,15 @@ const MegaFooter = () => {
                 <Mail className="w-4 h-4 mt-0.5 md:mt-1 text-primary flex-shrink-0" />
                 <span>helparenax@zohomail.in</span>
               </div>
+              <a 
+                href="https://t.me/+6IoFwhsuUkEzMGM9" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-start gap-2 text-muted-foreground hover:text-primary transition-colors"
+              >
+                <MessageCircle className="w-4 h-4 mt-0.5 md:mt-1 text-primary flex-shrink-0" />
+                <span>Join our Telegram Community</span>
+              </a>
               <div className="flex items-start gap-2 text-muted-foreground">
                 <MapPin className="w-4 h-4 mt-0.5 md:mt-1 text-primary flex-shrink-0" />
                 <span>Mumbai, Maharashtra, India</span>

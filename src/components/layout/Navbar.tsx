@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Wallet, User, Trophy, Users } from "lucide-react";
+import { Menu, X, Wallet, User, Trophy, Users, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
 import NotificationBell from "./NotificationBell";
@@ -11,6 +11,7 @@ const Navbar = () => {
 
   const navItems = [
     { name: "Tournaments", path: "/tournaments", icon: Trophy },
+    { name: "Leaderboard", path: "/leaderboard", icon: Award },
     { name: "Affiliate", path: "/affiliate", icon: Users },
     { name: "How It Works", path: "/how-it-works", icon: null },
     { name: "Support", path: "/support/faq", icon: null },

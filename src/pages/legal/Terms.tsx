@@ -200,7 +200,9 @@ const Terms = () => {
                   For questions about these Terms and Conditions, contact us at:
                 </p>
                 <div className="glass-panel rounded-lg p-4">
-                  <p className="text-foreground">Email: helparenax@zohomail.in</p>
+                  <p className="text-foreground">
+                    Email: <a href="mailto:helparenax@zohomail.in" className="text-primary hover:text-primary/80 transition-colors">helparenax@zohomail.in</a>
+                  </p>
                   <p className="text-foreground">Address: Mumbai, Maharashtra, India</p>
                 </div>
               </section>

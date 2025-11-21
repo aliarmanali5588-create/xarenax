@@ -120,9 +120,9 @@ const Profile = () => {
             </TabsContent>
 
             {/* Withdrawal Tab */}
-            <TabsContent value="withdrawal">
-              <WithdrawalSettings />
-            </TabsContent>
+          <TabsContent value="withdrawal">
+            <WithdrawalSettings userId={user?.id || ""} />
+          </TabsContent>
 
             {/* Support Tab */}
             <TabsContent value="support">

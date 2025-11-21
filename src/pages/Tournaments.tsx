@@ -1,92 +1,60 @@
-import { useState } from "react";
-import { Search, Filter } from "lucide-react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
 import TournamentCard from "@/components/cards/TournamentCard";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface Tournament {
+  id: string;
+  title: string;
+  entry_fee: number;
+  prize_pool: number;
+  start_time: string;
+  match_type: string;
+  map: string;
+  status: string;
+  current_slots: number;
+  max_slots: number;
+}
 
 const Tournaments = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock tournament data
-  const tournaments = [
-    {
-      id: "1",
-      title: "Elite Squad Championship",
-      entryFee: 30,
-      prizePool: 1000,
-      totalSlots: 100,
-      filledSlots: 67,
-      startTime: "Today, 6:00 PM",
-      mode: "Squad",
-      map: "Erangel",
-      status: "open" as const,
-    },
-    {
-      id: "2",
-      title: "Pro Duo Battle",
-      entryFee: 50,
-      prizePool: 2000,
-      totalSlots: 100,
-      filledSlots: 89,
-      startTime: "Today, 8:00 PM",
-      mode: "Duo",
-      map: "Miramar",
-      status: "filling" as const,
-    },
-    {
-      id: "3",
-      title: "Solo Survival Masters",
-      entryFee: 30,
-      prizePool: 1000,
-      totalSlots: 100,
-      filledSlots: 45,
-      startTime: "Tomorrow, 5:00 PM",
-      mode: "Solo",
-      map: "Sanhok",
-      status: "open" as const,
-    },
-    {
-      id: "4",
-      title: "Weekend Warriors",
-      entryFee: 50,
-      prizePool: 2000,
-      totalSlots: 100,
-      filledSlots: 100,
-      startTime: "Tomorrow, 7:00 PM",
-      mode: "Squad",
-      map: "Vikendi",
-      status: "full" as const,
-    },
-    {
-      id: "5",
-      title: "Night Owl Challenge",
-      entryFee: 30,
-      prizePool: 1000,
-      totalSlots: 100,
-      filledSlots: 23,
-      startTime: "Tomorrow, 11:00 PM",
-      mode: "Squad",
-      map: "Erangel",
-      status: "open" as const,
-    },
-    {
-      id: "6",
-      title: "Mega Prize Pool Event",
-      entryFee: 50,
-      prizePool: 2000,
-      totalSlots: 100,
-      filledSlots: 56,
-      startTime: "Saturday, 4:00 PM",
-      mode: "Duo",
-      map: "Miramar",
-      status: "open" as const,
-    },
-  ];
+  useEffect(() => {
+    fetchTournaments();
+  }, []);
+
+  const fetchTournaments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("tournaments")
+        .select("*")
+        .in("status", ["open", "full"])
+        .order("start_time", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching tournaments:", error);
+        toast.error("Failed to load tournaments");
+      } else {
+        setTournaments(data || []);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredTournaments = tournaments.filter((tournament) =>
-    tournament.title.toLowerCase().includes(searchQuery.toLowerCase())
+    tournament.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tournament.map.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tournament.match_type.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -117,24 +85,37 @@ const Tournaments = () => {
                   className="pl-10 glass-panel border-border/50"
                 />
               </div>
-              <Button variant="neon">
-                <Filter className="w-4 h-4 mr-2" />
-                Filters
-              </Button>
             </div>
           </div>
 
           {/* Tournament Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTournaments.map((tournament) => (
-              <TournamentCard key={tournament.id} {...tournament} />
-            ))}
-          </div>
-
-          {filteredTournaments.length === 0 && (
+          {loading ? (
             <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">
-                No tournaments found matching your search.
+              <div className="inline-block w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+              <p className="mt-4 text-muted-foreground">Loading tournaments...</p>
+            </div>
+          ) : filteredTournaments.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTournaments.map((tournament) => (
+                <TournamentCard
+                  key={tournament.id}
+                  id={tournament.id}
+                  title={tournament.title}
+                  entryFee={tournament.entry_fee}
+                  prizePool={tournament.prize_pool}
+                  startTime={new Date(tournament.start_time).toLocaleString()}
+                  mode={tournament.match_type}
+                  map={tournament.map}
+                  status={tournament.status}
+                  currentSlots={tournament.current_slots}
+                  maxSlots={tournament.max_slots}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-xl text-muted-foreground">
+                {searchQuery ? "No tournaments found matching your search" : "No live tournaments available"}
               </p>
             </div>
           )}

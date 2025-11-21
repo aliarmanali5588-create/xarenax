@@ -1,4 +1,4 @@
-import { Link, useLocation, Outlet } from "react-router-dom";
+import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Trophy, 
@@ -9,9 +9,12 @@ import {
   Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AdminLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
@@ -62,7 +65,7 @@ const AdminLayout = () => {
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-destructive hover:bg-destructive/10"
-            onClick={() => window.location.href = "/"}
+            onClick={signOut}
           >
             <LogOut className="h-5 w-5" />
             Exit Admin

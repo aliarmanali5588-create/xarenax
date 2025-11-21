@@ -4,6 +4,7 @@ import { Menu, X, Wallet, User, Trophy, Users, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
 import NotificationBell from "./NotificationBell";
+import UserMenu from "./UserMenu";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -58,11 +59,7 @@ const Navbar = () => {
                   <Wallet className="w-5 h-5" />
                 </Link>
               </Button>
-              <Button variant="ghost" size="icon" asChild>
-                <Link to="/profile">
-                  <User className="w-5 h-5" />
-                </Link>
-              </Button>
+              <UserMenu />
               <Button variant="neon" size="sm" asChild>
                 <Link to="/tournaments">Join Now</Link>
               </Button>
@@ -76,11 +73,7 @@ const Navbar = () => {
                   <Wallet className="w-5 h-5" />
                 </Link>
               </Button>
-              <Button variant="ghost" size="icon" asChild className="hidden sm:flex">
-                <Link to="/profile">
-                  <User className="w-5 h-5" />
-                </Link>
-              </Button>
+              <UserMenu />
             </div>
 
             {/* Mobile Menu Button */}

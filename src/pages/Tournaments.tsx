@@ -61,14 +61,14 @@ const Tournaments = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4">
+      <div className="pt-24 pb-16 px-4 md:px-6">
         <div className="container mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-gaming font-bold mb-4 text-glow-cyan">
+          <div className="text-center mb-8 md:mb-12">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-gaming font-bold mb-3 md:mb-4 text-glow-cyan">
               Live Tournaments
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
               Choose your battle and start competing for real prizes
             </p>
           </div>
@@ -95,7 +95,7 @@ const Tournaments = () => {
               <p className="mt-4 text-muted-foreground">Loading tournaments...</p>
             </div>
           ) : filteredTournaments.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {filteredTournaments.map((tournament) => (
                 <TournamentCard
                   key={tournament.id}

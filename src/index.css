@@ -168,4 +168,15 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Hide Lovable Badge */
+  div[class*="lovable"],
+  a[href*="lovable.dev"],
+  button[class*="lovable"],
+  [class*="edit-in-lovable"],
+  [id*="lovable-badge"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
 }

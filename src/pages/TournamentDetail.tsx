@@ -212,13 +212,13 @@ const TournamentDetail = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4">
+      <div className="pt-24 pb-20 px-4 md:px-6">
         <div className="container mx-auto max-w-4xl">
           {/* Header */}
-          <div className="glass-panel rounded-2xl p-8 mb-8 neon-border-cyan">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-gaming font-bold mb-3 text-glow-cyan">
+          <div className="glass-panel rounded-2xl p-4 sm:p-6 md:p-8 mb-6 md:mb-8 neon-border-cyan">
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-4 mb-6">
+              <div className="flex-1">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-gaming font-bold mb-3 text-glow-cyan">
                   {tournament.title}
                 </h1>
                 <div className="flex flex-wrap gap-2">
@@ -237,7 +237,7 @@ const TournamentDetail = () => {
             </div>
 
             {/* Prize Info */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
               <div className="glass-panel rounded-xl p-4 border-l-4 border-secondary">
                 <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
                   <Trophy className="w-4 h-4" />
@@ -274,8 +274,8 @@ const TournamentDetail = () => {
           </div>
 
           {/* Details */}
-          <div className="glass-panel rounded-xl p-6 mb-8">
-            <h2 className="text-2xl font-gaming font-bold mb-6 text-primary">
+          <div className="glass-panel rounded-xl p-4 sm:p-6 mb-6 md:mb-8">
+            <h2 className="text-xl sm:text-2xl font-gaming font-bold mb-4 sm:mb-6 text-primary">
               Tournament Details
             </h2>
 
@@ -332,23 +332,23 @@ const TournamentDetail = () => {
           </div>
 
           {/* Join Button */}
-          <div className="glass-panel rounded-xl p-6">
-            <div className="flex items-center justify-between mb-4">
+          <div className="glass-panel rounded-xl p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
               <div>
                 <p className="text-sm text-muted-foreground">Your Wallet Balance</p>
-                <p className="text-2xl font-gaming font-bold text-primary flex items-center">
-                  <IndianRupee className="w-5 h-5" />
+                <p className="text-xl sm:text-2xl font-gaming font-bold text-primary flex items-center">
+                  <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5" />
                   {walletBalance}
                 </p>
               </div>
               {walletBalance < tournament.entry_fee && (
-                <Badge variant="destructive">Insufficient Balance</Badge>
+                <Badge variant="destructive" className="text-xs">Insufficient Balance</Badge>
               )}
             </div>
             <Button
               variant={isFull ? "outline" : "gaming"}
               size="lg"
-              className="w-full"
+              className="w-full h-12 text-base"
               disabled={isFull || joining}
               onClick={handleJoinClick}
             >
@@ -362,9 +362,9 @@ const TournamentDetail = () => {
 
       {/* Confirmation Dialog */}
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent className="glass-panel border-primary/30">
+        <AlertDialogContent className="glass-panel border-primary/30 w-[95%] max-w-lg mx-auto">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-gaming text-2xl text-primary">
+            <AlertDialogTitle className="font-gaming text-xl sm:text-2xl text-primary">
               Confirm Tournament Entry
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-4">
@@ -405,12 +405,12 @@ const TournamentDetail = () => {
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={joining}>Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+            <AlertDialogCancel disabled={joining} className="w-full sm:w-auto">Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmJoin}
               disabled={joining || !pubgId.trim()}
-              className="bg-primary hover:bg-primary/90"
+              className="bg-primary hover:bg-primary/90 w-full sm:w-auto"
             >
               {joining ? "Joining..." : "Confirm & Join"}
             </AlertDialogAction>

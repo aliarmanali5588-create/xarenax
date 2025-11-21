@@ -28,10 +28,10 @@ const Profile = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4 md:px-6">
+      <div className="pt-24 pb-20 px-4 md:px-6">
         <div className="container mx-auto max-w-5xl">
           {/* Header */}
           <div className="text-center mb-8 md:mb-12">

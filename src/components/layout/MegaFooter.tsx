@@ -8,6 +8,7 @@ const MegaFooter = () => {
       title: "Platform",
       links: [
         { name: "Tournaments", path: "/tournaments" },
+        { name: "Leaderboard", path: "/leaderboard" },
         { name: "How It Works", path: "/how-it-works" },
         { name: "Affiliate Program", path: "/affiliate" },
       ],
@@ -17,6 +18,7 @@ const MegaFooter = () => {
       links: [
         { name: "FAQ", path: "/support/faq" },
         { name: "Contact Us", path: "/support/contact" },
+        { name: "Telegram Support", path: "https://t.me/helparenaxesports", external: true },
       ],
     },
     {
@@ -80,12 +82,23 @@ const MegaFooter = () => {
               <ul className="space-y-2">
                 {section.links.map((link) => (
                   <li key={link.name}>
-                    <Link
-                      to={link.path}
-                      className="text-sm md:text-base text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      {link.name}
-                    </Link>
+                    {link.external ? (
+                      <a
+                        href={link.path}
+                        className="text-sm md:text-base text-muted-foreground hover:text-primary transition-colors"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {link.name}
+                      </a>
+                    ) : (
+                      <Link
+                        to={link.path}
+                        className="text-sm md:text-base text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

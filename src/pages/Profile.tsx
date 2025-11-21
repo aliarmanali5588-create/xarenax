@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WithdrawalSettings from "@/components/profile/WithdrawalSettings";
 import SupportCard from "@/components/support/SupportCard";
 import { useAuth } from "@/contexts/AuthContext";
+import TournamentRoomDetails from "@/components/tournaments/TournamentRoomDetails";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -34,8 +35,9 @@ const Profile = () => {
           </div>
 
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8 glass-panel">
+            <TabsList className="grid w-full grid-cols-4 mb-8 glass-panel">
               <TabsTrigger value="overview" className="font-heading">Overview</TabsTrigger>
+              <TabsTrigger value="my-matches" className="font-heading">My Matches</TabsTrigger>
               <TabsTrigger value="withdrawal" className="font-heading">Withdrawal</TabsTrigger>
               <TabsTrigger value="support" className="font-heading">Support</TabsTrigger>
             </TabsList>
@@ -120,6 +122,11 @@ const Profile = () => {
                   </div>
                 ))}
               </div>
+            </TabsContent>
+
+            {/* My Matches Tab */}
+            <TabsContent value="my-matches">
+              <TournamentRoomDetails />
             </TabsContent>
 
             {/* Withdrawal Tab */}

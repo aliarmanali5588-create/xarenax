@@ -15,6 +15,15 @@ import { Plus, Trophy, Key, Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
+interface Tournament {
+  id: string;
+  title: string;
+  map: string;
+  match_type: string;
+  start_time: string;
+  status: string;
+}
+
 const ManageTournaments = () => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
@@ -28,6 +37,32 @@ const ManageTournaments = () => {
     dateTime: "",
   });
   const [loading, setLoading] = useState(false);
+  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [selectedTournamentId, setSelectedTournamentId] = useState("");
+  const [roomCredentials, setRoomCredentials] = useState({
+    roomId: "",
+    roomPassword: "",
+  });
+  const [updatingRoom, setUpdatingRoom] = useState(false);
+
+  useEffect(() => {
+    fetchTournaments();
+  }, []);
+
+  const fetchTournaments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("tournaments")
+        .select("id, title, map, match_type, start_time, status")
+        .in("status", ["open", "full"])
+        .order("start_time", { ascending: true });
+
+      if (error) throw error;
+      setTournaments(data || []);
+    } catch (error) {
+      console.error("Error fetching tournaments:", error);
+    }
+  };
 
   const calculateProfit = () => {
     const entry = parseFloat(formData.entryFee) || 0;
@@ -76,12 +111,66 @@ const ManageTournaments = () => {
           maxSlots: "100",
           dateTime: "",
         });
+        fetchTournaments(); // Refresh tournament list
       }
     } catch (error) {
       console.error("Error:", error);
       toast.error("An error occurred");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpdateRoomDetails = async () => {
+    if (!selectedTournamentId || !roomCredentials.roomId || !roomCredentials.roomPassword) {
+      toast.error("Please select a tournament and fill all room details");
+      return;
+    }
+
+    setUpdatingRoom(true);
+
+    try {
+      // Check if tournament_secrets already exists for this tournament
+      const { data: existingSecret, error: checkError } = await supabase
+        .from("tournament_secrets")
+        .select("id")
+        .eq("tournament_id", selectedTournamentId)
+        .maybeSingle();
+
+      if (checkError) throw checkError;
+
+      if (existingSecret) {
+        // Update existing secret
+        const { error } = await supabase
+          .from("tournament_secrets")
+          .update({
+            room_id: roomCredentials.roomId,
+            room_password: roomCredentials.roomPassword,
+          })
+          .eq("tournament_id", selectedTournamentId);
+
+        if (error) throw error;
+      } else {
+        // Insert new secret
+        const { error } = await supabase
+          .from("tournament_secrets")
+          .insert({
+            tournament_id: selectedTournamentId,
+            room_id: roomCredentials.roomId,
+            room_password: roomCredentials.roomPassword,
+          });
+
+        if (error) throw error;
+      }
+
+      toast.success("Room details updated successfully! Paid participants can now see them.");
+      setRoomCredentials({ roomId: "", roomPassword: "" });
+      setSelectedTournamentId("");
+    } catch (error) {
+      console.error("Error updating room details:", error);
+      toast.error("Failed to update room details");
+    } finally {
+      setUpdatingRoom(false);
     }
   };
 
@@ -244,13 +333,16 @@ const ManageTournaments = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="matchSelect">Select Match</Label>
-              <Select>
+              <Select value={selectedTournamentId} onValueChange={setSelectedTournamentId}>
                 <SelectTrigger className="bg-background/50 border-border">
                   <SelectValue placeholder="Choose match" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="match1">Erangel Solo - 6:00 PM</SelectItem>
-                  <SelectItem value="match2">Livik Squad - 8:00 PM</SelectItem>
+                  {tournaments.map((tournament) => (
+                    <SelectItem key={tournament.id} value={tournament.id}>
+                      {tournament.map} {tournament.match_type} - {new Date(tournament.start_time).toLocaleString()}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -259,6 +351,8 @@ const ManageTournaments = () => {
               <Input
                 id="roomId"
                 placeholder="Enter Room ID"
+                value={roomCredentials.roomId}
+                onChange={(e) => setRoomCredentials({ ...roomCredentials, roomId: e.target.value })}
                 className="bg-background/50 border-border"
               />
             </div>
@@ -267,12 +361,18 @@ const ManageTournaments = () => {
               <Input
                 id="password"
                 placeholder="Enter Password"
+                value={roomCredentials.roomPassword}
+                onChange={(e) => setRoomCredentials({ ...roomCredentials, roomPassword: e.target.value })}
                 className="bg-background/50 border-border"
               />
             </div>
           </div>
-          <Button className="bg-cyan-500 hover:bg-cyan-600 text-white">
-            Update & Notify Players
+          <Button 
+            onClick={handleUpdateRoomDetails}
+            disabled={updatingRoom}
+            className="bg-cyan-500 hover:bg-cyan-600 text-white"
+          >
+            {updatingRoom ? "Updating..." : "Update & Notify Players"}
           </Button>
         </CardContent>
       </Card>

@@ -32,12 +32,12 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-1">
             {navItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
-                className="px-4 py-2 rounded-md text-muted-foreground hover:text-foreground transition-colors font-medium"
+                className="px-3 py-2 rounded-md text-muted-foreground hover:text-foreground transition-colors font-medium text-sm"
                 activeClassName="text-primary bg-primary/10"
               >
                 <div className="flex items-center gap-2">
@@ -49,35 +49,53 @@ const Navbar = () => {
           </div>
 
           {/* Right Actions */}
-          <div className="hidden md:flex items-center space-x-3">
-            <NotificationBell />
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/wallet">
-                <Wallet className="w-5 h-5" />
-              </Link>
-            </Button>
-            <Button variant="ghost" size="icon" asChild>
-              <Link to="/profile">
-                <User className="w-5 h-5" />
-              </Link>
-            </Button>
-            <Button variant="neon" size="sm" asChild>
-              <Link to="/tournaments">Join Now</Link>
-            </Button>
-          </div>
+          <div className="flex items-center gap-2">
+            {/* Desktop Actions */}
+            <div className="hidden lg:flex items-center gap-2">
+              <NotificationBell />
+              <Button variant="ghost" size="icon" asChild>
+                <Link to="/wallet">
+                  <Wallet className="w-5 h-5" />
+                </Link>
+              </Button>
+              <Button variant="ghost" size="icon" asChild>
+                <Link to="/profile">
+                  <User className="w-5 h-5" />
+                </Link>
+              </Button>
+              <Button variant="neon" size="sm" asChild>
+                <Link to="/tournaments">Join Now</Link>
+              </Button>
+            </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 text-foreground"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+            {/* Mobile Icons (Tablet and below) */}
+            <div className="flex lg:hidden items-center gap-2">
+              <NotificationBell />
+              <Button variant="ghost" size="icon" asChild className="hidden sm:flex">
+                <Link to="/wallet">
+                  <Wallet className="w-5 h-5" />
+                </Link>
+              </Button>
+              <Button variant="ghost" size="icon" asChild className="hidden sm:flex">
+                <Link to="/profile">
+                  <User className="w-5 h-5" />
+                </Link>
+              </Button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="lg:hidden p-2 text-foreground hover:bg-muted rounded-md transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-2 border-t border-border/30">
+          <div className="lg:hidden py-4 space-y-2 border-t border-border/30 animate-in slide-in-from-top-2 duration-200">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -95,17 +113,23 @@ const Navbar = () => {
                 </div>
               </Link>
             ))}
-            <div className="flex gap-2 px-4 pt-2">
-              <Button variant="outline" size="sm" className="flex-1" asChild>
+            <div className="border-t border-border/30 pt-3 mt-3 space-y-2 px-4">
+              <Button variant="outline" size="sm" className="w-full justify-start sm:hidden" asChild>
                 <Link to="/wallet" onClick={() => setMobileMenuOpen(false)}>
                   <Wallet className="w-4 h-4 mr-2" />
                   Wallet
                 </Link>
               </Button>
-              <Button variant="outline" size="sm" className="flex-1" asChild>
+              <Button variant="outline" size="sm" className="w-full justify-start sm:hidden" asChild>
                 <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
                   <User className="w-4 h-4 mr-2" />
                   Profile
+                </Link>
+              </Button>
+              <Button variant="neon" size="sm" className="w-full" asChild>
+                <Link to="/tournaments" onClick={() => setMobileMenuOpen(false)}>
+                  <Trophy className="w-4 h-4 mr-2" />
+                  Join Tournament
                 </Link>
               </Button>
             </div>

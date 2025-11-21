@@ -94,12 +94,15 @@ export type Database = {
           bgmi_id: string | null
           bonus_balance: number
           created_at: string
+          device_id: string | null
           full_name: string | null
           id: string
           ign: string | null
           is_banned: boolean
+          last_ip: string | null
           referral_code: string
           referred_by: string | null
+          signup_ip: string | null
           total_deposited: number
           total_winnings: number
           updated_at: string
@@ -111,12 +114,15 @@ export type Database = {
           bgmi_id?: string | null
           bonus_balance?: number
           created_at?: string
+          device_id?: string | null
           full_name?: string | null
           id: string
           ign?: string | null
           is_banned?: boolean
+          last_ip?: string | null
           referral_code: string
           referred_by?: string | null
+          signup_ip?: string | null
           total_deposited?: number
           total_winnings?: number
           updated_at?: string
@@ -128,12 +134,15 @@ export type Database = {
           bgmi_id?: string | null
           bonus_balance?: number
           created_at?: string
+          device_id?: string | null
           full_name?: string | null
           id?: string
           ign?: string | null
           is_banned?: boolean
+          last_ip?: string | null
           referral_code?: string
           referred_by?: string | null
+          signup_ip?: string | null
           total_deposited?: number
           total_winnings?: number
           updated_at?: string

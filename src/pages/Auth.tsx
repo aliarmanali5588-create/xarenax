@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Mail, Lock, User, Gamepad2, Hash } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { getDeviceFingerprint } from "@/lib/deviceFingerprint";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -71,11 +72,27 @@ const Auth = () => {
       signupSchema.parse(signupForm);
       setLoading(true);
       
-      const { error } = await signUp(signupForm.email, signupForm.password, signupForm.username, signupForm.ign, signupForm.bgmiId);
+      // Capture device fingerprint for anti-fraud tracking
+      const { deviceId, ip } = await getDeviceFingerprint();
+      
+      const { error } = await signUp(
+        signupForm.email, 
+        signupForm.password, 
+        signupForm.username, 
+        signupForm.ign, 
+        signupForm.bgmiId,
+        deviceId,
+        ip || undefined
+      );
       
       if (error) {
         if (error.message.includes("User already registered")) {
           toast.error("An account with this email already exists");
+        } else if (error.message.includes("Maximum account limit reached")) {
+          toast.error("Maximum account limit reached for this device", {
+            description: "Please log in to your existing account",
+            duration: 5000,
+          });
         } else {
           toast.error(error.message || "Signup failed");
         }

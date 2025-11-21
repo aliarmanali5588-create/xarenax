@@ -8,7 +8,7 @@ interface AuthContextType {
   session: Session | null;
   isAdmin: boolean;
   loading: boolean;
-  signUp: (email: string, password: string, username: string, ign: string, bgmiId: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, username: string, ign: string, bgmiId: string, deviceId?: string, signupIp?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -85,7 +85,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signUp = async (email: string, password: string, username: string, ign: string, bgmiId: string) => {
+  const signUp = async (
+    email: string, 
+    password: string, 
+    username: string, 
+    ign: string, 
+    bgmiId: string,
+    deviceId?: string,
+    signupIp?: string
+  ) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
       
@@ -98,6 +106,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             username: username,
             ign: ign,
             bgmi_id: bgmiId,
+            device_id: deviceId || '',
+            signup_ip: signupIp || '',
           }
         }
       });

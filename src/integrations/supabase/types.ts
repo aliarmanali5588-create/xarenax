@@ -105,6 +105,41 @@ export type Database = {
           },
         ]
       }
+      tournament_secrets: {
+        Row: {
+          created_at: string | null
+          id: string
+          room_id: string
+          room_password: string
+          tournament_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          room_id: string
+          room_password: string
+          tournament_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          room_id?: string
+          room_password?: string
+          tournament_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_secrets_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: true
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tournaments: {
         Row: {
           created_at: string
@@ -117,8 +152,6 @@ export type Database = {
           max_slots: number
           per_kill_prize: number
           prize_pool: number
-          room_id: string | null
-          room_password: string | null
           start_time: string
           status: string
           title: string
@@ -135,8 +168,6 @@ export type Database = {
           max_slots: number
           per_kill_prize?: number
           prize_pool: number
-          room_id?: string | null
-          room_password?: string | null
           start_time: string
           status?: string
           title: string
@@ -153,8 +184,6 @@ export type Database = {
           max_slots?: number
           per_kill_prize?: number
           prize_pool?: number
-          room_id?: string | null
-          room_password?: string | null
           start_time?: string
           status?: string
           title?: string

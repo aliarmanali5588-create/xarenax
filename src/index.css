@@ -47,6 +47,12 @@
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
 
+    /* Admin Panel Colors - Red/Gold Accents */
+    --admin-red: 0 84% 60%;
+    --admin-gold: 45 93% 58%;
+    --admin-red-foreground: 0 0% 100%;
+    --admin-gold-foreground: 0 0% 0%;
+
     /* Neon Glow Effects */
     --glow-cyan: 188 100% 50%;
     --glow-orange: 33 100% 50%;

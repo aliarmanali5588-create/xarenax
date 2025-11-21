@@ -51,6 +51,12 @@ export default {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
         },
+        admin: {
+          red: "hsl(var(--admin-red))",
+          gold: "hsl(var(--admin-gold))",
+          "red-foreground": "hsl(var(--admin-red-foreground))",
+          "gold-foreground": "hsl(var(--admin-gold-foreground))",
+        },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

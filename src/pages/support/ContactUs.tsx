@@ -1,4 +1,4 @@
-import { Mail, Phone, MessageCircle, Send } from "lucide-react";
+import { Mail, Send } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,11 @@ const ContactUs = () => {
 
   const contactMethods = [
     {
-      icon: MessageCircle,
-      title: "WhatsApp Support",
-      description: "Get instant help on WhatsApp",
+      icon: Send,
+      title: "Telegram Support",
+      description: "Get instant help on Telegram",
       action: "Chat Now",
-      link: "https://wa.me/919876543210",
+      link: "https://t.me/arenaxsupport",
       primary: true,
     },
     {
@@ -28,14 +28,6 @@ const ContactUs = () => {
       description: "support@arenax.in",
       action: "Send Email",
       link: "mailto:support@arenax.in",
-      primary: false,
-    },
-    {
-      icon: Phone,
-      title: "Phone Support",
-      description: "+91 98765 43210",
-      action: "Call Us",
-      link: "tel:+919876543210",
       primary: false,
     },
   ];
@@ -57,7 +49,7 @@ const ContactUs = () => {
           </div>
 
           {/* Contact Methods */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {contactMethods.map((method) => (
               <a
                 key={method.title}
@@ -180,7 +172,7 @@ const ContactUs = () => {
               </div>
             </div>
             <p className="text-xs text-muted-foreground text-center mt-4">
-              WhatsApp support available 24/7 for urgent issues
+              Telegram support available 24/7 for urgent issues
             </p>
           </div>
         </div>

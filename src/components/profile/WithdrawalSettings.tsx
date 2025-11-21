@@ -154,20 +154,20 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
   }
 
   return (
-    <div className="glass-panel rounded-2xl p-8 neon-border-cyan">
-      <div className="flex items-center justify-between mb-6">
+    <div className="glass-panel rounded-2xl p-4 sm:p-6 md:p-8 neon-border-cyan">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-gaming font-bold text-glow-cyan mb-2">
+          <h2 className="text-xl sm:text-2xl font-gaming font-bold text-glow-cyan mb-2">
             Withdrawal Settings
           </h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Set your payment details. Once saved, they will be locked for security.
           </p>
         </div>
         {isLocked && (
-          <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/20 neon-border-cyan">
-            <Lock className="w-5 h-5 text-primary" />
-            <span className="text-sm font-semibold text-primary">Locked</span>
+          <div className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg bg-primary/20 neon-border-cyan flex-shrink-0">
+            <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            <span className="text-xs sm:text-sm font-semibold text-primary">Locked</span>
           </div>
         )}
       </div>
@@ -191,7 +191,7 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
       <div className="space-y-6">
         {/* UPI Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-heading font-semibold text-foreground flex items-center gap-2">
+          <h3 className="text-base sm:text-lg font-heading font-semibold text-foreground flex items-center gap-2">
             UPI Details
           </h3>
           
@@ -228,7 +228,7 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
 
         {/* Bank Details Section */}
         <div className="space-y-4 pt-4 border-t border-border/50">
-          <h3 className="text-lg font-heading font-semibold text-foreground">
+          <h3 className="text-base sm:text-lg font-heading font-semibold text-foreground">
             Bank Account Details
           </h3>
 
@@ -283,9 +283,9 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
             onClick={handleSave}
             variant="gaming"
             size="lg"
-            className="w-full"
+            className="w-full text-sm sm:text-base"
           >
-            <Unlock className="w-5 h-5 mr-2" />
+            <Unlock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
             Save & Lock Details
           </Button>
         )}

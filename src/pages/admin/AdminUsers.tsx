@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Users, Ban, CheckCircle, Search } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import StatCardSkeleton from "@/components/admin/StatCardSkeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface User {
   id: string;
@@ -28,69 +31,95 @@ interface User {
 
 const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: "U001",
-      username: "pro_gamer_x",
-      ign: "ProGamer",
-      bgmiId: "543216789",
-      walletBalance: 5500,
-      ipAddress: "192.168.1.100",
-      status: "active",
-      joinDate: "2024-01-10",
-      matchesPlayed: 45,
-    },
-    {
-      id: "U002",
-      username: "ace_player",
-      ign: "AceShooter",
-      bgmiId: "987654321",
-      walletBalance: 3200,
-      ipAddress: "192.168.1.101",
-      status: "active",
-      joinDate: "2024-01-12",
-      matchesPlayed: 32,
-    },
-    {
-      id: "U003",
-      username: "sniper_king",
-      ign: "SniperKing",
-      bgmiId: "456789123",
-      walletBalance: 0,
-      ipAddress: "192.168.1.100",
-      status: "banned",
-      joinDate: "2024-01-13",
-      matchesPlayed: 15,
-    },
-    {
-      id: "U004",
-      username: "noob_slayer",
-      ign: "NoobSlayer",
-      bgmiId: "789123456",
-      walletBalance: 1800,
-      ipAddress: "192.168.1.102",
-      status: "active",
-      joinDate: "2024-01-14",
-      matchesPlayed: 20,
-    },
-  ]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleBanUnban = (id: string) => {
-    setUsers(
-      users.map((user) =>
-        user.id === id
-          ? {
-              ...user,
-              status: user.status === "active" ? ("banned" as const) : ("active" as const),
-            }
-          : user
-      )
-    );
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const { data: profilesData, error: profilesError } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (profilesError) {
+        toast.error("Failed to fetch users");
+        console.error(profilesError);
+        return;
+      }
+
+      // Fetch participant counts for each user
+      const { data: participantsData } = await supabase
+        .from("participants")
+        .select("user_id");
+
+      const matchCounts = participantsData?.reduce((acc, p) => {
+        acc[p.user_id] = (acc[p.user_id] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>) || {};
+
+      const transformedUsers: User[] = (profilesData || []).map((profile) => ({
+        id: profile.id,
+        username: profile.username || "Unknown",
+        ign: profile.ign || "N/A",
+        bgmiId: profile.bgmi_id || "N/A",
+        walletBalance: Number(profile.wallet_balance) || 0,
+        ipAddress: "Hidden", // IP tracking to be implemented
+        status: profile.is_banned ? "banned" : "active",
+        joinDate: new Date(profile.created_at).toLocaleDateString(),
+        matchesPlayed: matchCounts[profile.id] || 0,
+      }));
+
+      setUsers(transformedUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast.error("An error occurred while fetching users");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBanUnban = async (id: string) => {
     const user = users.find((u) => u.id === id);
-    if (user?.status === "active") {
-      toast.error(`User ${user.username} has been banned`);
-    } else {
-      toast.success(`User ${user?.username} has been unbanned`);
+    if (!user) return;
+
+    const newBanStatus = user.status === "active";
+
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ is_banned: newBanStatus })
+        .eq("id", id);
+
+      if (error) {
+        toast.error("Failed to update user status");
+        console.error(error);
+        return;
+      }
+
+      setUsers(
+        users.map((u) =>
+          u.id === id
+            ? {
+                ...u,
+                status: newBanStatus ? ("banned" as const) : ("active" as const),
+              }
+            : u
+        )
+      );
+
+      if (newBanStatus) {
+        toast.error(`User ${user.username} has been banned`);
+      } else {
+        toast.success(`User ${user.username} has been unbanned`);
+      }
+    } catch (error) {
+      console.error("Error updating user status:", error);
+      toast.error("An error occurred");
     }
   };
 
@@ -102,6 +131,36 @@ const AdminUsers = () => {
       user.ipAddress.includes(searchTerm) ||
       user.id.includes(searchTerm)
   );
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+          <StatCardSkeleton />
+        </div>
+        <Card className="bg-card/50 backdrop-blur-xl border-admin-red/20">
+          <CardContent className="pt-6">
+            <Skeleton className="h-14 w-full" />
+          </CardContent>
+        </Card>
+        <Card className="bg-card/50 backdrop-blur-xl border-admin-red/20">
+          <CardHeader>
+            <Skeleton className="h-8 w-48" />
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -195,7 +254,14 @@ const AdminUsers = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredUsers.map((user) => (
+              {filteredUsers.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    {searchTerm ? "No users found matching your search" : "No users registered yet"}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredUsers.map((user) => (
                 <TableRow key={user.id} className="border-admin-red/20">
                   <TableCell className="font-medium text-cyan-400">
                     {user.username}
@@ -246,7 +312,7 @@ const AdminUsers = () => {
                     </Button>
                   </TableCell>
                 </TableRow>
-              ))}
+              )))}
             </TableBody>
           </Table>
         </CardContent>

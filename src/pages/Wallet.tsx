@@ -5,9 +5,12 @@ import MegaFooter from "@/components/layout/MegaFooter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DepositModal from "@/components/wallet/DepositModal";
+import WithdrawalModal from "@/components/wallet/WithdrawalModal";
 
 const Wallet = () => {
   const [depositModalOpen, setDepositModalOpen] = useState(false);
+  const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
+  const currentBalance = 570;
   
   const transactions = [
     {
@@ -93,7 +96,12 @@ const Wallet = () => {
                 <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Add Money
               </Button>
-              <Button variant="neonOrange" size="lg" className="w-full hover:scale-105 transition-transform text-sm sm:text-base">
+              <Button 
+                variant="neonOrange" 
+                size="lg" 
+                className="w-full hover:scale-105 transition-transform text-sm sm:text-base"
+                onClick={() => setWithdrawalModalOpen(true)}
+              >
                 <ArrowDownToLine className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Withdraw
               </Button>
@@ -165,6 +173,11 @@ const Wallet = () => {
 
       <MegaFooter />
       <DepositModal open={depositModalOpen} onOpenChange={setDepositModalOpen} />
+      <WithdrawalModal 
+        open={withdrawalModalOpen} 
+        onOpenChange={setWithdrawalModalOpen}
+        currentBalance={currentBalance}
+      />
     </div>
   );
 };

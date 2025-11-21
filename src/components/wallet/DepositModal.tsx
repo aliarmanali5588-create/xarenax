@@ -21,11 +21,16 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
   const [amount, setAmount] = useState("");
   const { initiatePayment } = useRazorpay();
 
+  const MIN_DEPOSIT = 50;
+  const MAX_DEPOSIT = 5000;
   const quickAmounts = [100, 250, 500, 1000];
 
   const handleDeposit = () => {
     const depositAmount = parseFloat(amount);
-    if (isNaN(depositAmount) || depositAmount <= 0) {
+    if (isNaN(depositAmount) || depositAmount < MIN_DEPOSIT) {
+      return;
+    }
+    if (depositAmount > MAX_DEPOSIT) {
       return;
     }
 
@@ -86,11 +91,12 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className="pl-10 text-lg font-heading"
-                min="1"
+                min="50"
+                max="5000"
               />
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Minimum deposit: ₹10 | Maximum: ₹50,000
+              Minimum deposit: ₹50 | Maximum: ₹5,000
             </p>
           </div>
 
@@ -100,7 +106,7 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
             variant="gaming"
             size="lg"
             className="w-full"
-            disabled={!amount || parseFloat(amount) <= 0}
+            disabled={!amount || parseFloat(amount) < MIN_DEPOSIT || parseFloat(amount) > MAX_DEPOSIT}
           >
             <CreditCard className="w-5 h-5 mr-2" />
             Pay with Razorpay

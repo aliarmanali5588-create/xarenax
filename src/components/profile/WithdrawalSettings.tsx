@@ -1,13 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Lock, Unlock, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
-const WithdrawalSettings = () => {
+interface WithdrawalSettingsProps {
+  userId: string;
+}
+
+const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
   const { toast } = useToast();
   const [isLocked, setIsLocked] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     upiId1: "",
     upiId2: "",
@@ -15,6 +32,37 @@ const WithdrawalSettings = () => {
     bankName: "",
     ifscCode: "",
   });
+
+  useEffect(() => {
+    fetchPaymentMethods();
+  }, [userId]);
+
+  const fetchPaymentMethods = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("user_payment_methods")
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        setFormData({
+          upiId1: data.upi_id_1 || "",
+          upiId2: data.upi_id_2 || "",
+          accountNumber: data.bank_account_no || "",
+          bankName: data.bank_name || "",
+          ifscCode: data.bank_ifsc || "",
+        });
+        setIsLocked(data.is_locked);
+      }
+    } catch (error) {
+      console.error("Error fetching payment methods:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSave = () => {
     // Validate all fields are filled
@@ -27,12 +75,48 @@ const WithdrawalSettings = () => {
       return;
     }
 
-    setIsLocked(true);
-    toast({
-      title: "Withdrawal Details Locked 🔒",
-      description: "Your payment details have been secured. Contact support to modify.",
-    });
+    setShowConfirmDialog(true);
   };
+
+  const confirmSave = async () => {
+    try {
+      const { error } = await supabase
+        .from("user_payment_methods")
+        .upsert({
+          user_id: userId,
+          upi_id_1: formData.upiId1,
+          upi_id_2: formData.upiId2 || null,
+          bank_account_no: formData.accountNumber,
+          bank_name: formData.bankName,
+          bank_ifsc: formData.ifscCode,
+          is_locked: true,
+        });
+
+      if (error) throw error;
+
+      setIsLocked(true);
+      setShowConfirmDialog(false);
+      toast({
+        title: "Withdrawal Details Locked 🔒",
+        description: "Your payment details have been secured. Contact support to modify.",
+      });
+    } catch (error) {
+      console.error("Error saving payment methods:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save payment details. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="glass-panel rounded-2xl p-8 neon-border-cyan">
+        <p className="text-center text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="glass-panel rounded-2xl p-8 neon-border-cyan">
@@ -171,6 +255,25 @@ const WithdrawalSettings = () => {
           </Button>
         )}
       </div>
+
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent className="glass-panel border-primary/30">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-2xl font-gaming text-glow-cyan">
+              Confirm Lock Payment Details
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
+              You cannot change these details later. Once locked, you'll need to contact support for any modifications. Are you absolutely sure?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSave} className="bg-primary hover:bg-primary/90">
+              Yes, Lock Details
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

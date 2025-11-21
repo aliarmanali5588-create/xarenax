@@ -6,8 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WithdrawalSettings from "@/components/profile/WithdrawalSettings";
 import SupportCard from "@/components/support/SupportCard";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Profile = () => {
+  const { user } = useAuth();
+  
   const stats = [
     { label: "Tournaments Played", value: "12", icon: Trophy },
     { label: "Win Rate", value: "33%", icon: Target },

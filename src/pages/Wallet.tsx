@@ -1,5 +1,8 @@
-import { useState } from "react";
-import { Plus, ArrowDownToLine, History, IndianRupee } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, ArrowDownToLine, History, IndianRupee, Zap } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
 import { Button } from "@/components/ui/button";
@@ -8,9 +11,63 @@ import DepositModal from "@/components/wallet/DepositModal";
 import WithdrawalModal from "@/components/wallet/WithdrawalModal";
 
 const Wallet = () => {
+  const { user } = useAuth();
   const [depositModalOpen, setDepositModalOpen] = useState(false);
   const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
-  const currentBalance = 570;
+  const [currentBalance, setCurrentBalance] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [addingTestMoney, setAddingTestMoney] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      fetchWalletBalance();
+    }
+  }, [user]);
+
+  const fetchWalletBalance = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("wallet_balance")
+        .eq("id", user?.id)
+        .single();
+
+      if (error) throw error;
+      setCurrentBalance(data?.wallet_balance || 0);
+    } catch (error) {
+      console.error("Error fetching wallet:", error);
+      toast.error("Failed to load wallet balance");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddTestMoney = async () => {
+    if (!user) {
+      toast.error("Please login first");
+      return;
+    }
+
+    setAddingTestMoney(true);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .update({ wallet_balance: currentBalance + 500 })
+        .eq("id", user.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setCurrentBalance(data.wallet_balance);
+      toast.success("₹500 added to your wallet for testing!");
+    } catch (error) {
+      console.error("Error adding test money:", error);
+      toast.error("Failed to add test money");
+    } finally {
+      setAddingTestMoney(false);
+    }
+  };
   
   const transactions = [
     {
@@ -80,10 +137,16 @@ const Wallet = () => {
           <div className="glass-panel rounded-2xl p-6 sm:p-8 mb-6 md:mb-8 neon-border-cyan neon-glow-cyan">
             <div className="text-center mb-6">
               <div className="text-xs sm:text-sm text-muted-foreground mb-2 md:mb-3">Available Balance</div>
-              <div className="flex items-center justify-center text-4xl sm:text-5xl md:text-6xl font-gaming font-bold text-primary text-glow-cyan">
-                <IndianRupee className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
-                570
-              </div>
+              {loading ? (
+                <div className="flex items-center justify-center h-16">
+                  <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center text-4xl sm:text-5xl md:text-6xl font-gaming font-bold text-primary text-glow-cyan">
+                  <IndianRupee className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
+                  {currentBalance}
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -104,6 +167,29 @@ const Wallet = () => {
               >
                 <ArrowDownToLine className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Withdraw
+              </Button>
+            </div>
+
+            {/* Test Money Button */}
+            <div className="mt-4 pt-4 border-t border-border/30">
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full border-admin-gold/50 text-admin-gold hover:bg-admin-gold/10 hover:scale-105 transition-all"
+                onClick={handleAddTestMoney}
+                disabled={addingTestMoney}
+              >
+                {addingTestMoney ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-admin-gold border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                    Add Test Money (₹500)
+                  </>
+                )}
               </Button>
             </div>
           </div>

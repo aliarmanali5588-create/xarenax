@@ -19,7 +19,7 @@ const ContactUs = () => {
       title: "Telegram Support",
       description: "Get instant help on Telegram",
       action: "Chat Now",
-      link: "https://t.me/arenaxsupport",
+      link: "https://t.me/+6IoFwhsuUkEzMGM9",
       primary: true,
     },
     {

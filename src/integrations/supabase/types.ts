@@ -91,9 +91,11 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bgmi_id: string | null
           created_at: string
           full_name: string | null
           id: string
+          ign: string | null
           is_banned: boolean
           referral_code: string
           referred_by: string | null
@@ -103,9 +105,11 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          bgmi_id?: string | null
           created_at?: string
           full_name?: string | null
           id: string
+          ign?: string | null
           is_banned?: boolean
           referral_code: string
           referred_by?: string | null
@@ -115,9 +119,11 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          bgmi_id?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
+          ign?: string | null
           is_banned?: boolean
           referral_code?: string
           referred_by?: string | null

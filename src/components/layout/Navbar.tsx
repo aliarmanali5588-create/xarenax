@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Wallet, User, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
+import NotificationBell from "./NotificationBell";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -48,6 +49,7 @@ const Navbar = () => {
 
           {/* Right Actions */}
           <div className="hidden md:flex items-center space-x-3">
+            <NotificationBell />
             <Button variant="ghost" size="icon" asChild>
               <Link to="/wallet">
                 <Wallet className="w-5 h-5" />

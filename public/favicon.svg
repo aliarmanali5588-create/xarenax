@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Trophy Cup -->
+  <path d="M18 12h28v18c0 7.732-6.268 14-14 14s-14-6.268-14-14V12z" fill="#00f0ff" stroke="#00f0ff" stroke-width="2"/>
+  
+  <!-- Trophy Handles -->
+  <path d="M16 16h-6c-2 0-3 1-3 3v4c0 2 1 3 3 3h6" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
+  <path d="M48 16h6c2 0 3 1 3 3v4c0 2-1 3-3 3h-6" fill="none" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Trophy Stem -->
+  <path d="M26 44h12v8H26z" fill="#00f0ff" stroke="#00f0ff" stroke-width="2"/>
+  
+  <!-- Trophy Base -->
+  <path d="M20 52h24v6c0 2-2 4-4 4H24c-2 0-4-2-4-4v-6z" fill="#00f0ff" stroke="#00f0ff" stroke-width="2"/>
+  
+  <!-- Inner Highlight -->
+  <circle cx="32" cy="20" r="3" fill="#ffffff" opacity="0.6"/>
+  
+  <!-- Glow Effect -->
+  <path d="M18 12h28v18c0 7.732-6.268 14-14 14s-14-6.268-14-14V12z" fill="url(#glow)" opacity="0.4"/>
+  
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="30%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#00f0ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

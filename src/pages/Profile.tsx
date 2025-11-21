@@ -3,6 +3,9 @@ import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import WithdrawalSettings from "@/components/profile/WithdrawalSettings";
+import SupportCard from "@/components/support/SupportCard";
 
 const Profile = () => {
   const stats = [
@@ -27,84 +30,105 @@ const Profile = () => {
             </p>
           </div>
 
-          {/* Profile Card */}
-          <div className="glass-panel rounded-2xl p-8 mb-8 neon-border-cyan">
-            <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
-              <Avatar className="w-32 h-32 border-4 border-primary/30 neon-glow-cyan">
-                <AvatarImage src="" alt="Profile" />
-                <AvatarFallback className="text-4xl font-gaming bg-gradient-to-br from-primary to-accent text-background">
-                  PX
-                </AvatarFallback>
-              </Avatar>
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 mb-8 glass-panel">
+              <TabsTrigger value="overview" className="font-heading">Overview</TabsTrigger>
+              <TabsTrigger value="withdrawal" className="font-heading">Withdrawal</TabsTrigger>
+              <TabsTrigger value="support" className="font-heading">Support</TabsTrigger>
+            </TabsList>
 
-              <div className="flex-1 text-center md:text-left">
-                <h2 className="text-3xl font-gaming font-bold mb-2">ProGamer_X</h2>
-                <p className="text-muted-foreground mb-4">Member since Jan 2024</p>
-                <Button variant="neon">Edit Profile</Button>
-              </div>
-            </div>
+            {/* Overview Tab */}
+            <TabsContent value="overview" className="space-y-8">
+              {/* Profile Card */}
+              <div className="glass-panel rounded-2xl p-8 neon-border-cyan">
+                <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
+                  <Avatar className="w-32 h-32 border-4 border-primary/30 neon-glow-cyan">
+                    <AvatarImage src="" alt="Profile" />
+                    <AvatarFallback className="text-4xl font-gaming bg-gradient-to-br from-primary to-accent text-background">
+                      PX
+                    </AvatarFallback>
+                  </Avatar>
 
-            {/* Profile Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <Mail className="w-5 h-5 text-primary" />
+                  <div className="flex-1 text-center md:text-left">
+                    <h2 className="text-3xl font-gaming font-bold mb-2">ProGamer_X</h2>
+                    <p className="text-muted-foreground mb-4">Member since Jan 2024</p>
+                    <Button variant="neon">Edit Profile</Button>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-sm text-muted-foreground">Email</div>
-                  <div className="font-medium">progamer@example.com</div>
+
+                {/* Profile Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <Mail className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">Email</div>
+                      <div className="font-medium">progamer@example.com</div>
+                    </div>
+                  </div>
+
+                  <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <Phone className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">Phone</div>
+                      <div className="font-medium">+91 98765 43210</div>
+                    </div>
+                  </div>
+
+                  <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <User className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">PUBG ID</div>
+                      <div className="font-medium">51234567890</div>
+                    </div>
+                  </div>
+
+                  <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <Calendar className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">Member Since</div>
+                      <div className="font-medium">January 2024</div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <div className="text-sm text-muted-foreground">Phone</div>
-                  <div className="font-medium">+91 98765 43210</div>
-                </div>
+              {/* Gaming Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {stats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="glass-panel-hover rounded-xl p-6 text-center group"
+                  >
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center neon-glow-cyan group-hover:scale-110 transition-transform">
+                      <stat.icon className="w-8 h-8 text-background" />
+                    </div>
+                    <div className="text-3xl font-gaming font-bold mb-2 text-glow-cyan">
+                      {stat.value}
+                    </div>
+                    <div className="text-muted-foreground text-sm">{stat.label}</div>
+                  </div>
+                ))}
               </div>
+            </TabsContent>
 
-              <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <User className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <div className="text-sm text-muted-foreground">PUBG ID</div>
-                  <div className="font-medium">51234567890</div>
-                </div>
-              </div>
+            {/* Withdrawal Tab */}
+            <TabsContent value="withdrawal">
+              <WithdrawalSettings />
+            </TabsContent>
 
-              <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <div className="text-sm text-muted-foreground">Member Since</div>
-                  <div className="font-medium">January 2024</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Gaming Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="glass-panel-hover rounded-xl p-6 text-center group"
-              >
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center neon-glow-cyan group-hover:scale-110 transition-transform">
-                  <stat.icon className="w-8 h-8 text-background" />
-                </div>
-                <div className="text-3xl font-gaming font-bold mb-2 text-glow-cyan">
-                  {stat.value}
-                </div>
-                <div className="text-muted-foreground text-sm">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+            {/* Support Tab */}
+            <TabsContent value="support">
+              <SupportCard />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 

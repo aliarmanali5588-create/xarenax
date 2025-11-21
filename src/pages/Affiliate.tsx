@@ -1,10 +1,8 @@
-import { Share2, UserPlus, Trophy, Copy } from "lucide-react";
+import { Share2, UserPlus, Trophy } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
 import AffiliateStepCard from "@/components/cards/AffiliateStepCard";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import ReferralCard from "@/components/affiliate/ReferralCard";
 
 const Affiliate = () => {
   const affiliateSteps = [
@@ -31,11 +29,6 @@ const Affiliate = () => {
     },
   ];
 
-  const handleCopyCode = () => {
-    navigator.clipboard.writeText("ARENAX2024");
-    toast.success("Referral code copied to clipboard!");
-  };
-
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -58,6 +51,11 @@ const Affiliate = () => {
             </p>
           </div>
 
+          {/* Referral Card */}
+          <div className="mb-16 max-w-2xl mx-auto">
+            <ReferralCard />
+          </div>
+
           {/* How It Works */}
           <div className="mb-16">
             <h2 className="text-3xl font-gaming font-bold text-center mb-12 text-glow-cyan">
@@ -72,27 +70,6 @@ const Affiliate = () => {
                 />
               ))}
             </div>
-          </div>
-
-          {/* Your Referral Code */}
-          <div className="glass-panel rounded-2xl p-8 md:p-12 neon-border-cyan max-w-2xl mx-auto mb-16">
-            <h3 className="text-2xl font-gaming font-bold mb-6 text-center">
-              Your Referral Code
-            </h3>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Input
-                value="ARENAX2024"
-                readOnly
-                className="glass-panel text-center text-2xl font-gaming font-bold tracking-wider flex-1"
-              />
-              <Button variant="neonOrange" size="lg" onClick={handleCopyCode}>
-                <Copy className="w-5 h-5 mr-2" />
-                Copy
-              </Button>
-            </div>
-            <p className="text-center text-muted-foreground mt-4">
-              Share this code with your friends to start earning
-            </p>
           </div>
 
           {/* Stats Dashboard */}

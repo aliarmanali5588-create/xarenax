@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { Plus, ArrowDownToLine, History, IndianRupee } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import DepositModal from "@/components/wallet/DepositModal";
 
 const Wallet = () => {
+  const [depositModalOpen, setDepositModalOpen] = useState(false);
+  
   const transactions = [
     {
       id: "1",
@@ -80,11 +84,16 @@ const Wallet = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <Button variant="gaming" size="lg" className="w-full">
+              <Button 
+                variant="gaming" 
+                size="lg" 
+                className="w-full hover:scale-105 transition-transform"
+                onClick={() => setDepositModalOpen(true)}
+              >
                 <Plus className="w-5 h-5 mr-2" />
                 Add Money
               </Button>
-              <Button variant="neonOrange" size="lg" className="w-full">
+              <Button variant="neonOrange" size="lg" className="w-full hover:scale-105 transition-transform">
                 <ArrowDownToLine className="w-5 h-5 mr-2" />
                 Withdraw
               </Button>
@@ -155,6 +164,7 @@ const Wallet = () => {
       </div>
 
       <MegaFooter />
+      <DepositModal open={depositModalOpen} onOpenChange={setDepositModalOpen} />
     </div>
   );
 };

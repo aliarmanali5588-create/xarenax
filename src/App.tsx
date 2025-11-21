@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Home from "./pages/Home";
 import Tournaments from "./pages/Tournaments";
+import TournamentDetail from "./pages/TournamentDetail";
 import Leaderboard from "./pages/Leaderboard";
 import Affiliate from "./pages/Affiliate";
 import HowItWorks from "./pages/HowItWorks";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/tournaments" element={<Tournaments />} />
+            <Route path="/tournaments/:id" element={<TournamentDetail />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/affiliate" element={<Affiliate />} />
             <Route path="/how-it-works" element={<HowItWorks />} />

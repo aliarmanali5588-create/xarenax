@@ -26,84 +26,53 @@ interface Player {
   totalEarnings: number;
 }
 
+// Mock Pro Player Data for Social Proof
+const mockPlayers: Omit<Player, "rank">[] = [
+  { username: "VENOM_GAMING", wins: 87, kills: 1842, matchesPlayed: 210, winRate: 41.4, totalEarnings: 48500 },
+  { username: "SNIPER_KING_YT", wins: 82, kills: 1756, matchesPlayed: 198, winRate: 41.4, totalEarnings: 45200 },
+  { username: "HEADSHOT_OP", wins: 79, kills: 1689, matchesPlayed: 192, winRate: 41.1, totalEarnings: 42800 },
+  { username: "SHADOW_ASSASSIN", wins: 75, kills: 1598, matchesPlayed: 185, winRate: 40.5, totalEarnings: 39500 },
+  { username: "PRO_REAPER_X", wins: 71, kills: 1523, matchesPlayed: 178, winRate: 39.9, totalEarnings: 36900 },
+  { username: "THUNDER_BOLT", wins: 68, kills: 1465, matchesPlayed: 172, winRate: 39.5, totalEarnings: 34200 },
+  { username: "ACE_COMMANDO", wins: 65, kills: 1402, matchesPlayed: 168, winRate: 38.7, totalEarnings: 31800 },
+  { username: "NIGHT_SLAYER", wins: 62, kills: 1347, matchesPlayed: 163, winRate: 38.0, totalEarnings: 29500 },
+  { username: "ELITE_HUNTER_99", wins: 59, kills: 1289, matchesPlayed: 158, winRate: 37.3, totalEarnings: 27200 },
+  { username: "GHOST_RIDER_PG", wins: 56, kills: 1234, matchesPlayed: 154, winRate: 36.4, totalEarnings: 25100 },
+  { username: "RAPID_KILLER", wins: 53, kills: 1178, matchesPlayed: 149, winRate: 35.6, totalEarnings: 23400 },
+  { username: "DEATH_SQUAD_TM", wins: 50, kills: 1125, matchesPlayed: 145, winRate: 34.5, totalEarnings: 21800 },
+  { username: "FURY_WARRIOR", wins: 47, kills: 1076, matchesPlayed: 141, winRate: 33.3, totalEarnings: 20200 },
+  { username: "BEAST_MODE_ON", wins: 44, kills: 1024, matchesPlayed: 137, winRate: 32.1, totalEarnings: 18700 },
+  { username: "TOXIC_GAMER_X", wins: 41, kills: 975, matchesPlayed: 133, winRate: 30.8, totalEarnings: 17300 },
+  { username: "SAVAGE_STRIKER", wins: 38, kills: 928, matchesPlayed: 129, winRate: 29.5, totalEarnings: 15900 },
+  { username: "ALPHA_PREDATOR", wins: 35, kills: 884, matchesPlayed: 125, winRate: 28.0, totalEarnings: 14600 },
+  { username: "MEGA_DESTROYER", wins: 32, kills: 842, matchesPlayed: 121, winRate: 26.4, totalEarnings: 13200 },
+  { username: "ULTIMATE_NINJA", wins: 29, kills: 801, matchesPlayed: 118, winRate: 24.6, totalEarnings: 11900 },
+  { username: "CONQUEROR_KING", wins: 26, kills: 763, matchesPlayed: 114, winRate: 22.8, totalEarnings: 10500 },
+];
+
 const Leaderboard = () => {
   const [period, setPeriod] = useState<TimePeriod>("weekly");
 
-  const players: Player[] = [
-    {
-      rank: 1,
-      username: "SHADOW_KING",
-      wins: 45,
-      kills: 892,
-      matchesPlayed: 120,
-      winRate: 37.5,
-      totalEarnings: 125000,
-    },
-    {
-      rank: 2,
-      username: "ACE_SNIPER",
-      wins: 42,
-      kills: 856,
-      matchesPlayed: 115,
-      winRate: 36.5,
-      totalEarnings: 98000,
-    },
-    {
-      rank: 3,
-      username: "PRO_GAMER_X",
-      wins: 38,
-      kills: 795,
-      matchesPlayed: 110,
-      winRate: 34.5,
-      totalEarnings: 87000,
-    },
-    {
-      rank: 4,
-      username: "HEADSHOT_MASTER",
-      wins: 35,
-      kills: 742,
-      matchesPlayed: 105,
-      winRate: 33.3,
-      totalEarnings: 76000,
-    },
-    {
-      rank: 5,
-      username: "SILENT_KILLER",
-      wins: 32,
-      kills: 698,
-      matchesPlayed: 98,
-      winRate: 32.7,
-      totalEarnings: 65000,
-    },
-    {
-      rank: 6,
-      username: "THUNDER_STRIKE",
-      wins: 30,
-      kills: 654,
-      matchesPlayed: 95,
-      winRate: 31.6,
-      totalEarnings: 58000,
-    },
-    {
-      rank: 7,
-      username: "NIGHT_HAWK",
-      wins: 28,
-      kills: 612,
-      matchesPlayed: 92,
-      winRate: 30.4,
-      totalEarnings: 52000,
-    },
-    {
-      rank: 8,
-      username: "VIPER_SQUAD",
-      wins: 26,
-      kills: 587,
-      matchesPlayed: 88,
-      winRate: 29.5,
-      totalEarnings: 47000,
-    },
-  ];
+  // Shuffle/Filter mock data based on period for "dynamic" effect
+  const getPlayersForPeriod = (): Player[] => {
+    let shuffledPlayers = [...mockPlayers];
+    
+    // Different shuffle for each period to simulate dynamic rankings
+    if (period === "weekly") {
+      shuffledPlayers.sort((a, b) => b.winRate - a.winRate);
+    } else if (period === "monthly") {
+      shuffledPlayers.sort((a, b) => b.kills - a.kills);
+    } else {
+      shuffledPlayers.sort((a, b) => b.totalEarnings - a.totalEarnings);
+    }
+    
+    return shuffledPlayers.map((player, index) => ({
+      ...player,
+      rank: index + 1,
+    }));
+  };
 
+  const players = getPlayersForPeriod();
   const topThree = players.slice(0, 3);
   const restOfPlayers = players.slice(3);
 
@@ -178,38 +147,38 @@ const Leaderboard = () => {
             </Button>
           </div>
 
-          {/* Stats Cards */}
+          {/* Stats Cards - Mock "Active Platform" Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div className="glass-panel rounded-xl p-6 border-primary/30">
               <div className="flex items-center gap-3 mb-2">
                 <TrendingUp className="w-6 h-6 text-primary" />
-                <h3 className="font-heading font-bold text-foreground">Total Players</h3>
+                <h3 className="font-heading font-bold text-foreground">Active Players</h3>
               </div>
-              <p className="text-3xl font-gaming font-bold text-primary">2,543</p>
+              <p className="text-3xl font-gaming font-bold text-primary">12,847</p>
             </div>
             <div className="glass-panel rounded-xl p-6 border-secondary/30">
               <div className="flex items-center gap-3 mb-2">
                 <Zap className="w-6 h-6 text-secondary" />
-                <h3 className="font-heading font-bold text-foreground">Total Matches</h3>
+                <h3 className="font-heading font-bold text-foreground">Matches Today</h3>
               </div>
-              <p className="text-3xl font-gaming font-bold text-secondary">8,932</p>
+              <p className="text-3xl font-gaming font-bold text-secondary">342</p>
             </div>
             <div className="glass-panel rounded-xl p-6 border-admin-gold/30">
               <div className="flex items-center gap-3 mb-2">
                 <Target className="w-6 h-6 text-admin-gold" />
-                <h3 className="font-heading font-bold text-foreground">Prize Distributed</h3>
+                <h3 className="font-heading font-bold text-foreground">Total Prizes</h3>
               </div>
-              <p className="text-3xl font-gaming font-bold text-admin-gold">₹5.2L</p>
+              <p className="text-3xl font-gaming font-bold text-admin-gold">₹18.7L</p>
             </div>
           </div>
 
-          {/* Podium - Top 3 */}
+          {/* Podium - Top 3 with Premium Visuals */}
           <div className="glass-panel rounded-2xl p-8 mb-12 neon-border-cyan">
             <h2 className="text-2xl font-gaming font-bold text-center mb-8 text-admin-gold">
               🏆 Top Champions 🏆
             </h2>
             <div className="flex items-end justify-center gap-4 md:gap-8">
-              {/* 2nd Place */}
+              {/* 2nd Place - Silver */}
               <div className="flex flex-col items-center flex-1 max-w-[200px]">
                 <div className="mb-4">
                   <Avatar className="w-20 h-20 border-4 border-gray-400 shadow-[0_0_20px_rgba(156,163,175,0.5)]">
@@ -226,12 +195,12 @@ const Leaderboard = () => {
                   <p className="font-heading font-bold text-foreground">{topThree[1]?.username}</p>
                   <p className="text-sm text-muted-foreground">{topThree[1]?.wins} Wins</p>
                   <Badge className="mt-2 bg-gray-500/20 text-gray-400 border-gray-400/50">
-                    ₹{(topThree[1]?.totalEarnings / 1000).toFixed(0)}K
+                    ₹{(topThree[1]?.totalEarnings / 1000).toFixed(1)}K
                   </Badge>
                 </div>
               </div>
 
-              {/* 1st Place */}
+              {/* 1st Place - Gold */}
               <div className="flex flex-col items-center flex-1 max-w-[220px]">
                 <div className="mb-4 relative">
                   <Crown className="w-8 h-8 text-admin-gold absolute -top-8 left-1/2 transform -translate-x-1/2 animate-pulse" />
@@ -249,12 +218,12 @@ const Leaderboard = () => {
                   <p className="font-heading font-bold text-admin-gold text-lg">{topThree[0]?.username}</p>
                   <p className="text-sm text-muted-foreground">{topThree[0]?.wins} Wins</p>
                   <Badge className="mt-2 bg-admin-gold/20 text-admin-gold border-admin-gold/50">
-                    ₹{(topThree[0]?.totalEarnings / 1000).toFixed(0)}K
+                    ₹{(topThree[0]?.totalEarnings / 1000).toFixed(1)}K
                   </Badge>
                 </div>
               </div>
 
-              {/* 3rd Place */}
+              {/* 3rd Place - Bronze */}
               <div className="flex flex-col items-center flex-1 max-w-[200px]">
                 <div className="mb-4">
                   <Avatar className="w-20 h-20 border-4 border-orange-600 shadow-[0_0_20px_rgba(234,88,12,0.5)]">
@@ -271,7 +240,7 @@ const Leaderboard = () => {
                   <p className="font-heading font-bold text-foreground">{topThree[2]?.username}</p>
                   <p className="text-sm text-muted-foreground">{topThree[2]?.wins} Wins</p>
                   <Badge className="mt-2 bg-orange-500/20 text-orange-600 border-orange-600/50">
-                    ₹{(topThree[2]?.totalEarnings / 1000).toFixed(0)}K
+                    ₹{(topThree[2]?.totalEarnings / 1000).toFixed(1)}K
                   </Badge>
                 </div>
               </div>
@@ -331,7 +300,7 @@ const Leaderboard = () => {
                       </Badge>
                     </TableCell>
                     <TableCell className="font-gaming font-bold text-admin-gold">
-                      ₹{(player.totalEarnings / 1000).toFixed(0)}K
+                      ₹{(player.totalEarnings / 1000).toFixed(1)}K
                     </TableCell>
                   </TableRow>
                 ))}

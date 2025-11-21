@@ -128,11 +128,11 @@ const Wallet = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4">
+      <div className="pt-24 pb-20 px-4 md:px-6 overflow-x-hidden">
         <div className="container mx-auto max-w-5xl">
           {/* Header */}
           <div className="text-center mb-8 md:mb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-gaming font-bold mb-3 md:mb-4 text-glow-cyan">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-gaming font-bold mb-3 md:mb-4 text-glow-cyan">
               My Wallet
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
@@ -156,11 +156,11 @@ const Wallet = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
               <Button 
                 variant="gaming" 
                 size="lg" 
-                className="w-full hover:scale-105 transition-transform text-sm sm:text-base"
+                className="w-full h-12 hover:scale-105 transition-transform text-sm sm:text-base"
                 onClick={() => setDepositModalOpen(true)}
               >
                 <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
@@ -169,7 +169,7 @@ const Wallet = () => {
               <Button 
                 variant="neonOrange" 
                 size="lg" 
-                className="w-full hover:scale-105 transition-transform text-sm sm:text-base"
+                className="w-full h-12 hover:scale-105 transition-transform text-sm sm:text-base"
                 onClick={() => setWithdrawalModalOpen(true)}
               >
                 <ArrowDownToLine className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
@@ -202,7 +202,7 @@ const Wallet = () => {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 mb-8 md:mb-12">
             <div className="glass-panel rounded-xl p-4 md:p-6">
               <div className="text-xs sm:text-sm text-muted-foreground mb-1 md:mb-2">Total Deposits</div>
               <div className="text-xl md:text-2xl font-heading font-bold text-primary">₹100</div>
@@ -232,31 +232,33 @@ const Wallet = () => {
               </div>
             ) : (
               <>
-                <div className="space-y-3">
+                {/* Mobile Card View */}
+                <div className="block space-y-3">
                   {transactions.map((transaction) => (
                     <div
                       key={transaction.id}
-                      className="glass-panel rounded-lg p-3 sm:p-4 hover:bg-card/60 transition-colors"
+                      className="glass-panel rounded-lg p-4 hover:bg-card/60 transition-colors"
                     >
-                      <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-4">
+                      <div className="flex items-start justify-between gap-3 mb-3">
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium mb-1 text-sm sm:text-base truncate">{transaction.description}</div>
-                          <div className="text-xs sm:text-sm text-muted-foreground">
+                          <div className="font-medium mb-1 text-sm sm:text-base">{transaction.description}</div>
+                          <div className="text-xs text-muted-foreground">
                             {transaction.date}
                           </div>
                         </div>
-                        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-3 flex-shrink-0">
-                          <div
-                            className={`text-lg sm:text-xl font-heading font-bold ${getTransactionColor(
-                              transaction.type
-                            )}`}
-                          >
-                            {transaction.amount > 0 ? "+" : ""}₹
-                            {Math.abs(transaction.amount)}
-                          </div>
-                          <Badge variant="secondary" className="text-xs">
-                            {transaction.status}
-                          </Badge>
+                        <Badge variant="secondary" className="text-xs flex-shrink-0">
+                          {transaction.status}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center justify-between pt-3 border-t border-border/30">
+                        <span className="text-sm text-muted-foreground">Amount</span>
+                        <div
+                          className={`text-xl font-heading font-bold ${getTransactionColor(
+                            transaction.type
+                          )}`}
+                        >
+                          {transaction.amount > 0 ? "+" : ""}₹
+                          {Math.abs(transaction.amount)}
                         </div>
                       </div>
                     </div>

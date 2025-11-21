@@ -14,16 +14,315 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      participants: {
+        Row: {
+          id: string
+          joined_at: string
+          kills: number | null
+          payment_status: string
+          prize_amount: number | null
+          pubg_id: string
+          rank: number | null
+          tournament_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          kills?: number | null
+          payment_status?: string
+          prize_amount?: number | null
+          pubg_id: string
+          rank?: number | null
+          tournament_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          kills?: number | null
+          payment_status?: string
+          prize_amount?: number | null
+          pubg_id?: string
+          rank?: number | null
+          tournament_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participants_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          is_banned: boolean
+          referral_code: string
+          referred_by: string | null
+          updated_at: string
+          username: string
+          wallet_balance: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          is_banned?: boolean
+          referral_code: string
+          referred_by?: string | null
+          updated_at?: string
+          username: string
+          wallet_balance?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          is_banned?: boolean
+          referral_code?: string
+          referred_by?: string | null
+          updated_at?: string
+          username?: string
+          wallet_balance?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_referred_by_fkey"
+            columns: ["referred_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournaments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          current_slots: number
+          entry_fee: number
+          id: string
+          map: string
+          match_type: string
+          max_slots: number
+          per_kill_prize: number
+          prize_pool: number
+          room_id: string | null
+          room_password: string | null
+          start_time: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          current_slots?: number
+          entry_fee: number
+          id?: string
+          map: string
+          match_type: string
+          max_slots: number
+          per_kill_prize?: number
+          prize_pool: number
+          room_id?: string | null
+          room_password?: string | null
+          start_time: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          current_slots?: number
+          entry_fee?: number
+          id?: string
+          map?: string
+          match_type?: string
+          max_slots?: number
+          per_kill_prize?: number
+          prize_pool?: number
+          room_id?: string | null
+          room_password?: string | null
+          start_time?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          status: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_payment_methods: {
+        Row: {
+          bank_account_no: string | null
+          bank_ifsc: string | null
+          bank_name: string | null
+          created_at: string
+          id: string
+          is_locked: boolean
+          locked_at: string | null
+          updated_at: string
+          upi_id_1: string | null
+          upi_id_2: string | null
+          user_id: string
+        }
+        Insert: {
+          bank_account_no?: string | null
+          bank_ifsc?: string | null
+          bank_name?: string | null
+          created_at?: string
+          id?: string
+          is_locked?: boolean
+          locked_at?: string | null
+          updated_at?: string
+          upi_id_1?: string | null
+          upi_id_2?: string | null
+          user_id: string
+        }
+        Update: {
+          bank_account_no?: string | null
+          bank_ifsc?: string | null
+          bank_name?: string | null
+          created_at?: string
+          id?: string
+          is_locked?: boolean
+          locked_at?: string | null
+          updated_at?: string
+          upi_id_1?: string | null
+          upi_id_2?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawal_requests: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          created_at: string
+          id: string
+          payment_method_id: string
+          processed_at: string | null
+          processed_by: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          created_at?: string
+          id?: string
+          payment_method_id: string
+          processed_at?: string | null
+          processed_by?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          created_at?: string
+          id?: string
+          payment_method_id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdrawal_requests_payment_method_id_fkey"
+            columns: ["payment_method_id"]
+            isOneToOne: false
+            referencedRelation: "user_payment_methods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "user" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +449,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["user", "admin"],
+    },
   },
 } as const

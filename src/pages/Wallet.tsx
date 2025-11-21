@@ -31,16 +31,19 @@ const Wallet = () => {
     return () => clearTimeout(timer);
   }, [user]);
 
+  const [bonusBalance, setBonusBalance] = useState(0);
+
   const fetchWalletBalance = async () => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("wallet_balance")
+        .select("wallet_balance, bonus_balance")
         .eq("id", user?.id)
         .single();
 
       if (error) throw error;
       setCurrentBalance(data?.wallet_balance || 0);
+      setBonusBalance(data?.bonus_balance || 0);
     } catch (error) {
       console.error("Error fetching wallet:", error);
       toast.error("Failed to load wallet balance");
@@ -143,7 +146,7 @@ const Wallet = () => {
           {/* Balance Card */}
           <div className="glass-panel rounded-2xl p-6 sm:p-8 mb-6 md:mb-8 neon-border-cyan neon-glow-cyan">
             <div className="text-center mb-6">
-              <div className="text-xs sm:text-sm text-muted-foreground mb-2 md:mb-3">Available Balance</div>
+              <div className="text-xs sm:text-sm text-muted-foreground mb-2 md:mb-3">Wallet Balance (Withdrawable)</div>
               {loading ? (
                 <div className="flex items-center justify-center h-16">
                   <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -155,6 +158,22 @@ const Wallet = () => {
                 </div>
               )}
             </div>
+
+            {/* Bonus Balance Display */}
+            {bonusBalance > 0 && (
+              <div className="mb-6 p-4 rounded-lg bg-secondary/10 border border-secondary/30">
+                <div className="text-center">
+                  <div className="text-xs text-muted-foreground mb-1">Bonus Balance (Entry Fees Only)</div>
+                  <div className="flex items-center justify-center text-2xl font-gaming font-bold text-secondary text-glow-orange">
+                    <IndianRupee className="w-5 h-5" />
+                    {bonusBalance}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Cannot be withdrawn • Use for tournament entries
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
               <Button 

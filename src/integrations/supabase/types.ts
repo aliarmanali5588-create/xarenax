@@ -92,6 +92,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bgmi_id: string | null
+          bonus_balance: number
           created_at: string
           full_name: string | null
           id: string
@@ -99,6 +100,8 @@ export type Database = {
           is_banned: boolean
           referral_code: string
           referred_by: string | null
+          total_deposited: number
+          total_winnings: number
           updated_at: string
           username: string
           wallet_balance: number
@@ -106,6 +109,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           bgmi_id?: string | null
+          bonus_balance?: number
           created_at?: string
           full_name?: string | null
           id: string
@@ -113,6 +117,8 @@ export type Database = {
           is_banned?: boolean
           referral_code: string
           referred_by?: string | null
+          total_deposited?: number
+          total_winnings?: number
           updated_at?: string
           username: string
           wallet_balance?: number
@@ -120,6 +126,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           bgmi_id?: string | null
+          bonus_balance?: number
           created_at?: string
           full_name?: string | null
           id?: string
@@ -127,6 +134,8 @@ export type Database = {
           is_banned?: boolean
           referral_code?: string
           referred_by?: string | null
+          total_deposited?: number
+          total_winnings?: number
           updated_at?: string
           username?: string
           wallet_balance?: number

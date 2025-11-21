@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { IndianRupee, ArrowDownToLine, AlertCircle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { IndianRupee, ArrowDownToLine, AlertCircle, Shield } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface WithdrawalModalProps {
   open: boolean;
@@ -19,17 +22,54 @@ interface WithdrawalModalProps {
 }
 
 const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModalProps) => {
+  const { user } = useAuth();
   const [amount, setAmount] = useState("");
+  const [totalDeposited, setTotalDeposited] = useState(0);
+  const [totalWinnings, setTotalWinnings] = useState(0);
+  const [loading, setLoading] = useState(true);
   const MIN_WITHDRAWAL = 110;
   const MAX_WITHDRAWAL = 10000;
 
   const quickAmounts = [500, 1000, 2000, 5000];
+
+  useEffect(() => {
+    if (open && user) {
+      fetchUserStats();
+    }
+  }, [open, user]);
+
+  const fetchUserStats = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("total_deposited, total_winnings")
+        .eq("id", user?.id)
+        .single();
+
+      if (error) throw error;
+      setTotalDeposited(data?.total_deposited || 0);
+      setTotalWinnings(data?.total_winnings || 0);
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleWithdrawal = () => {
     const withdrawalAmount = parseFloat(amount);
     
     if (isNaN(withdrawalAmount) || withdrawalAmount < MIN_WITHDRAWAL) {
       toast.error(`Minimum withdrawal amount is ₹${MIN_WITHDRAWAL}`);
+      return;
+    }
+
+    // Anti-fraud check: Must have deposited or won to withdraw
+    if (totalDeposited === 0 && totalWinnings < 100) {
+      toast.error("You must play matches or deposit to unlock withdrawals", {
+        description: "This security measure prevents fake account abuse",
+        duration: 5000,
+      });
       return;
     }
     
@@ -72,6 +112,17 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModal
               </div>
             </div>
           </div>
+
+          {/* Anti-fraud warning */}
+          {totalDeposited === 0 && totalWinnings < 100 && (
+            <Alert className="border-destructive/50 bg-destructive/5">
+              <Shield className="h-4 w-4 text-destructive" />
+              <AlertDescription className="text-sm">
+                <strong>Withdrawal Locked:</strong> You must play matches or deposit to unlock withdrawals.
+                This prevents fake account abuse.
+              </AlertDescription>
+            </Alert>
+          )}
 
           {/* Quick Amount Selection */}
           <div>
@@ -137,10 +188,12 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModal
             size="lg"
             className="w-full"
             disabled={
-              !amount || 
-              parseFloat(amount) < MIN_WITHDRAWAL || 
+              loading ||
+              !amount ||
+              parseFloat(amount) < MIN_WITHDRAWAL ||
               parseFloat(amount) > MAX_WITHDRAWAL ||
-              parseFloat(amount) > currentBalance
+              parseFloat(amount) > currentBalance ||
+              (totalDeposited === 0 && totalWinnings < 100)
             }
           >
             <ArrowDownToLine className="w-5 h-5 mr-2" />

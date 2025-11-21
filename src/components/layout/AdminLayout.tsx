@@ -1,4 +1,5 @@
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { 
   LayoutDashboard, 
   Trophy, 
@@ -10,11 +11,34 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { signOut } = useAuth();
+  const { signOut, isAdmin, loading } = useAuth();
+
+  // CRITICAL SECURITY: Protect admin routes
+  useEffect(() => {
+    if (!loading && !isAdmin) {
+      toast.error("Unauthorized Access");
+      navigate("/");
+    }
+  }, [isAdmin, loading, navigate]);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-admin-gold border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // Return null if not admin (prevents any rendering)
+  if (!isAdmin) {
+    return null;
+  }
 
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Trophy, Medal, TrendingUp, Zap, Target, Crown } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
@@ -13,6 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import LeaderboardPodiumSkeleton from "@/components/leaderboard/LeaderboardPodiumSkeleton";
+import LeaderboardTableSkeleton from "@/components/leaderboard/LeaderboardTableSkeleton";
 
 type TimePeriod = "weekly" | "monthly" | "alltime";
 
@@ -52,6 +54,16 @@ const mockPlayers: Omit<Player, "rank">[] = [
 
 const Leaderboard = () => {
   const [period, setPeriod] = useState<TimePeriod>("weekly");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate data loading
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [period]);
 
   // Shuffle/Filter mock data based on period for "dynamic" effect
   const getPlayersForPeriod = (): Player[] => {
@@ -173,140 +185,148 @@ const Leaderboard = () => {
           </div>
 
           {/* Podium - Top 3 with Premium Visuals */}
-          <div className="glass-panel rounded-2xl p-8 mb-12 neon-border-cyan">
-            <h2 className="text-2xl font-gaming font-bold text-center mb-8 text-admin-gold">
-              🏆 Top Champions 🏆
-            </h2>
-            <div className="flex items-end justify-center gap-4 md:gap-8">
-              {/* 2nd Place - Silver */}
-              <div className="flex flex-col items-center flex-1 max-w-[200px]">
-                <div className="mb-4">
-                  <Avatar className="w-20 h-20 border-4 border-gray-400 shadow-[0_0_20px_rgba(156,163,175,0.5)]">
-                    <AvatarFallback className="bg-gray-700 text-2xl font-gaming">
-                      {topThree[1]?.username.slice(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
+          {loading ? (
+            <LeaderboardPodiumSkeleton />
+          ) : (
+            <div className="glass-panel rounded-2xl p-8 mb-12 neon-border-cyan">
+              <h2 className="text-2xl font-gaming font-bold text-center mb-8 text-admin-gold">
+                🏆 Top Champions 🏆
+              </h2>
+              <div className="flex items-end justify-center gap-4 md:gap-8">
+                {/* 2nd Place - Silver */}
+                <div className="flex flex-col items-center flex-1 max-w-[200px]">
+                  <div className="mb-4">
+                    <Avatar className="w-20 h-20 border-4 border-gray-400 shadow-[0_0_20px_rgba(156,163,175,0.5)]">
+                      <AvatarFallback className="bg-gray-700 text-2xl font-gaming">
+                        {topThree[1]?.username.slice(0, 2)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+                  <div className={`glass-panel rounded-t-xl w-full ${getPodiumHeight(2)} flex flex-col items-center justify-center bg-gradient-to-t from-gray-500/20 to-gray-400/10 border-t-4 border-gray-400`}>
+                    <Medal className="w-8 h-8 text-gray-400 mb-2" />
+                    <span className="text-4xl font-gaming font-bold text-gray-400">2</span>
+                  </div>
+                  <div className="mt-3 text-center">
+                    <p className="font-heading font-bold text-foreground">{topThree[1]?.username}</p>
+                    <p className="text-sm text-muted-foreground">{topThree[1]?.wins} Wins</p>
+                    <Badge className="mt-2 bg-gray-500/20 text-gray-400 border-gray-400/50">
+                      ₹{(topThree[1]?.totalEarnings / 1000).toFixed(1)}K
+                    </Badge>
+                  </div>
                 </div>
-                <div className={`glass-panel rounded-t-xl w-full ${getPodiumHeight(2)} flex flex-col items-center justify-center bg-gradient-to-t from-gray-500/20 to-gray-400/10 border-t-4 border-gray-400`}>
-                  <Medal className="w-8 h-8 text-gray-400 mb-2" />
-                  <span className="text-4xl font-gaming font-bold text-gray-400">2</span>
-                </div>
-                <div className="mt-3 text-center">
-                  <p className="font-heading font-bold text-foreground">{topThree[1]?.username}</p>
-                  <p className="text-sm text-muted-foreground">{topThree[1]?.wins} Wins</p>
-                  <Badge className="mt-2 bg-gray-500/20 text-gray-400 border-gray-400/50">
-                    ₹{(topThree[1]?.totalEarnings / 1000).toFixed(1)}K
-                  </Badge>
-                </div>
-              </div>
 
-              {/* 1st Place - Gold */}
-              <div className="flex flex-col items-center flex-1 max-w-[220px]">
-                <div className="mb-4 relative">
-                  <Crown className="w-8 h-8 text-admin-gold absolute -top-8 left-1/2 transform -translate-x-1/2 animate-pulse" />
-                  <Avatar className="w-24 h-24 border-4 border-admin-gold shadow-[0_0_30px_rgba(255,215,0,0.6)]">
-                    <AvatarFallback className="bg-gradient-to-br from-admin-gold/30 to-secondary/30 text-3xl font-gaming text-admin-gold">
-                      {topThree[0]?.username.slice(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
+                {/* 1st Place - Gold */}
+                <div className="flex flex-col items-center flex-1 max-w-[220px]">
+                  <div className="mb-4 relative">
+                    <Crown className="w-8 h-8 text-admin-gold absolute -top-8 left-1/2 transform -translate-x-1/2 animate-pulse" />
+                    <Avatar className="w-24 h-24 border-4 border-admin-gold shadow-[0_0_30px_rgba(255,215,0,0.6)]">
+                      <AvatarFallback className="bg-gradient-to-br from-admin-gold/30 to-secondary/30 text-3xl font-gaming text-admin-gold">
+                        {topThree[0]?.username.slice(0, 2)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+                  <div className={`glass-panel rounded-t-xl w-full ${getPodiumHeight(1)} flex flex-col items-center justify-center bg-gradient-to-t from-admin-gold/20 to-admin-gold/10 border-t-4 border-admin-gold`}>
+                    <Crown className="w-10 h-10 text-admin-gold mb-2" />
+                    <span className="text-5xl font-gaming font-bold text-admin-gold">1</span>
+                  </div>
+                  <div className="mt-3 text-center">
+                    <p className="font-heading font-bold text-admin-gold text-lg">{topThree[0]?.username}</p>
+                    <p className="text-sm text-muted-foreground">{topThree[0]?.wins} Wins</p>
+                    <Badge className="mt-2 bg-admin-gold/20 text-admin-gold border-admin-gold/50">
+                      ₹{(topThree[0]?.totalEarnings / 1000).toFixed(1)}K
+                    </Badge>
+                  </div>
                 </div>
-                <div className={`glass-panel rounded-t-xl w-full ${getPodiumHeight(1)} flex flex-col items-center justify-center bg-gradient-to-t from-admin-gold/20 to-admin-gold/10 border-t-4 border-admin-gold`}>
-                  <Crown className="w-10 h-10 text-admin-gold mb-2" />
-                  <span className="text-5xl font-gaming font-bold text-admin-gold">1</span>
-                </div>
-                <div className="mt-3 text-center">
-                  <p className="font-heading font-bold text-admin-gold text-lg">{topThree[0]?.username}</p>
-                  <p className="text-sm text-muted-foreground">{topThree[0]?.wins} Wins</p>
-                  <Badge className="mt-2 bg-admin-gold/20 text-admin-gold border-admin-gold/50">
-                    ₹{(topThree[0]?.totalEarnings / 1000).toFixed(1)}K
-                  </Badge>
-                </div>
-              </div>
 
-              {/* 3rd Place - Bronze */}
-              <div className="flex flex-col items-center flex-1 max-w-[200px]">
-                <div className="mb-4">
-                  <Avatar className="w-20 h-20 border-4 border-orange-600 shadow-[0_0_20px_rgba(234,88,12,0.5)]">
-                    <AvatarFallback className="bg-orange-900/50 text-2xl font-gaming">
-                      {topThree[2]?.username.slice(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-                <div className={`glass-panel rounded-t-xl w-full ${getPodiumHeight(3)} flex flex-col items-center justify-center bg-gradient-to-t from-orange-600/20 to-orange-500/10 border-t-4 border-orange-600`}>
-                  <Medal className="w-8 h-8 text-orange-600 mb-2" />
-                  <span className="text-4xl font-gaming font-bold text-orange-600">3</span>
-                </div>
-                <div className="mt-3 text-center">
-                  <p className="font-heading font-bold text-foreground">{topThree[2]?.username}</p>
-                  <p className="text-sm text-muted-foreground">{topThree[2]?.wins} Wins</p>
-                  <Badge className="mt-2 bg-orange-500/20 text-orange-600 border-orange-600/50">
-                    ₹{(topThree[2]?.totalEarnings / 1000).toFixed(1)}K
-                  </Badge>
+                {/* 3rd Place - Bronze */}
+                <div className="flex flex-col items-center flex-1 max-w-[200px]">
+                  <div className="mb-4">
+                    <Avatar className="w-20 h-20 border-4 border-orange-600 shadow-[0_0_20px_rgba(234,88,12,0.5)]">
+                      <AvatarFallback className="bg-orange-900/50 text-2xl font-gaming">
+                        {topThree[2]?.username.slice(0, 2)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </div>
+                  <div className={`glass-panel rounded-t-xl w-full ${getPodiumHeight(3)} flex flex-col items-center justify-center bg-gradient-to-t from-orange-600/20 to-orange-500/10 border-t-4 border-orange-600`}>
+                    <Medal className="w-8 h-8 text-orange-600 mb-2" />
+                    <span className="text-4xl font-gaming font-bold text-orange-600">3</span>
+                  </div>
+                  <div className="mt-3 text-center">
+                    <p className="font-heading font-bold text-foreground">{topThree[2]?.username}</p>
+                    <p className="text-sm text-muted-foreground">{topThree[2]?.wins} Wins</p>
+                    <Badge className="mt-2 bg-orange-500/20 text-orange-600 border-orange-600/50">
+                      ₹{(topThree[2]?.totalEarnings / 1000).toFixed(1)}K
+                    </Badge>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Rankings Table */}
-          <div className="glass-panel rounded-xl p-6 overflow-x-auto">
-            <h2 className="text-2xl font-gaming font-bold mb-6 text-primary">
-              Full Rankings
-            </h2>
-            <Table>
-              <TableHeader>
-                <TableRow className="border-border/50">
-                  <TableHead className="text-primary font-gaming">Rank</TableHead>
-                  <TableHead className="text-primary font-gaming">Player</TableHead>
-                  <TableHead className="text-primary font-gaming">Wins</TableHead>
-                  <TableHead className="text-primary font-gaming">Kills</TableHead>
-                  <TableHead className="text-primary font-gaming">Matches</TableHead>
-                  <TableHead className="text-primary font-gaming">Win Rate</TableHead>
-                  <TableHead className="text-primary font-gaming">Earnings</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {restOfPlayers.map((player) => (
-                  <TableRow 
-                    key={player.rank} 
-                    className="border-border/30 hover:bg-card/60 transition-colors"
-                  >
-                    <TableCell className="font-gaming font-bold text-lg">
-                      #{player.rank}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-10 h-10 border-2 border-primary/30">
-                          <AvatarFallback className="bg-card text-sm font-gaming">
-                            {player.username.slice(0, 2)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="font-heading font-semibold text-cyan-400">
-                          {player.username}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-bold text-success">
-                      {player.wins}
-                    </TableCell>
-                    <TableCell className="font-bold text-destructive">
-                      {player.kills}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {player.matchesPlayed}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="font-heading">
-                        {player.winRate}%
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="font-gaming font-bold text-admin-gold">
-                      ₹{(player.totalEarnings / 1000).toFixed(1)}K
-                    </TableCell>
+          {loading ? (
+            <LeaderboardTableSkeleton />
+          ) : (
+            <div className="glass-panel rounded-xl p-6 overflow-x-auto">
+              <h2 className="text-2xl font-gaming font-bold mb-6 text-primary">
+                Full Rankings
+              </h2>
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/50">
+                    <TableHead className="text-primary font-gaming">Rank</TableHead>
+                    <TableHead className="text-primary font-gaming">Player</TableHead>
+                    <TableHead className="text-primary font-gaming">Wins</TableHead>
+                    <TableHead className="text-primary font-gaming">Kills</TableHead>
+                    <TableHead className="text-primary font-gaming">Matches</TableHead>
+                    <TableHead className="text-primary font-gaming">Win Rate</TableHead>
+                    <TableHead className="text-primary font-gaming">Earnings</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {restOfPlayers.map((player) => (
+                    <TableRow 
+                      key={player.rank} 
+                      className="border-border/30 hover:bg-card/60 transition-colors"
+                    >
+                      <TableCell className="font-gaming font-bold text-lg">
+                        #{player.rank}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="w-10 h-10 border-2 border-primary/30">
+                            <AvatarFallback className="bg-card text-sm font-gaming">
+                              {player.username.slice(0, 2)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-heading font-semibold text-cyan-400">
+                            {player.username}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-bold text-success">
+                        {player.wins}
+                      </TableCell>
+                      <TableCell className="font-bold text-destructive">
+                        {player.kills}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {player.matchesPlayed}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className="font-heading">
+                          {player.winRate}%
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-gaming font-bold text-admin-gold">
+                        ₹{(player.totalEarnings / 1000).toFixed(1)}K
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </div>
       </div>
 

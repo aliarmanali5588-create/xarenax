@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import DepositModal from "@/components/wallet/DepositModal";
 import WithdrawalModal from "@/components/wallet/WithdrawalModal";
+import TransactionSkeleton from "@/components/wallet/TransactionSkeleton";
 
 const Wallet = () => {
   const { user } = useAuth();
@@ -17,11 +18,17 @@ const Wallet = () => {
   const [currentBalance, setCurrentBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [addingTestMoney, setAddingTestMoney] = useState(false);
+  const [transactionsLoading, setTransactionsLoading] = useState(true);
 
   useEffect(() => {
     if (user) {
       fetchWalletBalance();
     }
+    // Simulate transactions loading
+    const timer = setTimeout(() => {
+      setTransactionsLoading(false);
+    }, 1200);
+    return () => clearTimeout(timer);
   }, [user]);
 
   const fetchWalletBalance = async () => {
@@ -217,41 +224,51 @@ const Wallet = () => {
               <h2 className="text-xl sm:text-2xl font-heading font-bold">Transaction History</h2>
             </div>
 
-            <div className="space-y-3">
-              {transactions.map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="glass-panel rounded-lg p-3 sm:p-4 hover:bg-card/60 transition-colors"
-                >
-                  <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium mb-1 text-sm sm:text-base truncate">{transaction.description}</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">
-                        {transaction.date}
-                      </div>
-                    </div>
-                    <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-3 flex-shrink-0">
-                      <div
-                        className={`text-lg sm:text-xl font-heading font-bold ${getTransactionColor(
-                          transaction.type
-                        )}`}
-                      >
-                        {transaction.amount > 0 ? "+" : ""}₹
-                        {Math.abs(transaction.amount)}
-                      </div>
-                      <Badge variant="secondary" className="text-xs">
-                        {transaction.status}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {transactions.length === 0 && (
-              <div className="text-center py-12 text-muted-foreground">
-                No transactions yet
+            {transactionsLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3, 4].map((index) => (
+                  <TransactionSkeleton key={index} />
+                ))}
               </div>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  {transactions.map((transaction) => (
+                    <div
+                      key={transaction.id}
+                      className="glass-panel rounded-lg p-3 sm:p-4 hover:bg-card/60 transition-colors"
+                    >
+                      <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium mb-1 text-sm sm:text-base truncate">{transaction.description}</div>
+                          <div className="text-xs sm:text-sm text-muted-foreground">
+                            {transaction.date}
+                          </div>
+                        </div>
+                        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-3 flex-shrink-0">
+                          <div
+                            className={`text-lg sm:text-xl font-heading font-bold ${getTransactionColor(
+                              transaction.type
+                            )}`}
+                          >
+                            {transaction.amount > 0 ? "+" : ""}₹
+                            {Math.abs(transaction.amount)}
+                          </div>
+                          <Badge variant="secondary" className="text-xs">
+                            {transaction.status}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {transactions.length === 0 && (
+                  <div className="text-center py-12 text-muted-foreground">
+                    No transactions yet
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

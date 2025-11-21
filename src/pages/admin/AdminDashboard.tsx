@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Wallet, TrendingUp, AlertCircle } from "lucide-react";
 import {
@@ -8,8 +9,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import StatCardSkeleton from "@/components/admin/StatCardSkeleton";
+import ActivityTableSkeleton from "@/components/admin/ActivityTableSkeleton";
 
 const AdminDashboard = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate data loading
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const stats = [
     {
       title: "Total Users",
@@ -52,70 +65,82 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat) => (
-          <Card
-            key={stat.title}
-            className="bg-card/50 backdrop-blur-xl border-admin-red/20 hover:border-admin-gold/50 transition-all"
-          >
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className={`h-5 w-5 ${stat.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-gaming font-bold text-foreground">
-                {stat.value}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((index) => (
+            <StatCardSkeleton key={index} />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {stats.map((stat) => (
+            <Card
+              key={stat.title}
+              className="bg-card/50 backdrop-blur-xl border-admin-red/20 hover:border-admin-gold/50 transition-all"
+            >
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {stat.title}
+                </CardTitle>
+                <stat.icon className={`h-5 w-5 ${stat.color}`} />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-gaming font-bold text-foreground">
+                  {stat.value}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">{stat.change}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Recent Activity */}
-      <Card className="bg-card/50 backdrop-blur-xl border-admin-red/20">
-        <CardHeader>
-          <CardTitle className="text-xl font-gaming text-admin-gold">
-            Recent Activity
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-admin-red/20">
-                <TableHead className="text-admin-gold">Type</TableHead>
-                <TableHead className="text-admin-gold">User</TableHead>
-                <TableHead className="text-admin-gold">Time</TableHead>
-                <TableHead className="text-admin-gold">Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {recentActivity.map((activity, idx) => (
-                <TableRow key={idx} className="border-admin-red/20">
-                  <TableCell className="font-medium">{activity.type}</TableCell>
-                  <TableCell className="text-cyan-400">{activity.user}</TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {activity.time}
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-2 py-1 rounded text-xs font-bold ${
-                        activity.status === "success"
-                          ? "bg-green-500/20 text-green-400"
-                          : "bg-orange-500/20 text-orange-400"
-                      }`}
-                    >
-                      {activity.status}
-                    </span>
-                  </TableCell>
+      {loading ? (
+        <ActivityTableSkeleton />
+      ) : (
+        <Card className="bg-card/50 backdrop-blur-xl border-admin-red/20">
+          <CardHeader>
+            <CardTitle className="text-xl font-gaming text-admin-gold">
+              Recent Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-admin-red/20">
+                  <TableHead className="text-admin-gold">Type</TableHead>
+                  <TableHead className="text-admin-gold">User</TableHead>
+                  <TableHead className="text-admin-gold">Time</TableHead>
+                  <TableHead className="text-admin-gold">Status</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              </TableHeader>
+              <TableBody>
+                {recentActivity.map((activity, idx) => (
+                  <TableRow key={idx} className="border-admin-red/20">
+                    <TableCell className="font-medium">{activity.type}</TableCell>
+                    <TableCell className="text-cyan-400">{activity.user}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {activity.time}
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-bold ${
+                          activity.status === "success"
+                            ? "bg-green-500/20 text-green-400"
+                            : "bg-orange-500/20 text-orange-400"
+                        }`}
+                      >
+                        {activity.status}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

@@ -88,7 +88,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 space-y-2 border-t border-border/30 animate-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden py-4 space-y-2 border-t border-border/30 animate-in slide-in-from-top-2 duration-200 bg-[#050b14]/95 backdrop-blur-xl">
             {navItems.map((item) => (
               <Link
                 key={item.path}

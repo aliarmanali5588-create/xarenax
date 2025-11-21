@@ -8,12 +8,12 @@ interface TournamentCardProps {
   title: string;
   entryFee: number;
   prizePool: number;
-  totalSlots: number;
-  filledSlots: number;
+  currentSlots?: number;
+  maxSlots?: number;
   startTime: string;
   mode: string;
   map: string;
-  status?: "open" | "filling" | "full";
+  status?: string;
 }
 
 const TournamentCard = ({
@@ -21,17 +21,17 @@ const TournamentCard = ({
   title,
   entryFee,
   prizePool,
-  totalSlots,
-  filledSlots,
+  currentSlots = 0,
+  maxSlots = 100,
   startTime,
   mode,
   map,
-  status = "open",
+  status = "Open",
 }: TournamentCardProps) => {
-  const slotsPercentage = (filledSlots / totalSlots) * 100;
+  const slotsPercentage = (currentSlots / maxSlots) * 100;
 
   const getStatusBadge = () => {
-    if (status === "full") return <Badge variant="destructive">Full</Badge>;
+    if (status?.toLowerCase() === "full") return <Badge variant="destructive">Full</Badge>;
     if (slotsPercentage > 80) return <Badge variant="secondary">Filling Fast</Badge>;
     return <Badge className="bg-success text-success-foreground">Open</Badge>;
   };
@@ -86,7 +86,7 @@ const TournamentCard = ({
             Slots
           </span>
           <span className="font-medium">
-            {filledSlots}/{totalSlots}
+            {currentSlots}/{maxSlots}
           </span>
         </div>
         <div className="h-2 bg-muted rounded-full overflow-hidden">

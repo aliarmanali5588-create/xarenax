@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, Mail, Lock, User } from "lucide-react";
+import { Trophy, Mail, Lock, User, Gamepad2, Hash } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -17,6 +17,8 @@ const loginSchema = z.object({
 
 const signupSchema = loginSchema.extend({
   username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
+  ign: z.string().min(3, "IGN must be at least 3 characters").max(30, "IGN must be less than 30 characters"),
+  bgmiId: z.string().min(5, "BGMI ID must be at least 5 characters").max(20, "BGMI ID must be less than 20 characters"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -28,7 +30,7 @@ const Auth = () => {
   const { signIn, signUp } = useAuth();
   
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
-  const [signupForm, setSignupForm] = useState({ email: "", password: "", confirmPassword: "", username: "" });
+  const [signupForm, setSignupForm] = useState({ email: "", password: "", confirmPassword: "", username: "", ign: "", bgmiId: "" });
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -69,7 +71,7 @@ const Auth = () => {
       signupSchema.parse(signupForm);
       setLoading(true);
       
-      const { error } = await signUp(signupForm.email, signupForm.password, signupForm.username);
+      const { error } = await signUp(signupForm.email, signupForm.password, signupForm.username, signupForm.ign, signupForm.bgmiId);
       
       if (error) {
         if (error.message.includes("User already registered")) {
@@ -188,6 +190,36 @@ const Auth = () => {
                         placeholder="gamer123"
                         value={signupForm.username}
                         onChange={(e) => setSignupForm({ ...signupForm, username: e.target.value })}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-ign">In-Game Name (IGN)</Label>
+                    <div className="relative">
+                      <Gamepad2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <Input
+                        id="signup-ign"
+                        type="text"
+                        placeholder="Mortal_OP"
+                        value={signupForm.ign}
+                        onChange={(e) => setSignupForm({ ...signupForm, ign: e.target.value })}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-bgmi-id">BGMI ID</Label>
+                    <div className="relative">
+                      <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <Input
+                        id="signup-bgmi-id"
+                        type="text"
+                        placeholder="543216789"
+                        value={signupForm.bgmiId}
+                        onChange={(e) => setSignupForm({ ...signupForm, bgmiId: e.target.value })}
                         className="pl-10"
                         required
                       />

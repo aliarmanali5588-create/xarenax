@@ -25,9 +25,9 @@ const ContactUs = () => {
     {
       icon: Mail,
       title: "Email Support",
-      description: "support@arenax.in",
+      description: "helparenax@zohomail.in",
       action: "Send Email",
-      link: "mailto:support@arenax.in",
+      link: "mailto:helparenax@zohomail.in",
       primary: false,
     },
   ];
@@ -56,8 +56,10 @@ const ContactUs = () => {
                 href={method.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`glass-panel-hover rounded-xl p-6 text-center group ${
-                  method.primary ? "neon-border-cyan" : ""
+                className={`glass-panel-hover rounded-xl p-6 text-center group transition-all duration-300 ${
+                  method.primary 
+                    ? "neon-border-cyan hover:shadow-[0_0_30px_rgba(0,240,255,0.4)]" 
+                    : "border border-border/30 hover:border-primary/50 hover:shadow-[0_0_25px_rgba(0,240,255,0.3)]"
                 }`}
               >
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center neon-glow-cyan group-hover:scale-110 transition-transform">

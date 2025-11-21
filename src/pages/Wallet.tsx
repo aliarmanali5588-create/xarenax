@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus, ArrowDownToLine, History, IndianRupee, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Navbar from "@/components/layout/Navbar";
@@ -13,6 +14,7 @@ import TransactionSkeleton from "@/components/wallet/TransactionSkeleton";
 
 const Wallet = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [depositModalOpen, setDepositModalOpen] = useState(false);
   const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
   const [currentBalance, setCurrentBalance] = useState(0);
@@ -21,15 +23,20 @@ const Wallet = () => {
   const [transactionsLoading, setTransactionsLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      fetchWalletBalance();
+    // Redirect to auth if not logged in
+    if (!user) {
+      navigate("/auth");
+      return;
     }
+    
+    fetchWalletBalance();
+    
     // Simulate transactions loading
     const timer = setTimeout(() => {
       setTransactionsLoading(false);
     }, 1200);
     return () => clearTimeout(timer);
-  }, [user]);
+  }, [user, navigate]);
 
   const [bonusBalance, setBonusBalance] = useState(0);
 

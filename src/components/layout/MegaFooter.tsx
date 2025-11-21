@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Trophy, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Trophy, Mail, MapPin } from "lucide-react";
 
 const MegaFooter = () => {
   const footerSections = [
@@ -30,12 +30,6 @@ const MegaFooter = () => {
     },
   ];
 
-  const socialLinks = [
-    { icon: Facebook, url: "#", label: "Facebook" },
-    { icon: Twitter, url: "#", label: "Twitter" },
-    { icon: Instagram, url: "#", label: "Instagram" },
-    { icon: Youtube, url: "#", label: "Youtube" },
-  ];
 
   return (
     <footer className="bg-gradient-to-b from-background to-card border-t border-border/30 mt-16 md:mt-20">
@@ -60,11 +54,7 @@ const MegaFooter = () => {
             <div className="space-y-2 md:space-y-3 text-xs md:text-sm">
               <div className="flex items-start gap-2 text-muted-foreground">
                 <Mail className="w-4 h-4 mt-0.5 md:mt-1 text-primary flex-shrink-0" />
-                <span>support@arenax.in</span>
-              </div>
-              <div className="flex items-start gap-2 text-muted-foreground">
-                <Phone className="w-4 h-4 mt-0.5 md:mt-1 text-primary flex-shrink-0" />
-                <span>+91 98765 43210</span>
+                <span>helparenax@zohomail.in</span>
               </div>
               <div className="flex items-start gap-2 text-muted-foreground">
                 <MapPin className="w-4 h-4 mt-0.5 md:mt-1 text-primary flex-shrink-0" />
@@ -106,21 +96,6 @@ const MegaFooter = () => {
           ))}
         </div>
 
-        {/* Social Links */}
-        <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 py-4 md:py-6 border-t border-border/30">
-          {socialLinks.map((social) => (
-            <a
-              key={social.label}
-              href={social.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-9 h-9 md:w-10 md:h-10 rounded-full glass-panel flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/50 transition-all duration-300 hover:neon-glow-cyan"
-              aria-label={social.label}
-            >
-              <social.icon className="w-4 h-4 md:w-5 md:h-5" />
-            </a>
-          ))}
-        </div>
 
         {/* Bottom Bar */}
         <div className="pt-4 md:pt-6 border-t border-border/30 text-center text-xs md:text-sm text-muted-foreground px-2">

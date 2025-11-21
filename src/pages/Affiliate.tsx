@@ -72,28 +72,6 @@ const Affiliate = () => {
             </div>
           </div>
 
-          {/* Stats Dashboard */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-            <div className="glass-panel-hover rounded-xl p-6 text-center">
-              <div className="text-4xl font-gaming font-bold mb-2 text-primary text-glow-cyan">
-                0
-              </div>
-              <div className="text-muted-foreground">Total Referrals</div>
-            </div>
-            <div className="glass-panel-hover rounded-xl p-6 text-center">
-              <div className="text-4xl font-gaming font-bold mb-2 text-secondary text-glow-orange">
-                ₹0
-              </div>
-              <div className="text-muted-foreground">Total Earnings</div>
-            </div>
-            <div className="glass-panel-hover rounded-xl p-6 text-center">
-              <div className="text-4xl font-gaming font-bold mb-2 text-success">
-                ₹0
-              </div>
-              <div className="text-muted-foreground">This Month</div>
-            </div>
-          </div>
-
           {/* Benefits */}
           <div className="glass-panel rounded-2xl p-8 md:p-12">
             <h3 className="text-3xl font-gaming font-bold mb-8 text-center text-glow-cyan">

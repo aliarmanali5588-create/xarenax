@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { z } from "zod";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +21,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+// SECURITY: PUBG ID Validation Schema
+const pubgIdSchema = z.string()
+  .trim()
+  .min(3, "PUBG ID must be at least 3 characters")
+  .max(20, "PUBG ID must be less than 20 characters")
+  .regex(/^[a-zA-Z0-9_-]+$/, "Only letters, numbers, hyphens, and underscores allowed");
 
 interface Tournament {
   id: string;
@@ -109,6 +117,16 @@ const TournamentDetail = () => {
   const handleConfirmJoin = async () => {
     if (!user || !tournament || !pubgId.trim()) {
       toast.error("Please enter your PUBG ID");
+      return;
+    }
+
+    // SECURITY: Validate PUBG ID format
+    try {
+      pubgIdSchema.parse(pubgId);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      }
       return;
     }
 

@@ -11,9 +11,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Plus, Trophy, Key, Award } from "lucide-react";
+import { Plus, Trophy, Key, Award, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { z } from "zod";
+
+// SECURITY: Tournament Creation Validation Schema
+const tournamentSchema = z.object({
+  title: z.string().trim().min(5, "Title too short").max(100, "Title too long"),
+  map: z.string().min(1, "Map is required"),
+  matchType: z.string().min(1, "Match type is required"),
+  entryFee: z.number().min(1, "Entry fee must be at least ₹1").max(10000, "Entry fee too high"),
+  prizePool: z.number().min(1, "Prize pool must be at least ₹1"),
+  perKillPrize: z.number().min(0, "Per kill prize cannot be negative").max(1000, "Per kill prize too high"),
+  maxSlots: z.number().min(10, "Minimum 10 slots required").max(200, "Maximum 200 slots allowed"),
+  dateTime: z.string().refine(
+    (dt) => new Date(dt) > new Date(),
+    "Start time must be in the future"
+  )
+}).refine(
+  (data) => data.prizePool < (data.entryFee * data.maxSlots * 0.9),
+  {
+    message: "Prize pool exceeds 90% of revenue - financially unsustainable!",
+    path: ["prizePool"]
+  }
+);
 
 interface Tournament {
   id: string;
@@ -75,6 +97,27 @@ const ManageTournaments = () => {
   const handleCreateMatch = async () => {
     if (!formData.title || !formData.map || !formData.matchType || !formData.entryFee || !formData.prizePool || !formData.dateTime) {
       toast.error("Please fill all required fields");
+      return;
+    }
+
+    // SECURITY: Validate tournament data
+    const tournamentData = {
+      title: formData.title,
+      map: formData.map,
+      matchType: formData.matchType,
+      entryFee: parseFloat(formData.entryFee) || 0,
+      prizePool: parseFloat(formData.prizePool) || 0,
+      perKillPrize: parseFloat(formData.perKillPrize) || 0,
+      maxSlots: parseInt(formData.maxSlots) || 100,
+      dateTime: formData.dateTime
+    };
+
+    try {
+      tournamentSchema.parse(tournamentData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      }
       return;
     }
 
@@ -298,14 +341,26 @@ const ManageTournaments = () => {
           </div>
 
           {/* Profit Calculator */}
-          <div className="p-4 bg-admin-gold/10 border border-admin-gold/30 rounded-lg">
+          <div className={`p-4 border rounded-lg ${
+            calculateProfit() < 0 
+              ? "bg-destructive/10 border-destructive/30" 
+              : "bg-admin-gold/10 border-admin-gold/30"
+          }`}>
             <p className="text-sm text-muted-foreground mb-2">Estimated Profit ({formData.maxSlots || 100} Slots)</p>
-            <p className="text-3xl font-gaming font-bold text-admin-gold">
+            <p className={`text-3xl font-gaming font-bold ${
+              calculateProfit() < 0 ? "text-destructive" : "text-admin-gold"
+            }`}>
               ₹{calculateProfit().toLocaleString()}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               Revenue: ₹{((parseFloat(formData.entryFee) || 0) * (parseInt(formData.maxSlots) || 100)).toLocaleString()} - Prize: ₹{(parseFloat(formData.prizePool) || 0).toLocaleString()}
             </p>
+            {calculateProfit() < 0 && (
+              <div className="mt-3 flex items-start gap-2 text-destructive text-sm">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <p className="font-semibold">Warning: Tournament will lose money!</p>
+              </div>
+            )}
           </div>
 
           <Button

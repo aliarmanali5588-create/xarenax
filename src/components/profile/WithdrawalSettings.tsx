@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +16,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+// SECURITY: Payment Details Validation Schema
+const paymentDetailsSchema = z.object({
+  upiId1: z.string()
+    .trim()
+    .regex(/^[\w.+-]+@[\w.-]+$/, "Invalid UPI format (e.g., name@upi)"),
+  upiId2: z.string().optional(),
+  accountNumber: z.string()
+    .trim()
+    .regex(/^\d{9,18}$/, "Account number must be 9-18 digits"),
+  bankName: z.string()
+    .trim()
+    .min(2, "Bank name too short")
+    .max(50, "Bank name too long")
+    .regex(/^[a-zA-Z\s]+$/, "Only letters and spaces allowed in bank name"),
+  ifscCode: z.string()
+    .trim()
+    .length(11, "IFSC code must be exactly 11 characters")
+    .regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, "Invalid IFSC format (e.g., HDFC0001234)")
+});
 
 interface WithdrawalSettingsProps {
   userId: string;
@@ -72,6 +93,20 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
         description: "Please fill all mandatory fields before locking.",
         variant: "destructive",
       });
+      return;
+    }
+
+    // SECURITY: Validate payment details format
+    try {
+      paymentDetailsSchema.parse(formData);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Invalid Format",
+          description: error.errors[0].message,
+          variant: "destructive",
+        });
+      }
       return;
     }
 

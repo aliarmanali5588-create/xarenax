@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Trophy, Mail, MapPin, MessageCircle } from "lucide-react";
+import { Trophy, Mail, MapPin } from "lucide-react";
+import TelegramIcon from "../icons/TelegramIcon";
 
 const MegaFooter = () => {
   const footerSections = [
@@ -62,7 +63,7 @@ const MegaFooter = () => {
                 rel="noopener noreferrer"
                 className="flex items-start gap-2 text-muted-foreground hover:text-primary transition-colors"
               >
-                <MessageCircle className="w-4 h-4 mt-0.5 md:mt-1 text-primary flex-shrink-0" />
+                <TelegramIcon className="w-4 h-4 mt-0.5 md:mt-1 text-primary flex-shrink-0" />
                 <span>Join our Telegram Community</span>
               </a>
               <div className="flex items-start gap-2 text-muted-foreground">

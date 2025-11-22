@@ -99,8 +99,8 @@ const Profile = () => {
       <div className="pt-24 pb-20 px-4 md:px-6">
         <div className="container mx-auto max-w-5xl">
           {/* Header */}
-          <div className="text-center mb-8 md:mb-12">
-            <h1 className="text-2xl sm:text-3xl md:text-5xl font-gaming font-bold mb-3 md:mb-4 text-glow-cyan">
+          <div className="text-center mb-4 md:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-gaming font-bold mb-2 md:mb-4 text-glow-cyan">
               My Profile
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground">
@@ -109,7 +109,7 @@ const Profile = () => {
           </div>
 
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-6 md:mb-8 glass-panel">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-4 md:mb-6 glass-panel">
               <TabsTrigger value="overview" className="font-heading text-xs sm:text-sm">Overview</TabsTrigger>
               <TabsTrigger value="my-matches" className="font-heading text-xs sm:text-sm">My Matches</TabsTrigger>
               <TabsTrigger value="withdrawal" className="font-heading text-xs sm:text-sm">Withdrawal</TabsTrigger>
@@ -117,29 +117,29 @@ const Profile = () => {
             </TabsList>
 
             {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-6 md:space-y-8">
+            <TabsContent value="overview" className="space-y-4 md:space-y-6">
               {/* Profile Card */}
-              <div className="glass-panel rounded-2xl p-4 sm:p-6 md:p-8 neon-border-cyan">
-                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 mb-6 md:mb-8">
-                  <Avatar className="w-32 h-32 border-4 border-primary/30 neon-glow-cyan">
+              <div className="glass-panel rounded-2xl p-4 md:p-6 neon-border-cyan">
+                <div className="flex flex-col items-center gap-3 md:gap-4 mb-4 md:mb-6">
+                  <Avatar className="w-24 h-24 md:w-32 md:h-32 border-4 border-primary/30 neon-glow-cyan">
                     <AvatarImage src="" alt="Profile" />
-                    <AvatarFallback className="text-4xl font-gaming bg-gradient-to-br from-primary to-accent text-background">
+                    <AvatarFallback className="text-3xl md:text-4xl font-gaming bg-gradient-to-br from-primary to-accent text-background">
                       {userInitials}
                     </AvatarFallback>
                   </Avatar>
 
-                  <div className="flex-1 text-center md:text-left">
-                    <h2 className="text-xl sm:text-2xl md:text-3xl font-gaming font-bold mb-2">
+                  <div className="flex-1 w-full text-center">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-gaming font-bold mb-1 md:mb-2">
                       {profileData?.username || user.email?.split('@')[0] || 'Player'}
                     </h2>
-                    <p className="text-sm sm:text-base text-muted-foreground mb-3 md:mb-4">
+                    <p className="text-sm sm:text-base text-muted-foreground mb-3">
                       Member since {memberSince}
                     </p>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setIsEditModalOpen(true)}
-                      className="mt-2 border-primary/40 hover:border-primary hover:bg-primary/10 text-primary"
+                      className="w-full md:w-auto border-primary/40 hover:border-primary hover:bg-primary/10 text-primary neon-border-cyan"
                     >
                       <Pencil className="w-4 h-4 mr-2" />
                       Edit Profile
@@ -195,7 +195,7 @@ const Profile = () => {
               {statsLoading ? (
                 <ProfileStatsSkeleton />
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
                   {stats.map((stat) => (
                   <div
                     key={stat.label}

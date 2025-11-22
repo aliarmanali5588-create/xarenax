@@ -21,6 +21,11 @@ const Wallet = () => {
   const [loading, setLoading] = useState(true);
   const [addingTestMoney, setAddingTestMoney] = useState(false);
   const [transactionsLoading, setTransactionsLoading] = useState(true);
+  const [bonusBalance, setBonusBalance] = useState(0);
+  const [totalDeposited, setTotalDeposited] = useState(0);
+  const [totalWinnings, setTotalWinnings] = useState(0);
+  const [totalWithdrawn, setTotalWithdrawn] = useState(0);
+  const [transactions, setTransactions] = useState<any[]>([]);
 
   useEffect(() => {
     // Redirect to auth if not logged in
@@ -30,32 +35,52 @@ const Wallet = () => {
     }
     
     fetchWalletBalance();
-    
-    // Simulate transactions loading
-    const timer = setTimeout(() => {
-      setTransactionsLoading(false);
-    }, 1200);
-    return () => clearTimeout(timer);
+    fetchTransactions();
   }, [user, navigate]);
-
-  const [bonusBalance, setBonusBalance] = useState(0);
 
   const fetchWalletBalance = async () => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("wallet_balance, bonus_balance")
+        .select("wallet_balance, bonus_balance, total_deposited, total_winnings")
         .eq("id", user?.id)
         .single();
 
       if (error) throw error;
       setCurrentBalance(data?.wallet_balance || 0);
       setBonusBalance(data?.bonus_balance || 0);
+      setTotalDeposited(data?.total_deposited || 0);
+      setTotalWinnings(data?.total_winnings || 0);
     } catch (error) {
       console.error("Error fetching wallet:", error);
       toast.error("Failed to load wallet balance");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTransactions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("user_id", user?.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+
+      // Calculate total withdrawn
+      const withdrawn = data
+        ?.filter((t) => t.type === "withdrawal" && t.status === "success")
+        .reduce((sum, t) => sum + t.amount, 0) || 0;
+      
+      setTotalWithdrawn(withdrawn);
+      setTransactions(data || []);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    } finally {
+      setTransactionsLoading(false);
     }
   };
 
@@ -78,6 +103,7 @@ const Wallet = () => {
 
       setCurrentBalance(data.wallet_balance);
       toast.success("₹500 added to your wallet for testing!");
+      fetchTransactions(); // Refresh transactions
     } catch (error) {
       console.error("Error adding test money:", error);
       toast.error("Failed to add test money");
@@ -85,41 +111,6 @@ const Wallet = () => {
       setAddingTestMoney(false);
     }
   };
-  
-  const transactions = [
-    {
-      id: "1",
-      type: "win",
-      amount: 1000,
-      description: "Elite Squad Championship - 1st Place",
-      date: "2024-01-20 18:30",
-      status: "completed",
-    },
-    {
-      id: "2",
-      type: "withdrawal",
-      amount: -500,
-      description: "Bank Transfer",
-      date: "2024-01-19 14:20",
-      status: "completed",
-    },
-    {
-      id: "3",
-      type: "deposit",
-      amount: 100,
-      description: "UPI Deposit",
-      date: "2024-01-18 10:15",
-      status: "completed",
-    },
-    {
-      id: "4",
-      type: "entry",
-      amount: -30,
-      description: "Tournament Entry Fee",
-      date: "2024-01-18 09:00",
-      status: "completed",
-    },
-  ];
 
   const getTransactionColor = (type: string) => {
     switch (type) {
@@ -231,15 +222,15 @@ const Wallet = () => {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 mb-8 md:mb-12">
             <div className="glass-panel rounded-xl p-4 md:p-6">
               <div className="text-xs sm:text-sm text-muted-foreground mb-1 md:mb-2">Total Deposits</div>
-              <div className="text-xl md:text-2xl font-heading font-bold text-primary">₹100</div>
+              <div className="text-xl md:text-2xl font-heading font-bold text-primary">₹{totalDeposited}</div>
             </div>
             <div className="glass-panel rounded-xl p-4 md:p-6">
               <div className="text-xs sm:text-sm text-muted-foreground mb-1 md:mb-2">Total Winnings</div>
-              <div className="text-xl md:text-2xl font-heading font-bold text-success">₹1,000</div>
+              <div className="text-xl md:text-2xl font-heading font-bold text-success">₹{totalWinnings}</div>
             </div>
             <div className="glass-panel rounded-xl p-4 md:p-6">
               <div className="text-xs sm:text-sm text-muted-foreground mb-1 md:mb-2">Total Withdrawn</div>
-              <div className="text-xl md:text-2xl font-heading font-bold text-secondary">₹500</div>
+              <div className="text-xl md:text-2xl font-heading font-bold text-secondary">₹{totalWithdrawn}</div>
             </div>
           </div>
 
@@ -267,9 +258,11 @@ const Wallet = () => {
                     >
                       <div className="flex items-start justify-between gap-3 mb-3">
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium mb-1 text-sm sm:text-base">{transaction.description}</div>
+                          <div className="font-medium mb-1 text-sm sm:text-base">
+                            {transaction.description || transaction.type}
+                          </div>
                           <div className="text-xs text-muted-foreground">
-                            {transaction.date}
+                            {new Date(transaction.created_at).toLocaleString()}
                           </div>
                         </div>
                         <Badge variant="secondary" className="text-xs flex-shrink-0">
@@ -283,8 +276,8 @@ const Wallet = () => {
                             transaction.type
                           )}`}
                         >
-                          {transaction.amount > 0 ? "+" : ""}₹
-                          {Math.abs(transaction.amount)}
+                          {["deposit", "winning", "referral_signup_bonus", "referral_win_bonus"].includes(transaction.type) ? "+" : ""}₹
+                          {transaction.amount}
                         </div>
                       </div>
                     </div>

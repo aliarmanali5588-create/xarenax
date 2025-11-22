@@ -10,7 +10,6 @@ import TournamentRoomDetails from "@/components/tournaments/TournamentRoomDetail
 import ProfileStatsSkeleton from "@/components/profile/ProfileStatsSkeleton";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Navigate } from "react-router-dom";
 
 interface ProfileData {
   username: string;
@@ -21,7 +20,7 @@ interface ProfileData {
 }
 
 const Profile = () => {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
   const [tournamentStats, setTournamentStats] = useState({
@@ -71,21 +70,6 @@ const Profile = () => {
       setStatsLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
 
   const stats = [
     { label: "Tournaments Played", value: tournamentStats.played.toString(), icon: Trophy },

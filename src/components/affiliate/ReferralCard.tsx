@@ -22,15 +22,20 @@ const ReferralCard = () => {
   }, [user]);
 
   const fetchReferralCode = async () => {
+    if (!user?.id) return;
+    
     try {
       const { data, error } = await supabase
         .from("profiles")
         .select("referral_code")
-        .eq("id", user?.id)
-        .single();
+        .eq("id", user.id)
+        .maybeSingle();
 
       if (error) throw error;
-      setReferralCode(data.referral_code);
+      
+      if (data?.referral_code) {
+        setReferralCode(data.referral_code);
+      }
     } catch (error) {
       console.error("Error fetching referral code:", error);
       toast.error("Failed to load referral code");

@@ -7,7 +7,8 @@ import {
   Users, 
   Settings,
   LogOut,
-  Shield
+  Shield,
+  UserPlus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -45,6 +46,7 @@ const AdminLayout = () => {
     { icon: Trophy, label: "Tournaments", path: "/admin/tournaments" },
     { icon: Wallet, label: "Withdrawals", path: "/admin/withdrawals" },
     { icon: Users, label: "Users", path: "/admin/users" },
+    { icon: UserPlus, label: "Referrals", path: "/admin/referrals" },
     { icon: Settings, label: "Settings", path: "/admin/settings" },
   ];
 

@@ -1,4 +1,5 @@
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface RazorpayOptions {
   amount: number;
@@ -9,7 +10,7 @@ interface RazorpayOptions {
 export const useRazorpay = () => {
   const { toast } = useToast();
 
-  const initiatePayment = ({ amount, onSuccess, onFailure }: RazorpayOptions) => {
+  const initiatePayment = async ({ amount, onSuccess, onFailure }: RazorpayOptions) => {
     // Check if Razorpay is loaded
     if (typeof (window as any).Razorpay === "undefined") {
       toast({
@@ -20,8 +21,30 @@ export const useRazorpay = () => {
       return;
     }
 
+    // Fetch Razorpay Key from database
+    let razorpayKey = "rzp_test_XXXXXXXXXXXXXXXX"; // Fallback
+    try {
+      const { data, error } = await supabase
+        .from("platform_settings")
+        .select("setting_value")
+        .eq("setting_key", "razorpay_key_id")
+        .single();
+
+      if (error) throw error;
+      if (data?.setting_value) {
+        razorpayKey = data.setting_value;
+      }
+    } catch (error) {
+      console.error("Failed to fetch Razorpay key:", error);
+      toast({
+        title: "Configuration Error",
+        description: "Failed to load payment configuration. Using default.",
+        variant: "destructive",
+      });
+    }
+
     const options = {
-      key: "rzp_test_XXXXXXXXXXXXXXXX", // Replace with your Razorpay key
+      key: razorpayKey,
       amount: amount * 100, // Amount in paise
       currency: "INR",
       name: "ArenaX",

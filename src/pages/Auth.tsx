@@ -10,6 +10,7 @@ import { Trophy, Mail, Lock, User, Gamepad2, Hash } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { getDeviceFingerprint } from "@/lib/deviceFingerprint";
+import { supabase } from "@/integrations/supabase/client";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -89,6 +90,28 @@ const Auth = () => {
     try {
       signupSchema.parse(signupForm);
       setLoading(true);
+      
+      // Validate referral code if provided
+      if (referralCode && referralCode.trim() !== "") {
+        const { data: isValid, error: rpcError } = await supabase.rpc('is_referral_valid', { 
+          code: referralCode 
+        });
+        
+        if (rpcError) {
+          toast.error("Failed to validate referral code");
+          setLoading(false);
+          return;
+        }
+        
+        if (!isValid) {
+          toast.error("Invalid Referral Code", {
+            description: "The referral code you entered does not exist. Please check and try again.",
+            duration: 5000,
+          });
+          setLoading(false);
+          return;
+        }
+      }
       
       // Capture device fingerprint for anti-fraud tracking
       const { deviceId, ip } = await getDeviceFingerprint();

@@ -475,6 +475,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_referral_valid: { Args: { code: string }; Returns: boolean }
       is_super_admin: { Args: { user_email: string }; Returns: boolean }
       redeem_admin_invite: { Args: { code: string }; Returns: Json }
     }

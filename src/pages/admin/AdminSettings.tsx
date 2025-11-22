@@ -48,19 +48,33 @@ const AdminSettings = () => {
   const handleSaveSettings = async () => {
     setSaving(true);
     try {
-      // Update Razorpay Key ID
+      // Upsert Razorpay Key ID
       const { error: keyIdError } = await supabase
         .from("platform_settings")
-        .update({ setting_value: razorpayKeyId })
-        .eq("setting_key", "razorpay_key_id");
+        .upsert(
+          {
+            setting_key: "razorpay_key_id",
+            setting_value: razorpayKeyId,
+            description: "Razorpay Public Key ID",
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "setting_key" }
+        );
 
       if (keyIdError) throw keyIdError;
 
-      // Update Razorpay Key Secret
+      // Upsert Razorpay Key Secret
       const { error: secretError } = await supabase
         .from("platform_settings")
-        .update({ setting_value: razorpayKeySecret })
-        .eq("setting_key", "razorpay_key_secret");
+        .upsert(
+          {
+            setting_key: "razorpay_key_secret",
+            setting_value: razorpayKeySecret,
+            description: "Razorpay Private Key Secret",
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "setting_key" }
+        );
 
       if (secretError) throw secretError;
 

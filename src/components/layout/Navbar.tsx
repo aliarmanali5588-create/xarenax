@@ -75,10 +75,10 @@ const Navbar = () => {
             {!user && (
               <div className="hidden lg:flex items-center gap-2">
                 <Button variant="outline" size="sm" asChild>
-                  <Link to="/auth">Login</Link>
+                  <Link to="/login">Login</Link>
                 </Button>
                 <Button variant="gaming" size="sm" asChild>
-                  <Link to="/auth">Signup</Link>
+                  <Link to="/signup">Signup</Link>
                 </Button>
               </div>
             )}
@@ -100,7 +100,7 @@ const Navbar = () => {
             {!user && (
               <div className="flex lg:hidden items-center gap-2">
                 <Button variant="outline" size="sm" asChild>
-                  <Link to="/auth">Login</Link>
+                  <Link to="/login">Login</Link>
                 </Button>
               </div>
             )}
@@ -164,12 +164,12 @@ const Navbar = () => {
             {!user && (
               <div className="border-t border-border/30 pt-3 mt-3 space-y-2 px-4">
                 <Button variant="outline" size="sm" className="w-full" asChild>
-                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
                     Login
                   </Link>
                 </Button>
                 <Button variant="gaming" size="sm" className="w-full" asChild>
-                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
                     Signup
                   </Link>
                 </Button>

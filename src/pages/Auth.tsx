@@ -37,6 +37,10 @@ const Auth = () => {
   const { signIn, signUp } = useAuth();
   const [searchParams] = useSearchParams();
   
+  // Determine default tab based on URL path
+  const isSignupRoute = window.location.pathname === '/signup';
+  const [activeTab, setActiveTab] = useState(isSignupRoute ? "signup" : "login");
+  
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [signupForm, setSignupForm] = useState({ email: "", password: "", confirmPassword: "", username: "", ign: "", bgmiId: "" });
   const [loading, setLoading] = useState(false);
@@ -190,7 +194,7 @@ const Auth = () => {
           <p className="text-muted-foreground">Join the Ultimate PUBG Tournament Platform</p>
         </div>
 
-        <Tabs defaultValue="login" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>

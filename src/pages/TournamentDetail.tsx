@@ -99,7 +99,7 @@ const TournamentDetail = () => {
   const handleJoinClick = () => {
     if (!user) {
       toast.error("Please login to join tournaments");
-      navigate("/auth");
+      navigate("/signup");
       return;
     }
 

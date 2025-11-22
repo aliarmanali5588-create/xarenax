@@ -194,28 +194,30 @@ const Wallet = () => {
               </Button>
             </div>
 
-            {/* Test Money Button */}
-            <div className="mt-4 pt-4 border-t border-border/30">
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full border-admin-gold/50 text-admin-gold hover:bg-admin-gold/10 hover:scale-105 transition-all"
-                onClick={handleAddTestMoney}
-                disabled={addingTestMoney}
-              >
-                {addingTestMoney ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-admin-gold border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    Add Test Money (₹500)
-                  </>
-                )}
-              </Button>
-            </div>
+            {/* Test Money Button - Super Admin Only */}
+            {user?.email === 'ashadislam333@gmail.com' && (
+              <div className="mt-4 pt-4 border-t border-border/30">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full border-admin-gold/50 text-admin-gold hover:bg-admin-gold/10 hover:scale-105 transition-all"
+                  onClick={handleAddTestMoney}
+                  disabled={addingTestMoney}
+                >
+                  {addingTestMoney ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-admin-gold border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      Add Test Money (₹500)
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Quick Stats */}

@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Trophy, Users, IndianRupee, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface TournamentCardProps {
   id: string;
@@ -28,7 +29,17 @@ const TournamentCard = ({
   map,
   status = "Open",
 }: TournamentCardProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const slotsPercentage = (currentSlots / maxSlots) * 100;
+
+  const handleJoinClick = () => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    navigate(`/tournaments/${id}`);
+  };
 
   const getStatusBadge = () => {
     if (status?.toLowerCase() === "full") return <Badge variant="destructive">Full</Badge>;
@@ -110,13 +121,9 @@ const TournamentCard = ({
         variant={status === "full" ? "outline" : "gaming"}
         className="w-full"
         disabled={status === "full"}
-        asChild={status !== "full"}
+        onClick={status !== "full" ? handleJoinClick : undefined}
       >
-        {status === "full" ? (
-          <span>Tournament Full</span>
-        ) : (
-          <Link to={`/tournaments/${id}`}>Join Tournament</Link>
-        )}
+        {status === "full" ? "Tournament Full" : "Join Tournament"}
       </Button>
     </div>
   );

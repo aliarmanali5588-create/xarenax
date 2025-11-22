@@ -1,1 +1,4 @@
 project_id = "wcwmadabepmfibowhiuc"
+
+[functions.tournament-reminders]
+verify_jwt = false

@@ -56,7 +56,7 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModal
     }
   };
 
-  const handleWithdrawal = () => {
+  const handleWithdrawal = async () => {
     const withdrawalAmount = parseFloat(amount);
     
     if (isNaN(withdrawalAmount) || withdrawalAmount < MIN_WITHDRAWAL) {
@@ -83,10 +83,83 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModal
       return;
     }
 
-    // Mock withdrawal request
-    toast.success("Withdrawal request submitted! Processing within 24-48 hours.");
-    onOpenChange(false);
-    setAmount("");
+    setLoading(true);
+    try {
+      // 1. Get or create user's payment method
+      let { data: paymentMethod, error: pmError } = await supabase
+        .from("user_payment_methods")
+        .select("id")
+        .eq("user_id", user?.id)
+        .maybeSingle();
+
+      if (pmError) throw pmError;
+
+      // If no payment method exists, create one
+      if (!paymentMethod) {
+        const { data: newPM, error: createError } = await supabase
+          .from("user_payment_methods")
+          .insert({ user_id: user?.id })
+          .select("id")
+          .single();
+
+        if (createError) throw createError;
+        paymentMethod = newPM;
+      }
+
+      // 2. Deduct from wallet balance
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("wallet_balance")
+        .eq("id", user?.id)
+        .single();
+
+      if (profileError) throw profileError;
+
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({ wallet_balance: profile.wallet_balance - withdrawalAmount })
+        .eq("id", user?.id);
+
+      if (updateError) throw updateError;
+
+      // 3. Create withdrawal request
+      const { error: withdrawalError } = await supabase
+        .from("withdrawal_requests")
+        .insert({
+          user_id: user?.id,
+          amount: withdrawalAmount,
+          payment_method_id: paymentMethod.id,
+          status: "pending"
+        });
+
+      if (withdrawalError) throw withdrawalError;
+
+      // 4. Log transaction
+      await supabase.from("transactions").insert({
+        user_id: user?.id,
+        amount: withdrawalAmount,
+        type: "withdrawal",
+        status: "pending",
+        description: "Withdrawal request submitted"
+      });
+
+      // 5. Send notification to user
+      await supabase.from("notifications").insert({
+        user_id: user?.id,
+        title: "💸 Withdrawal Request Submitted",
+        message: `Your withdrawal request of ₹${withdrawalAmount} has been submitted and is being processed. You'll receive the money within 24-48 hours.`,
+        type: "payment"
+      });
+
+      toast.success("Withdrawal request submitted! Processing within 24-48 hours.");
+      onOpenChange(false);
+      setAmount("");
+    } catch (error: any) {
+      console.error("Withdrawal error:", error);
+      toast.error("Failed to submit withdrawal request: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

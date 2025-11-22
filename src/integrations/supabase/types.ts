@@ -465,6 +465,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_user_profile: {
+        Args: {
+          p_bgmi_id: string
+          p_device_id: string
+          p_ign: string
+          p_referral_code: string
+          p_referred_by: string
+          p_signup_ip: string
+          p_username: string
+          user_id: string
+        }
+        Returns: undefined
+      }
       credit_referral_bonus: {
         Args: { new_user_name: string; referrer_id: string }
         Returns: undefined

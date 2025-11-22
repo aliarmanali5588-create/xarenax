@@ -133,51 +133,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Step 3: Generate unique referral code
       const newReferralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
 
-      // Step 4: Create profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          username: username,
-          ign: ign,
-          bgmi_id: bgmiId,
-          device_id: deviceId || null,
-          signup_ip: signupIp || null,
-          last_ip: signupIp || null,
-          wallet_balance: 0,
-          bonus_balance: 0,
-          referral_code: newReferralCode,
-          referred_by: referredById,
-        });
+      // Step 4: Create profile using secure function
+      const { error: profileError } = await supabase.rpc('create_user_profile', {
+        user_id: data.user.id,
+        p_username: username,
+        p_ign: ign,
+        p_bgmi_id: bgmiId,
+        p_device_id: deviceId || '',
+        p_signup_ip: signupIp || '',
+        p_referral_code: newReferralCode,
+        p_referred_by: referredById
+      });
 
       if (profileError) {
         console.error("Profile creation error:", profileError);
         return { data: null, error: new Error(`Profile creation failed: ${profileError.message}`) };
-      }
-
-      // Step 5: Assign user role
-      const { error: roleError } = await supabase
-        .from('user_roles')
-        .insert({
-          user_id: data.user.id,
-          role: 'user',
-        });
-
-      if (roleError) {
-        console.error("Role assignment failed:", roleError);
-      }
-
-      // Step 6: Credit referral bonus if applicable
-      if (referredById) {
-        try {
-          await supabase.rpc('credit_referral_bonus', {
-            referrer_id: referredById,
-            new_user_name: username
-          });
-        } catch (refError) {
-          console.error("Referral bonus error:", refError);
-          // Don't fail signup if referral bonus fails
-        }
       }
 
       return { data, error: null };

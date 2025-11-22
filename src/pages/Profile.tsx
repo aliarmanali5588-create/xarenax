@@ -109,11 +109,31 @@ const Profile = () => {
           </div>
 
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 mb-4 md:mb-6 glass-panel">
-              <TabsTrigger value="overview" className="font-heading text-xs sm:text-sm">Overview</TabsTrigger>
-              <TabsTrigger value="my-matches" className="font-heading text-xs sm:text-sm">My Matches</TabsTrigger>
-              <TabsTrigger value="withdrawal" className="font-heading text-xs sm:text-sm">Withdrawal</TabsTrigger>
-              <TabsTrigger value="support" className="font-heading text-xs sm:text-sm">Support</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-3 p-2 mb-4 md:mb-6 glass-panel">
+              <TabsTrigger 
+                value="overview" 
+                className="font-heading text-sm md:text-base font-bold py-4 data-[state=active]:bg-primary/20 data-[state=active]:neon-glow-cyan data-[state=active]:border-primary/50 data-[state=active]:border transition-all"
+              >
+                Overview
+              </TabsTrigger>
+              <TabsTrigger 
+                value="my-matches" 
+                className="font-heading text-sm md:text-base font-bold py-4 data-[state=active]:bg-primary/20 data-[state=active]:neon-glow-cyan data-[state=active]:border-primary/50 data-[state=active]:border transition-all"
+              >
+                My Matches
+              </TabsTrigger>
+              <TabsTrigger 
+                value="withdrawal" 
+                className="font-heading text-sm md:text-base font-bold py-4 data-[state=active]:bg-primary/20 data-[state=active]:neon-glow-cyan data-[state=active]:border-primary/50 data-[state=active]:border transition-all"
+              >
+                Withdrawal
+              </TabsTrigger>
+              <TabsTrigger 
+                value="support" 
+                className="font-heading text-sm md:text-base font-bold py-4 data-[state=active]:bg-primary/20 data-[state=active]:neon-glow-cyan data-[state=active]:border-primary/50 data-[state=active]:border transition-all"
+              >
+                Support
+              </TabsTrigger>
             </TabsList>
 
             {/* Overview Tab */}

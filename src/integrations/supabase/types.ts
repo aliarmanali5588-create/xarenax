@@ -468,6 +468,7 @@ export type Database = {
       expire_old_invitations: { Args: never; Returns: undefined }
       generate_invite_code: { Args: never; Returns: string }
       get_affiliate_stats: { Args: { p_user_id: string }; Returns: Json }
+      get_referrer_id: { Args: { code: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

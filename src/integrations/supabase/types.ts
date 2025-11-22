@@ -495,6 +495,10 @@ export type Database = {
       }
       is_referral_valid: { Args: { code: string }; Returns: boolean }
       is_super_admin: { Args: { user_email: string }; Returns: boolean }
+      process_new_referral: {
+        Args: { code_used: string; new_user_id: string }
+        Returns: undefined
+      }
       redeem_admin_invite: { Args: { code: string }; Returns: Json }
     }
     Enums: {

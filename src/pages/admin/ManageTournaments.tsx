@@ -66,6 +66,9 @@ const ManageTournaments = () => {
     roomPassword: "",
   });
   const [updatingRoom, setUpdatingRoom] = useState(false);
+  const [selectedResultTournamentId, setSelectedResultTournamentId] = useState("");
+  const [winnerUsername, setWinnerUsername] = useState("");
+  const [distributingPrize, setDistributingPrize] = useState(false);
 
   useEffect(() => {
     fetchTournaments();
@@ -164,6 +167,114 @@ const ManageTournaments = () => {
     }
   };
 
+  const handleDistributePrize = async () => {
+    if (!selectedResultTournamentId || !winnerUsername.trim()) {
+      toast.error("Please select a match and enter winner's username");
+      return;
+    }
+
+    setDistributingPrize(true);
+
+    try {
+      // 1. Find the winner in profiles by username
+      const { data: winnerProfile, error: profileError } = await supabase
+        .from("profiles")
+        .select("id, username")
+        .eq("username", winnerUsername.trim())
+        .maybeSingle();
+
+      if (profileError) throw profileError;
+      if (!winnerProfile) {
+        toast.error(`User "${winnerUsername}" not found in the system`);
+        return;
+      }
+
+      // 2. Verify user participated in this match
+      const { data: participant, error: participantError } = await supabase
+        .from("participants")
+        .select("id, payment_status")
+        .eq("tournament_id", selectedResultTournamentId)
+        .eq("user_id", winnerProfile.id)
+        .maybeSingle();
+
+      if (participantError) throw participantError;
+      if (!participant) {
+        toast.error(`${winnerUsername} did not participate in this match`);
+        return;
+      }
+
+      if (participant.payment_status !== "paid") {
+        toast.error(`${winnerUsername} did not pay for this match`);
+        return;
+      }
+
+      // 3. Get tournament details
+      const { data: tournament, error: tournamentError } = await supabase
+        .from("tournaments")
+        .select("prize_pool, title")
+        .eq("id", selectedResultTournamentId)
+        .single();
+
+      if (tournamentError) throw tournamentError;
+
+      // 4. Update participant rank to 1
+      await supabase
+        .from("participants")
+        .update({ rank: 1 })
+        .eq("id", participant.id);
+
+      // 5. Credit winner's wallet (read current balance first)
+      const { data: currentProfile } = await supabase
+        .from("profiles")
+        .select("wallet_balance, total_winnings")
+        .eq("id", winnerProfile.id)
+        .single();
+
+      const { error: walletError } = await supabase
+        .from("profiles")
+        .update({ 
+          wallet_balance: (currentProfile?.wallet_balance || 0) + tournament.prize_pool,
+          total_winnings: (currentProfile?.total_winnings || 0) + tournament.prize_pool
+        })
+        .eq("id", winnerProfile.id);
+
+      if (walletError) throw walletError;
+
+      // 6. Record transaction
+      await supabase.from("transactions").insert({
+        user_id: winnerProfile.id,
+        amount: tournament.prize_pool,
+        type: "contest_win",
+        status: "success",
+        description: `Prize for winning ${tournament.title}`
+      });
+
+      // 7. Close match
+      await supabase
+        .from("tournaments")
+        .update({ status: "completed" })
+        .eq("id", selectedResultTournamentId);
+
+      // 8. Notify winner
+      await supabase.from("notifications").insert({
+        user_id: winnerProfile.id,
+        title: "🏆 Victory!",
+        message: `Congratulations! You won ₹${tournament.prize_pool} in ${tournament.title}. Prize credited to your wallet!`,
+        type: "match"
+      });
+
+      toast.success(`₹${tournament.prize_pool} distributed to ${winnerUsername}!`);
+      setWinnerUsername("");
+      setSelectedResultTournamentId("");
+      fetchTournaments();
+    } catch (error) {
+      console.error("Error distributing prize:", error);
+      toast.error("Failed to distribute prize");
+    } finally {
+      setDistributingPrize(false);
+    }
+  };
+
   const handleUpdateRoomDetails = async () => {
     if (!selectedTournamentId || !roomCredentials.roomId || !roomCredentials.roomPassword) {
       toast.error("Please select a tournament and fill all room details");
@@ -206,7 +317,33 @@ const ManageTournaments = () => {
         if (error) throw error;
       }
 
-      toast.success("Room details updated successfully! Paid participants can now see them.");
+      // Get tournament details for notification
+      const { data: tournament } = await supabase
+        .from("tournaments")
+        .select("title")
+        .eq("id", selectedTournamentId)
+        .single();
+
+      // Get all paid participants
+      const { data: participants } = await supabase
+        .from("participants")
+        .select("user_id")
+        .eq("tournament_id", selectedTournamentId)
+        .eq("payment_status", "paid");
+
+      // Send notification to all participants
+      if (participants && participants.length > 0) {
+        const notifications = participants.map(p => ({
+          user_id: p.user_id,
+          title: "🎮 Room ID Available!",
+          message: `Room ID for ${tournament?.title || "your match"} is now available! Check "My Matches" section.`,
+          type: "match"
+        }));
+
+        await supabase.from("notifications").insert(notifications);
+      }
+
+      toast.success(`Room details updated & ${participants?.length || 0} participants notified!`);
       setRoomCredentials({ roomId: "", roomPassword: "" });
       setSelectedTournamentId("");
     } catch (error) {
@@ -446,13 +583,16 @@ const ManageTournaments = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="resultMatch">Select Completed Match</Label>
-              <Select>
+              <Select value={selectedResultTournamentId} onValueChange={setSelectedResultTournamentId}>
                 <SelectTrigger className="bg-background/50 border-border">
                   <SelectValue placeholder="Choose match" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="match1">Erangel Solo - 6:00 PM (Completed)</SelectItem>
-                  <SelectItem value="match2">Livik Squad - 4:00 PM (Completed)</SelectItem>
+                  {tournaments.map((tournament) => (
+                    <SelectItem key={tournament.id} value={tournament.id}>
+                      {tournament.title} - {tournament.map} {tournament.match_type}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -461,13 +601,19 @@ const ManageTournaments = () => {
               <Input
                 id="winner"
                 placeholder="Enter winner's username"
+                value={winnerUsername}
+                onChange={(e) => setWinnerUsername(e.target.value)}
                 className="bg-background/50 border-border"
               />
             </div>
           </div>
-          <Button className="bg-admin-gold text-admin-gold-foreground hover:bg-admin-gold/80 font-gaming">
+          <Button 
+            onClick={handleDistributePrize}
+            disabled={distributingPrize}
+            className="bg-admin-gold text-admin-gold-foreground hover:bg-admin-gold/80 font-gaming"
+          >
             <Award className="mr-2 h-5 w-5" />
-            Distribute Prize
+            {distributingPrize ? "Processing..." : "Distribute Prize"}
           </Button>
         </CardContent>
       </Card>

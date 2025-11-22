@@ -34,8 +34,15 @@ const signupSchema = z.object({
 
 const Auth = () => {
   const navigate = useNavigate();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user } = useAuth();
   const [searchParams] = useSearchParams();
+  
+  // Redirect logged-in users away from auth pages
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
   
   // Determine default tab based on URL path
   const isSignupRoute = window.location.pathname === '/signup';

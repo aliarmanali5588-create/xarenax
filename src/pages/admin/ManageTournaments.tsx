@@ -457,10 +457,13 @@ const ManageTournaments = () => {
             room_id: roomFormData.roomId,
             room_password: roomFormData.roomPassword,
           },
-          { onConflict: "tournament_id" }
+          { onConflict: "tournament_id", ignoreDuplicates: false }
         );
 
-      if (upsertError) throw upsertError;
+      if (upsertError) {
+        console.error("Upsert error:", upsertError);
+        throw new Error(`Failed to save room details: ${upsertError.message}`);
+      }
 
       // Update tournament status to 'live'
       await supabase

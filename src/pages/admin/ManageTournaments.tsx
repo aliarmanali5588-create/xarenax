@@ -448,38 +448,19 @@ const ManageTournaments = () => {
     setUpdatingRoom(true);
 
     try {
-      // Check if tournament_secrets already exists
-      const { data: existingSecret, error: checkError } = await supabase
+      // Use upsert to handle both insert and update
+      const { error: upsertError } = await supabase
         .from("tournament_secrets")
-        .select("id")
-        .eq("tournament_id", selectedTournamentForRoom.id)
-        .maybeSingle();
-
-      if (checkError) throw checkError;
-
-      if (existingSecret) {
-        // Update existing secret
-        const { error } = await supabase
-          .from("tournament_secrets")
-          .update({
-            room_id: roomFormData.roomId,
-            room_password: roomFormData.roomPassword,
-          })
-          .eq("tournament_id", selectedTournamentForRoom.id);
-
-        if (error) throw error;
-      } else {
-        // Insert new secret
-        const { error } = await supabase
-          .from("tournament_secrets")
-          .insert({
+        .upsert(
+          {
             tournament_id: selectedTournamentForRoom.id,
             room_id: roomFormData.roomId,
             room_password: roomFormData.roomPassword,
-          });
+          },
+          { onConflict: "tournament_id" }
+        );
 
-        if (error) throw error;
-      }
+      if (upsertError) throw upsertError;
 
       // Update tournament status to 'live'
       await supabase

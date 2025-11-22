@@ -35,7 +35,8 @@ const AdminWithdrawals = () => {
   const fetchWithdrawalRequests = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      // Fetch withdrawal requests with payment methods
+      const { data: withdrawalData, error: withdrawalError } = await supabase
         .from("withdrawal_requests")
         .select(`
           id,
@@ -44,7 +45,6 @@ const AdminWithdrawals = () => {
           status,
           created_at,
           payment_method_id,
-          profiles!inner(username),
           user_payment_methods!inner(
             upi_id_1,
             upi_id_2,
@@ -55,12 +55,27 @@ const AdminWithdrawals = () => {
         `)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (withdrawalError) throw withdrawalError;
 
-      const formattedRequests: WithdrawalRequest[] = (data || []).map((req: any) => ({
+      // Get unique user IDs
+      const userIds = [...new Set(withdrawalData?.map((req: any) => req.user_id) || [])];
+
+      // Fetch profiles for these users
+      const { data: profilesData, error: profilesError } = await supabase
+        .from("profiles")
+        .select("id, username")
+        .in("id", userIds);
+
+      if (profilesError) throw profilesError;
+
+      // Create a map of user_id to username
+      const profileMap = new Map(profilesData?.map((p: any) => [p.id, p.username]));
+
+      // Combine the data
+      const formattedRequests: WithdrawalRequest[] = (withdrawalData || []).map((req: any) => ({
         id: req.id,
         user_id: req.user_id,
-        username: req.profiles.username,
+        username: profileMap.get(req.user_id) || "Unknown",
         amount: req.amount,
         upi_id_1: req.user_payment_methods.upi_id_1,
         upi_id_2: req.user_payment_methods.upi_id_2,

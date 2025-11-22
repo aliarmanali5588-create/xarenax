@@ -12,10 +12,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Users, Ban, CheckCircle, Search, AlertTriangle } from "lucide-react";
+import { Users, Ban, CheckCircle, Search, AlertTriangle, DollarSign } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import StatCardSkeleton from "@/components/admin/StatCardSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import SendMoneyModal from "@/components/admin/SendMoneyModal";
 
 interface User {
   id: string;
@@ -36,6 +37,8 @@ const AdminUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDuplicatesOnly, setShowDuplicatesOnly] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [showSendMoneyModal, setShowSendMoneyModal] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -140,6 +143,15 @@ const AdminUsers = () => {
       console.error("Error updating user status:", error);
       toast.error("An error occurred");
     }
+  };
+
+  const handleOpenSendMoney = (user: User) => {
+    setSelectedUser(user);
+    setShowSendMoneyModal(true);
+  };
+
+  const handleSendMoneySuccess = () => {
+    fetchUsers(); // Refresh user data after sending money
   };
 
   const filteredUsers = users.filter((user) => {
@@ -343,28 +355,39 @@ const AdminUsers = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Button
-                      size="sm"
-                      variant={user.status === "active" ? "destructive" : "default"}
-                      onClick={() => handleBanUnban(user.id)}
-                      className={
-                        user.status === "banned"
-                          ? "bg-green-500 hover:bg-green-600 text-white"
-                          : ""
-                      }
-                    >
-                      {user.status === "active" ? (
-                        <>
-                          <Ban className="h-4 w-4 mr-1" />
-                          Ban
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Unban
-                        </>
-                      )}
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => handleOpenSendMoney(user)}
+                        className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+                      >
+                        <DollarSign className="h-4 w-4 mr-1" />
+                        Pay
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={user.status === "active" ? "destructive" : "default"}
+                        onClick={() => handleBanUnban(user.id)}
+                        className={
+                          user.status === "banned"
+                            ? "bg-green-500 hover:bg-green-600 text-white"
+                            : ""
+                        }
+                      >
+                        {user.status === "active" ? (
+                          <>
+                            <Ban className="h-4 w-4 mr-1" />
+                            Ban
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Unban
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               )))}
@@ -372,6 +395,16 @@ const AdminUsers = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Send Money Modal */}
+      {selectedUser && (
+        <SendMoneyModal
+          isOpen={showSendMoneyModal}
+          onClose={() => setShowSendMoneyModal(false)}
+          user={selectedUser}
+          onSuccess={handleSendMoneySuccess}
+        />
+      )}
     </div>
   );
 };

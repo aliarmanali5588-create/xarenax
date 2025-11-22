@@ -1,13 +1,15 @@
-import { User, Mail, Calendar, Trophy, Target, Award } from "lucide-react";
+import { User, Mail, Calendar, Trophy, Target, Award, Pencil } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import WithdrawalSettings from "@/components/profile/WithdrawalSettings";
 import SupportCard from "@/components/support/SupportCard";
 import { useAuth } from "@/contexts/AuthContext";
 import TournamentRoomDetails from "@/components/tournaments/TournamentRoomDetails";
 import ProfileStatsSkeleton from "@/components/profile/ProfileStatsSkeleton";
+import { EditProfileModal } from "@/components/profile/EditProfileModal";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -23,6 +25,7 @@ const Profile = () => {
   const { user } = useAuth();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [tournamentStats, setTournamentStats] = useState({
     played: 0,
     winRate: 0
@@ -132,6 +135,15 @@ const Profile = () => {
                     <p className="text-sm sm:text-base text-muted-foreground mb-3 md:mb-4">
                       Member since {memberSince}
                     </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsEditModalOpen(true)}
+                      className="mt-2 border-primary/40 hover:border-primary hover:bg-primary/10 text-primary"
+                    >
+                      <Pencil className="w-4 h-4 mr-2" />
+                      Edit Profile
+                    </Button>
                   </div>
                 </div>
 
@@ -221,6 +233,22 @@ const Profile = () => {
       </div>
 
       <MegaFooter />
+
+      {/* Edit Profile Modal */}
+      {user && profileData && (
+        <EditProfileModal
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          currentData={{
+            username: profileData.username,
+            ign: profileData.ign,
+            bgmiId: profileData.bgmi_id,
+            email: user.email || "",
+          }}
+          userId={user.id}
+          onSuccess={fetchProfileData}
+        />
+      )}
     </div>
   );
 };

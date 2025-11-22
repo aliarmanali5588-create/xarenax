@@ -29,8 +29,6 @@ import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminReferrals from "./pages/admin/AdminReferrals";
-import AdminInvitations from "./pages/admin/AdminInvitations";
-import RedeemInvite from "./pages/RedeemInvite";
 
 const queryClient = new QueryClient();
 
@@ -62,7 +60,6 @@ const App = () => {
               <Route path="/legal/privacy" element={<PrivacyPolicy />} />
               <Route path="/legal/terms" element={<Terms />} />
               <Route path="/legal/refund" element={<RefundPolicy />} />
-              <Route path="/redeem-invite" element={<RedeemInvite />} />
               {/* Admin Routes */}
               <Route path="/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
@@ -70,7 +67,6 @@ const App = () => {
                 <Route path="withdrawals" element={<AdminWithdrawals />} />
                 <Route path="users" element={<AdminUsers />} />
                 <Route path="referrals" element={<AdminReferrals />} />
-                <Route path="invitations" element={<AdminInvitations />} />
                 <Route path="settings" element={<AdminSettings />} />
               </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

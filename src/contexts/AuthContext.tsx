@@ -8,7 +8,7 @@ interface AuthContextType {
   session: Session | null;
   isAdmin: boolean;
   loading: boolean;
-  signUp: (email: string, password: string, username: string, ign: string, bgmiId: string, deviceId?: string, signupIp?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, username: string, ign: string, bgmiId: string, deviceId?: string, signupIp?: string, referralCode?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -92,9 +92,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     ign: string, 
     bgmiId: string,
     deviceId?: string,
-    signupIp?: string
+    signupIp?: string,
+    referralCode?: string
   ) => {
     try {
+      let referredById = null;
+      
+      // If referral code is provided, look up the referrer's UUID
+      if (referralCode) {
+        const { data: referrerData, error: referrerError } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("referral_code", referralCode.toUpperCase())
+          .single();
+        
+        if (!referrerError && referrerData) {
+          referredById = referrerData.id;
+        }
+      }
+      
       const redirectUrl = `${window.location.origin}/`;
       
       const { error } = await supabase.auth.signUp({
@@ -108,6 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             bgmi_id: bgmiId,
             device_id: deviceId || '',
             signup_ip: signupIp || '',
+            referred_by: referredById,
           }
         }
       });

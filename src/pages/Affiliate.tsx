@@ -1,10 +1,73 @@
-import { Share2, UserPlus, Trophy } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Share2, UserPlus, Trophy, Users, Wallet, TrendingUp, Target } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
 import AffiliateStepCard from "@/components/cards/AffiliateStepCard";
 import ReferralCard from "@/components/affiliate/ReferralCard";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+
+interface AffiliateStats {
+  total_signups: number;
+  active_depositors: number;
+  matches_played: number;
+  total_earnings: number;
+}
+
+interface ReferralHistory {
+  id: string;
+  username: string;
+  created_at: string;
+  total_deposited: number;
+  total_winnings: number;
+}
 
 const Affiliate = () => {
+  const { user } = useAuth();
+  const [stats, setStats] = useState<AffiliateStats | null>(null);
+  const [referrals, setReferrals] = useState<ReferralHistory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      fetchAffiliateData();
+    }
+  }, [user]);
+
+  const fetchAffiliateData = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch stats using the database function
+      const { data: statsData, error: statsError } = await supabase.rpc(
+        "get_affiliate_stats",
+        { p_user_id: user?.id }
+      );
+
+      if (statsError) throw statsError;
+      setStats(statsData as unknown as AffiliateStats);
+
+      // Fetch referral history
+      const { data: referralsData, error: referralsError } = await supabase
+        .from("profiles")
+        .select("id, username, created_at, total_deposited, total_winnings")
+        .eq("referred_by", user?.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      if (referralsError) throw referralsError;
+      setReferrals(referralsData || []);
+    } catch (error) {
+      console.error("Error fetching affiliate data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const affiliateSteps = [
     {
       step: 1,
@@ -29,6 +92,14 @@ const Affiliate = () => {
     },
   ];
 
+  const calculateEarnings = (referral: ReferralHistory) => {
+    // ₹10 signup bonus + potential win bonuses (estimate based on total winnings)
+    const signupBonus = 10;
+    const estimatedWins = Math.floor(referral.total_winnings / 1000); // Rough estimate
+    const winBonus = estimatedWins * 100;
+    return signupBonus + winBonus;
+  };
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -36,29 +107,181 @@ const Affiliate = () => {
       <div className="pt-24 pb-16 px-4">
         <div className="container mx-auto">
           {/* Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <div className="inline-block mb-6">
               <span className="px-4 py-2 rounded-full glass-panel text-sm font-medium text-secondary neon-border-orange">
                 Earn While You Game
               </span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-gaming font-bold mb-4">
+            <h1 className="text-4xl md:text-6xl font-gaming font-bold mb-4">
               <span className="text-glow-cyan">Affiliate</span>{" "}
-              <span className="text-glow-orange">Program</span>
+              <span className="text-glow-orange">Dashboard</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
               Invite friends to ArenaX and earn rewards for every signup and win. Turn your network into passive income!
             </p>
           </div>
 
           {/* Referral Card */}
-          <div className="mb-16 max-w-2xl mx-auto">
+          <div className="mb-12 max-w-2xl mx-auto">
             <ReferralCard />
           </div>
 
+          {/* Stats Dashboard - Mobile First */}
+          {user && (
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-gaming font-bold mb-6 text-glow-cyan">
+                Your Performance
+              </h2>
+              
+              {loading ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <Card key={i} className="glass-panel p-3">
+                      <Skeleton className="h-8 w-8 mb-2" />
+                      <Skeleton className="h-4 w-20 mb-1" />
+                      <Skeleton className="h-6 w-16" />
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {/* Total Signups */}
+                  <Card className="glass-panel p-3 hover:neon-border-cyan transition-all">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+                        <Users className="w-4 h-4 text-cyan-500" />
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-1">Total Signups</p>
+                    <p className="text-xl md:text-2xl font-bold text-foreground">
+                      {stats?.total_signups || 0}
+                    </p>
+                  </Card>
+
+                  {/* Active Depositors */}
+                  <Card className="glass-panel p-3 hover:neon-border-orange transition-all">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
+                        <Wallet className="w-4 h-4 text-orange-500" />
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-1">Active Users</p>
+                    <p className="text-xl md:text-2xl font-bold text-foreground">
+                      {stats?.active_depositors || 0}
+                    </p>
+                  </Card>
+
+                  {/* Matches Played */}
+                  <Card className="glass-panel p-3 hover:neon-border-cyan transition-all">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+                        <Target className="w-4 h-4 text-cyan-500" />
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-1">Matches Played</p>
+                    <p className="text-xl md:text-2xl font-bold text-foreground">
+                      {stats?.matches_played || 0}
+                    </p>
+                  </Card>
+
+                  {/* Total Earnings */}
+                  <Card className="glass-panel p-3 hover:neon-border-orange transition-all">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center">
+                        <TrendingUp className="w-4 h-4 text-green-500" />
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-1">Total Earned</p>
+                    <p className="text-xl md:text-2xl font-bold text-green-500">
+                      ₹{stats?.total_earnings || 0}
+                    </p>
+                  </Card>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Referral History - Responsive Table/Cards */}
+          {user && referrals.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-gaming font-bold mb-6 text-glow-cyan">
+                Recent Referrals
+              </h2>
+
+              {/* Desktop Table View */}
+              <div className="hidden md:block glass-panel rounded-xl overflow-hidden">
+                <table className="w-full">
+                  <thead className="bg-primary/10 border-b border-border">
+                    <tr>
+                      <th className="text-left p-4 text-sm font-semibold">User</th>
+                      <th className="text-left p-4 text-sm font-semibold">Joined Date</th>
+                      <th className="text-left p-4 text-sm font-semibold">Status</th>
+                      <th className="text-right p-4 text-sm font-semibold">Earnings</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {referrals.map((referral) => (
+                      <tr key={referral.id} className="border-b border-border/50 hover:bg-primary/5 transition-colors">
+                        <td className="p-4">
+                          <span className="font-medium">{referral.username}</span>
+                        </td>
+                        <td className="p-4 text-sm text-muted-foreground">
+                          {format(new Date(referral.created_at), "MMM dd, yyyy")}
+                        </td>
+                        <td className="p-4">
+                          {referral.total_deposited > 0 ? (
+                            <Badge className="bg-green-500/20 text-green-500 border-green-500/50">
+                              Active
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary">
+                              New
+                            </Badge>
+                          )}
+                        </td>
+                        <td className="p-4 text-right">
+                          <span className="font-bold text-green-500">
+                            ₹{calculateEarnings(referral)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="block md:hidden space-y-3">
+                {referrals.map((referral) => (
+                  <Card key={referral.id} className="glass-panel p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-semibold text-foreground">{referral.username}</span>
+                      {referral.total_deposited > 0 ? (
+                        <Badge className="bg-green-500/20 text-green-500 border-green-500/50">
+                          Active
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">New</Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">
+                        {format(new Date(referral.created_at), "MMM dd, yyyy")}
+                      </span>
+                      <span className="font-bold text-green-500">
+                        ₹{calculateEarnings(referral)}
+                      </span>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* How It Works */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-gaming font-bold text-center mb-12 text-glow-cyan">
+          <div className="mb-12">
+            <h2 className="text-2xl md:text-3xl font-gaming font-bold text-center mb-8 text-glow-cyan">
               How It Works
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16">
@@ -73,8 +296,8 @@ const Affiliate = () => {
           </div>
 
           {/* Benefits */}
-          <div className="glass-panel rounded-2xl p-8 md:p-12">
-            <h3 className="text-3xl font-gaming font-bold mb-8 text-center text-glow-cyan">
+          <div className="glass-panel rounded-2xl p-6 md:p-12">
+            <h3 className="text-2xl md:text-3xl font-gaming font-bold mb-8 text-center text-glow-cyan">
               Program Benefits
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

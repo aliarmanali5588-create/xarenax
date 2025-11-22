@@ -117,15 +117,18 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
     try {
       const { error } = await supabase
         .from("user_payment_methods")
-        .upsert({
-          user_id: userId,
-          upi_id_1: formData.upiId1,
-          upi_id_2: formData.upiId2 || null,
-          bank_account_no: formData.accountNumber,
-          bank_name: formData.bankName,
-          bank_ifsc: formData.ifscCode,
-          is_locked: true,
-        });
+        .upsert(
+          {
+            user_id: userId,
+            upi_id_1: formData.upiId1,
+            upi_id_2: formData.upiId2 || null,
+            bank_account_no: formData.accountNumber,
+            bank_name: formData.bankName,
+            bank_ifsc: formData.ifscCode,
+            is_locked: true,
+          },
+          { onConflict: 'user_id' } // <-- CRITICAL: Resolve conflict on user_id
+        );
 
       if (error) throw error;
 

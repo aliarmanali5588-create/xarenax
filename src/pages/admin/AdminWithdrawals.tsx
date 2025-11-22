@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,75 +11,172 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Wallet, CheckCircle, XCircle } from "lucide-react";
+import { Wallet, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface WithdrawalRequest {
   id: string;
+  user_id: string;
   username: string;
   amount: number;
-  upiId: string;
-  bankDetails?: {
-    accountNo: string;
-    bankName: string;
-    ifsc: string;
-  };
+  upi_id_1?: string;
+  upi_id_2?: string;
+  bank_account_no?: string;
+  bank_name?: string;
+  bank_ifsc?: string;
   status: "pending" | "paid" | "rejected";
-  requestDate: string;
+  created_at: string;
 }
 
 const AdminWithdrawals = () => {
-  const [requests, setRequests] = useState<WithdrawalRequest[]>([
-    {
-      id: "WD001",
-      username: "pro_gamer_x",
-      amount: 5000,
-      upiId: "progamer@paytm",
-      status: "pending",
-      requestDate: "2024-01-15",
-    },
-    {
-      id: "WD002",
-      username: "ace_player",
-      amount: 3000,
-      upiId: "ace.player@ybl",
-      bankDetails: {
-        accountNo: "1234567890",
-        bankName: "HDFC Bank",
-        ifsc: "HDFC0001234",
-      },
-      status: "pending",
-      requestDate: "2024-01-15",
-    },
-    {
-      id: "WD003",
-      username: "sniper_king",
-      amount: 2500,
-      upiId: "sniper@oksbi",
-      status: "paid",
-      requestDate: "2024-01-14",
-    },
-  ]);
+  const [requests, setRequests] = useState<WithdrawalRequest[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleMarkAsPaid = (id: string) => {
-    setRequests(
-      requests.map((req) =>
-        req.id === id ? { ...req, status: "paid" as const } : req
-      )
-    );
-    toast.success("Withdrawal marked as paid!");
+  const fetchWithdrawalRequests = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("withdrawal_requests")
+        .select(`
+          id,
+          user_id,
+          amount,
+          status,
+          created_at,
+          payment_method_id,
+          profiles!inner(username),
+          user_payment_methods!inner(
+            upi_id_1,
+            upi_id_2,
+            bank_account_no,
+            bank_name,
+            bank_ifsc
+          )
+        `)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      const formattedRequests: WithdrawalRequest[] = (data || []).map((req: any) => ({
+        id: req.id,
+        user_id: req.user_id,
+        username: req.profiles.username,
+        amount: req.amount,
+        upi_id_1: req.user_payment_methods.upi_id_1,
+        upi_id_2: req.user_payment_methods.upi_id_2,
+        bank_account_no: req.user_payment_methods.bank_account_no,
+        bank_name: req.user_payment_methods.bank_name,
+        bank_ifsc: req.user_payment_methods.bank_ifsc,
+        status: req.status,
+        created_at: req.created_at,
+      }));
+
+      setRequests(formattedRequests);
+    } catch (error: any) {
+      toast.error("Failed to fetch withdrawal requests: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleReject = (id: string) => {
-    setRequests(
-      requests.map((req) =>
-        req.id === id ? { ...req, status: "rejected" as const } : req
-      )
-    );
-    toast.error("Withdrawal request rejected");
+  useEffect(() => {
+    fetchWithdrawalRequests();
+  }, []);
+
+  const handleMarkAsPaid = async (id: string, userId: string) => {
+    try {
+      // Update withdrawal request status
+      const { error: updateError } = await supabase
+        .from("withdrawal_requests")
+        .update({ 
+          status: "paid",
+          processed_at: new Date().toISOString(),
+          processed_by: (await supabase.auth.getUser()).data.user?.id
+        })
+        .eq("id", id);
+
+      if (updateError) throw updateError;
+
+      // Send notification
+      await supabase.from("notifications").insert({
+        user_id: userId,
+        title: "💸 Withdrawal Successful!",
+        message: "Your withdrawal has been processed successfully. Money has been sent to your registered account.",
+        type: "payment",
+      });
+
+      toast.success("Withdrawal marked as paid!");
+      fetchWithdrawalRequests();
+    } catch (error: any) {
+      toast.error("Failed to mark as paid: " + error.message);
+    }
+  };
+
+  const handleReject = async (id: string, userId: string, amount: number) => {
+    try {
+      // 1. Refund to wallet
+      const { data: profile, error: fetchError } = await supabase
+        .from("profiles")
+        .select("wallet_balance")
+        .eq("id", userId)
+        .single();
+
+      if (fetchError) throw fetchError;
+      if (!profile) throw new Error("User profile not found");
+
+      const { error: walletError } = await supabase
+        .from("profiles")
+        .update({ wallet_balance: profile.wallet_balance + amount })
+        .eq("id", userId);
+
+      if (walletError) throw walletError;
+
+      // 2. Update withdrawal request status
+      const { error: updateError } = await supabase
+        .from("withdrawal_requests")
+        .update({ 
+          status: "rejected",
+          processed_at: new Date().toISOString(),
+          processed_by: (await supabase.auth.getUser()).data.user?.id
+        })
+        .eq("id", id);
+
+      if (updateError) throw updateError;
+
+      // 3. Log refund transaction
+      await supabase.from("transactions").insert({
+        user_id: userId,
+        amount: amount,
+        type: "refund",
+        status: "success",
+        description: "Withdrawal rejected - Amount refunded to wallet",
+      });
+
+      // 4. Send notification
+      await supabase.from("notifications").insert({
+        user_id: userId,
+        title: "❌ Withdrawal Rejected",
+        message: `Your withdrawal request of ₹${amount} has been rejected. The amount has been refunded to your wallet.`,
+        type: "payment",
+      });
+
+      toast.success("Withdrawal rejected and amount refunded!");
+      fetchWithdrawalRequests();
+    } catch (error: any) {
+      toast.error("Failed to reject withdrawal: " + error.message);
+    }
   };
 
   const pendingRequests = requests.filter((r) => r.status === "pending");
   const totalPending = pendingRequests.reduce((sum, r) => sum + r.amount, 0);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-admin-gold" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -147,96 +244,114 @@ const AdminWithdrawals = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {requests.map((request) => (
-                <TableRow key={request.id} className="border-admin-red/20">
-                  <TableCell className="font-mono text-xs">
-                    {request.id}
-                  </TableCell>
-                  <TableCell className="font-medium text-cyan-400">
-                    {request.username}
-                  </TableCell>
-                  <TableCell className="font-bold text-admin-gold">
-                    ₹{request.amount.toLocaleString()}
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1 text-xs">
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">UPI:</span>
-                        <span className="text-foreground font-mono">
-                          {request.upiId} 🔒
-                        </span>
-                      </div>
-                      {request.bankDetails && (
-                        <>
-                          <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">Bank:</span>
-                            <span className="text-foreground">
-                              {request.bankDetails.bankName}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">A/C:</span>
-                            <span className="text-foreground font-mono">
-                              {request.bankDetails.accountNo} 🔒
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">IFSC:</span>
-                            <span className="text-foreground font-mono">
-                              {request.bankDetails.ifsc}
-                            </span>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground text-xs">
-                    {request.requestDate}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        request.status === "paid"
-                          ? "default"
-                          : request.status === "rejected"
-                          ? "destructive"
-                          : "secondary"
-                      }
-                      className={
-                        request.status === "pending"
-                          ? "bg-orange-500/20 text-orange-400 border-orange-500/50"
-                          : request.status === "paid"
-                          ? "bg-green-500/20 text-green-400 border-green-500/50"
-                          : ""
-                      }
-                    >
-                      {request.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {request.status === "pending" && (
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          onClick={() => handleMarkAsPaid(request.id)}
-                          className="bg-green-500 hover:bg-green-600 text-white"
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Paid
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleReject(request.id)}
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          Reject
-                        </Button>
-                      </div>
-                    )}
+              {requests.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    No withdrawal requests found
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                requests.map((request) => (
+                  <TableRow key={request.id} className="border-admin-red/20">
+                    <TableCell className="font-mono text-xs">
+                      {request.id.slice(0, 8)}...
+                    </TableCell>
+                    <TableCell className="font-medium text-cyan-400">
+                      {request.username}
+                    </TableCell>
+                    <TableCell className="font-bold text-admin-gold">
+                      ₹{request.amount.toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1 text-xs">
+                        {request.upi_id_1 && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">UPI 1:</span>
+                            <span className="text-foreground font-mono">
+                              {request.upi_id_1} 🔒
+                            </span>
+                          </div>
+                        )}
+                        {request.upi_id_2 && (
+                          <div className="flex items-center gap-2">
+                            <span className="text-muted-foreground">UPI 2:</span>
+                            <span className="text-foreground font-mono">
+                              {request.upi_id_2} 🔒
+                            </span>
+                          </div>
+                        )}
+                        {request.bank_account_no && (
+                          <>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">Bank:</span>
+                              <span className="text-foreground">
+                                {request.bank_name}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">A/C:</span>
+                              <span className="text-foreground font-mono">
+                                {request.bank_account_no} 🔒
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">IFSC:</span>
+                              <span className="text-foreground font-mono">
+                                {request.bank_ifsc}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-xs">
+                      {new Date(request.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          request.status === "paid"
+                            ? "default"
+                            : request.status === "rejected"
+                            ? "destructive"
+                            : "secondary"
+                        }
+                        className={
+                          request.status === "pending"
+                            ? "bg-orange-500/20 text-orange-400 border-orange-500/50"
+                            : request.status === "paid"
+                            ? "bg-green-500/20 text-green-400 border-green-500/50"
+                            : ""
+                        }
+                      >
+                        {request.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {request.status === "pending" && (
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => handleMarkAsPaid(request.id, request.user_id)}
+                            className="bg-green-500 hover:bg-green-600 text-white"
+                          >
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            Paid
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleReject(request.id, request.user_id, request.amount)}
+                          >
+                            <XCircle className="h-4 w-4 mr-1" />
+                            Reject
+                          </Button>
+                        </div>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

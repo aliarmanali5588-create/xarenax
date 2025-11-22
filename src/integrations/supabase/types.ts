@@ -473,8 +473,8 @@ export type Database = {
           p_referral_code: string
           p_referred_by: string
           p_signup_ip: string
+          p_user_id: string
           p_username: string
-          user_id: string
         }
         Returns: undefined
       }

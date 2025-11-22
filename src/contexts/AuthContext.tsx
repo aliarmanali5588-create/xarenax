@@ -135,7 +135,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Step 4: Create profile using secure function
       const { error: profileError } = await supabase.rpc('create_user_profile', {
-        user_id: data.user.id,
+        p_user_id: data.user.id,
         p_username: username,
         p_ign: ign,
         p_bgmi_id: bgmiId,

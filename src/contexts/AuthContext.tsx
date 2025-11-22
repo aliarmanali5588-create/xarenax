@@ -107,16 +107,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       let referredById = null;
       
-      // If referral code is provided, look up the referrer's UUID
+      // If referral code is provided, use secure function to get referrer UUID
       if (referralCode) {
-        const { data: referrerData, error: referrerError } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("referral_code", referralCode.toUpperCase())
-          .single();
+        const { data: referrerUuid, error: referrerError } = await supabase.rpc(
+          'get_referrer_id', 
+          { code: referralCode.toUpperCase() }
+        );
         
-        if (!referrerError && referrerData) {
-          referredById = referrerData.id;
+        if (!referrerError && referrerUuid) {
+          referredById = referrerUuid;
         }
       }
       

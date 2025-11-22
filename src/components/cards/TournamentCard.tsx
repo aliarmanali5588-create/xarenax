@@ -35,7 +35,7 @@ const TournamentCard = ({
 
   const handleJoinClick = () => {
     if (!user) {
-      navigate("/auth");
+      navigate("/signup");
       return;
     }
     navigate(`/tournaments/${id}`);

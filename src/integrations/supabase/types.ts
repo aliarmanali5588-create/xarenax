@@ -14,48 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      admin_invitations: {
-        Row: {
-          created_at: string
-          created_by: string
-          expires_at: string
-          granted_role: Database["public"]["Enums"]["app_role"]
-          id: string
-          invite_code: string
-          invitee_email: string
-          redeemed_at: string | null
-          redeemed_by: string | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by: string
-          expires_at: string
-          granted_role?: Database["public"]["Enums"]["app_role"]
-          id?: string
-          invite_code: string
-          invitee_email: string
-          redeemed_at?: string | null
-          redeemed_by?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          expires_at?: string
-          granted_role?: Database["public"]["Enums"]["app_role"]
-          id?: string
-          invite_code?: string
-          invitee_email?: string
-          redeemed_at?: string | null
-          redeemed_by?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       notifications: {
         Row: {
           created_at: string
@@ -483,8 +441,6 @@ export type Database = {
         Args: { new_user_name: string; referrer_id: string }
         Returns: undefined
       }
-      expire_old_invitations: { Args: never; Returns: undefined }
-      generate_invite_code: { Args: never; Returns: string }
       get_affiliate_stats: { Args: { p_user_id: string }; Returns: Json }
       get_referrer_id: { Args: { code: string }; Returns: string }
       has_role: {
@@ -500,7 +456,6 @@ export type Database = {
         Args: { code_used: string; new_user_id: string }
         Returns: undefined
       }
-      redeem_admin_invite: { Args: { code: string }; Returns: Json }
       user_is_tournament_participant: {
         Args: { p_tournament_id: string; p_user_id: string }
         Returns: boolean

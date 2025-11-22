@@ -33,18 +33,23 @@ const Wallet = () => {
   }, [user]);
 
   const fetchWalletBalance = async () => {
+    if (!user?.id) return;
+    
     try {
       const { data, error } = await supabase
         .from("profiles")
         .select("wallet_balance, bonus_balance, total_deposited, total_winnings")
-        .eq("id", user?.id)
-        .single();
+        .eq("id", user.id)
+        .maybeSingle();
 
       if (error) throw error;
-      setCurrentBalance(data?.wallet_balance || 0);
-      setBonusBalance(data?.bonus_balance || 0);
-      setTotalDeposited(data?.total_deposited || 0);
-      setTotalWinnings(data?.total_winnings || 0);
+      
+      if (data) {
+        setCurrentBalance(data.wallet_balance || 0);
+        setBonusBalance(data.bonus_balance || 0);
+        setTotalDeposited(data.total_deposited || 0);
+        setTotalWinnings(data.total_winnings || 0);
+      }
     } catch (error) {
       console.error("Error fetching wallet:", error);
       toast.error("Failed to load wallet balance");
@@ -54,11 +59,13 @@ const Wallet = () => {
   };
 
   const fetchTransactions = async () => {
+    if (!user?.id) return;
+    
     try {
       const { data, error } = await supabase
         .from("transactions")
         .select("*")
-        .eq("user_id", user?.id)
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(10);
 

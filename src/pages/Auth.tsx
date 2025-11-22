@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,10 +34,23 @@ const signupSchema = z.object({
 const Auth = () => {
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
+  const [searchParams] = useSearchParams();
   
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [signupForm, setSignupForm] = useState({ email: "", password: "", confirmPassword: "", username: "", ign: "", bgmiId: "" });
   const [loading, setLoading] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
+
+  // Auto-fill referral code from URL
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) {
+      setReferralCode(ref.toUpperCase());
+      toast.info(`Referral code ${ref.toUpperCase()} applied!`, {
+        description: "You'll get special bonuses when you sign up"
+      });
+    }
+  }, [searchParams]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,7 +100,8 @@ const Auth = () => {
         signupForm.ign, 
         signupForm.bgmiId,
         deviceId,
-        ip || undefined
+        ip || undefined,
+        referralCode || undefined
       );
       
       if (error) {
@@ -292,6 +306,15 @@ const Auth = () => {
                       />
                     </div>
                   </div>
+                  {/* Referral Code Badge */}
+                  {referralCode && (
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/30">
+                      <p className="text-sm text-green-500 font-medium flex items-center gap-2">
+                        <Trophy className="w-4 h-4" />
+                        Referral Code Active: <span className="font-bold">{referralCode}</span>
+                      </p>
+                    </div>
+                  )}
                   <Button type="submit" variant="gaming" className="w-full" disabled={loading}>
                     {loading ? "Creating account..." : "Sign Up"}
                   </Button>

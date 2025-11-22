@@ -106,40 +106,83 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     referralCode?: string
   ) => {
     try {
-      let referredById = null;
-      
-      // If referral code is provided, use secure function to get referrer UUID
-      if (referralCode) {
-        const { data: referrerUuid, error: referrerError } = await supabase.rpc(
-          'get_referrer_id', 
-          { code: referralCode.toUpperCase() }
-        );
-        
-        if (!referrerError && referrerUuid) {
-          referredById = referrerUuid;
-        }
-      }
-      
       const redirectUrl = `${window.location.origin}/`;
       
+      // Step 1: Create auth user
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: redirectUrl,
-          data: {
-            username: username,
-            ign: ign,
-            bgmi_id: bgmiId,
-            device_id: deviceId || '',
-            signup_ip: signupIp || '',
-            referred_by: referredById,
-          }
         }
       });
 
-      return { data, error };
+      if (error) return { data, error };
+      if (!data.user) return { data: null, error: new Error("Signup failed") };
+
+      // Step 2: Get referrer ID if referral code provided
+      let referredById = null;
+      if (referralCode) {
+        const { data: referrerUuid } = await supabase.rpc(
+          'get_referrer_id', 
+          { code: referralCode.toUpperCase() }
+        );
+        if (referrerUuid) referredById = referrerUuid;
+      }
+
+      // Step 3: Generate unique referral code
+      const newReferralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+
+      // Step 4: Create profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: data.user.id,
+          username: username,
+          ign: ign,
+          bgmi_id: bgmiId,
+          device_id: deviceId || null,
+          signup_ip: signupIp || null,
+          last_ip: signupIp || null,
+          wallet_balance: 0,
+          bonus_balance: 0,
+          referral_code: newReferralCode,
+          referred_by: referredById,
+        });
+
+      if (profileError) {
+        console.error("Profile creation error:", profileError);
+        return { data: null, error: new Error(`Profile creation failed: ${profileError.message}`) };
+      }
+
+      // Step 5: Assign user role
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .insert({
+          user_id: data.user.id,
+          role: 'user',
+        });
+
+      if (roleError) {
+        console.error("Role assignment failed:", roleError);
+      }
+
+      // Step 6: Credit referral bonus if applicable
+      if (referredById) {
+        try {
+          await supabase.rpc('credit_referral_bonus', {
+            referrer_id: referredById,
+            new_user_name: username
+          });
+        } catch (refError) {
+          console.error("Referral bonus error:", refError);
+          // Don't fail signup if referral bonus fails
+        }
+      }
+
+      return { data, error: null };
     } catch (error: any) {
+      console.error("Signup error:", error);
       return { data: null, error };
     }
   };

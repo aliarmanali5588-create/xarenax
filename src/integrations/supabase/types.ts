@@ -465,6 +465,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      credit_referral_bonus: {
+        Args: { new_user_name: string; referrer_id: string }
+        Returns: undefined
+      }
       expire_old_invitations: { Args: never; Returns: undefined }
       generate_invite_code: { Args: never; Returns: string }
       get_affiliate_stats: { Args: { p_user_id: string }; Returns: Json }

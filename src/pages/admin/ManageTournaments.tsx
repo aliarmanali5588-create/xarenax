@@ -10,8 +10,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { toast } from "sonner";
-import { Plus, Trophy, Key, Award, AlertTriangle } from "lucide-react";
+import { Plus, Trophy, Key, Award, AlertTriangle, Pencil, Trash2, List } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { z } from "zod";
@@ -44,6 +68,11 @@ interface Tournament {
   match_type: string;
   start_time: string;
   status: string;
+  entry_fee: number;
+  prize_pool: number;
+  per_kill_prize: number;
+  max_slots: number;
+  current_slots: number;
 }
 
 const ManageTournaments = () => {
@@ -69,16 +98,32 @@ const ManageTournaments = () => {
   const [selectedResultTournamentId, setSelectedResultTournamentId] = useState("");
   const [winnerUsername, setWinnerUsername] = useState("");
   const [distributingPrize, setDistributingPrize] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    title: "",
+    map: "",
+    matchType: "",
+    entryFee: "",
+    prizePool: "",
+    perKillPrize: "",
+    maxSlots: "",
+    dateTime: "",
+  });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [tournamentToDelete, setTournamentToDelete] = useState<string | null>(null);
+  const [allTournaments, setAllTournaments] = useState<Tournament[]>([]);
 
   useEffect(() => {
     fetchTournaments();
+    fetchAllTournaments();
   }, []);
 
   const fetchTournaments = async () => {
     try {
       const { data, error } = await supabase
         .from("tournaments")
-        .select("id, title, map, match_type, start_time, status")
+        .select("*")
         .in("status", ["open", "full"])
         .order("start_time", { ascending: true });
 
@@ -86,6 +131,20 @@ const ManageTournaments = () => {
       setTournaments(data || []);
     } catch (error) {
       console.error("Error fetching tournaments:", error);
+    }
+  };
+
+  const fetchAllTournaments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("tournaments")
+        .select("*")
+        .order("start_time", { ascending: false });
+
+      if (error) throw error;
+      setAllTournaments(data || []);
+    } catch (error) {
+      console.error("Error fetching all tournaments:", error);
     }
   };
 
@@ -157,7 +216,8 @@ const ManageTournaments = () => {
           maxSlots: "100",
           dateTime: "",
         });
-        fetchTournaments(); // Refresh tournament list
+        fetchTournaments();
+        fetchAllTournaments();
       }
     } catch (error) {
       console.error("Error:", error);
@@ -267,6 +327,7 @@ const ManageTournaments = () => {
       setWinnerUsername("");
       setSelectedResultTournamentId("");
       fetchTournaments();
+      fetchAllTournaments();
     } catch (error) {
       console.error("Error distributing prize:", error);
       toast.error("Failed to distribute prize");
@@ -351,6 +412,79 @@ const ManageTournaments = () => {
       toast.error("Failed to update room details");
     } finally {
       setUpdatingRoom(false);
+    }
+  };
+
+  const handleEditClick = (tournament: Tournament) => {
+    setEditingTournament(tournament);
+    setEditFormData({
+      title: tournament.title,
+      map: tournament.map,
+      matchType: tournament.match_type,
+      entryFee: tournament.entry_fee.toString(),
+      prizePool: tournament.prize_pool.toString(),
+      perKillPrize: tournament.per_kill_prize.toString(),
+      maxSlots: tournament.max_slots.toString(),
+      dateTime: new Date(tournament.start_time).toISOString().slice(0, 16),
+    });
+    setEditModalOpen(true);
+  };
+
+  const handleUpdateTournament = async () => {
+    if (!editingTournament) return;
+
+    try {
+      const { error } = await supabase
+        .from("tournaments")
+        .update({
+          title: editFormData.title,
+          map: editFormData.map,
+          match_type: editFormData.matchType,
+          entry_fee: parseFloat(editFormData.entryFee),
+          prize_pool: parseFloat(editFormData.prizePool),
+          per_kill_prize: parseFloat(editFormData.perKillPrize) || 0,
+          max_slots: parseInt(editFormData.maxSlots),
+          start_time: new Date(editFormData.dateTime).toISOString(),
+        })
+        .eq("id", editingTournament.id);
+
+      if (error) throw error;
+
+      toast.success("Tournament updated successfully!");
+      setEditModalOpen(false);
+      setEditingTournament(null);
+      fetchAllTournaments();
+      fetchTournaments();
+    } catch (error) {
+      console.error("Error updating tournament:", error);
+      toast.error("Failed to update tournament");
+    }
+  };
+
+  const handleDeleteClick = (tournamentId: string) => {
+    setTournamentToDelete(tournamentId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!tournamentToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from("tournaments")
+        .delete()
+        .eq("id", tournamentToDelete);
+
+      if (error) throw error;
+
+      toast.success("Tournament deleted successfully!");
+      setDeleteDialogOpen(false);
+      setTournamentToDelete(null);
+      fetchAllTournaments();
+      fetchTournaments();
+    } catch (error) {
+      console.error("Error deleting tournament:", error);
+      toast.error("Failed to delete tournament");
     }
   };
 
@@ -617,6 +751,200 @@ const ManageTournaments = () => {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Manage Tournaments Table */}
+      <Card className="bg-card/50 backdrop-blur-xl border-admin-red/20">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <List className="h-6 w-6 text-primary" />
+            <CardTitle className="text-xl font-gaming text-foreground">
+              Manage Tournaments
+            </CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-lg border border-border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead>Title</TableHead>
+                  <TableHead>Date & Time</TableHead>
+                  <TableHead>Entry Fee</TableHead>
+                  <TableHead>Slots</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {allTournaments.map((tournament) => (
+                  <TableRow key={tournament.id}>
+                    <TableCell className="font-medium">{tournament.title}</TableCell>
+                    <TableCell>{new Date(tournament.start_time).toLocaleString()}</TableCell>
+                    <TableCell>₹{tournament.entry_fee}</TableCell>
+                    <TableCell>{tournament.current_slots}/{tournament.max_slots}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        tournament.status === 'open' ? 'bg-green-500/20 text-green-400' :
+                        tournament.status === 'full' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-muted text-muted-foreground'
+                      }`}>
+                        {tournament.status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditClick(tournament)}
+                          className="border-admin-gold/30 hover:bg-admin-gold/10"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleDeleteClick(tournament.id)}
+                          className="border-destructive/30 hover:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Edit Tournament Modal */}
+      <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+        <DialogContent className="max-w-2xl bg-background border-admin-gold/30">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-gaming text-admin-gold">Edit Tournament</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2 md:col-span-2">
+                <Label>Tournament Title</Label>
+                <Input
+                  value={editFormData.title}
+                  onChange={(e) => setEditFormData({ ...editFormData, title: e.target.value })}
+                  className="bg-background/50 border-admin-red/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Map</Label>
+                <Select value={editFormData.map} onValueChange={(val) => setEditFormData({ ...editFormData, map: val })}>
+                  <SelectTrigger className="bg-background/50 border-admin-red/30">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Erangel">Erangel</SelectItem>
+                    <SelectItem value="Livik">Livik</SelectItem>
+                    <SelectItem value="Miramar">Miramar</SelectItem>
+                    <SelectItem value="Sanhok">Sanhok</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Match Type</Label>
+                <Select value={editFormData.matchType} onValueChange={(val) => setEditFormData({ ...editFormData, matchType: val })}>
+                  <SelectTrigger className="bg-background/50 border-admin-red/30">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Solo">Solo</SelectItem>
+                    <SelectItem value="Duo">Duo</SelectItem>
+                    <SelectItem value="Squad">Squad</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Entry Fee (₹)</Label>
+                <Input
+                  type="number"
+                  value={editFormData.entryFee}
+                  onChange={(e) => setEditFormData({ ...editFormData, entryFee: e.target.value })}
+                  className="bg-background/50 border-admin-red/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Prize Pool (₹)</Label>
+                <Input
+                  type="number"
+                  value={editFormData.prizePool}
+                  onChange={(e) => setEditFormData({ ...editFormData, prizePool: e.target.value })}
+                  className="bg-background/50 border-admin-red/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Per Kill Prize (₹)</Label>
+                <Input
+                  type="number"
+                  value={editFormData.perKillPrize}
+                  onChange={(e) => setEditFormData({ ...editFormData, perKillPrize: e.target.value })}
+                  className="bg-background/50 border-admin-red/30"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Max Slots</Label>
+                <Input
+                  type="number"
+                  value={editFormData.maxSlots}
+                  onChange={(e) => setEditFormData({ ...editFormData, maxSlots: e.target.value })}
+                  className="bg-background/50 border-admin-red/30"
+                />
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label>Start Date & Time</Label>
+                <Input
+                  type="datetime-local"
+                  value={editFormData.dateTime}
+                  onChange={(e) => setEditFormData({ ...editFormData, dateTime: e.target.value })}
+                  className="bg-background/50 border-admin-red/30"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-4">
+              <Button variant="outline" onClick={() => setEditModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleUpdateTournament} className="bg-admin-gold text-admin-gold-foreground hover:bg-admin-gold/80">
+                Save Changes
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent className="bg-background border-destructive/30">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete this tournament. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive hover:bg-destructive/80">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

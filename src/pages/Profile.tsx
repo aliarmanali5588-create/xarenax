@@ -36,26 +36,30 @@ const Profile = () => {
   }, [user]);
 
   const fetchProfileData = async () => {
+    if (!user?.id) return;
+    
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('username, ign, bgmi_id, created_at, total_winnings')
-        .eq('id', user?.id)
-        .single();
+        .eq('id', user.id)
+        .maybeSingle();
 
       if (error) throw error;
-      setProfileData(data);
+      if (data) setProfileData(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
   };
 
   const fetchTournamentStats = async () => {
+    if (!user?.id) return;
+    
     try {
       const { data, error } = await supabase
         .from('participants')
         .select('rank')
-        .eq('user_id', user?.id);
+        .eq('user_id', user.id);
 
       if (error) throw error;
 

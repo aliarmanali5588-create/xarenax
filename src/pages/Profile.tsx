@@ -1,7 +1,6 @@
-import { User, Mail, Phone, Calendar, Trophy, Target, Award } from "lucide-react";
+import { User, Mail, Calendar, Trophy, Target, Award } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WithdrawalSettings from "@/components/profile/WithdrawalSettings";
@@ -9,23 +8,98 @@ import SupportCard from "@/components/support/SupportCard";
 import { useAuth } from "@/contexts/AuthContext";
 import TournamentRoomDetails from "@/components/tournaments/TournamentRoomDetails";
 import ProfileStatsSkeleton from "@/components/profile/ProfileStatsSkeleton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Navigate } from "react-router-dom";
+
+interface ProfileData {
+  username: string;
+  ign: string | null;
+  bgmi_id: string | null;
+  created_at: string;
+  total_winnings: number;
+}
 
 const Profile = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
-  
-  // Simulate loading stats (replace with actual data fetch)
-  useState(() => {
-    const timer = setTimeout(() => setStatsLoading(false), 1000);
-    return () => clearTimeout(timer);
+  const [tournamentStats, setTournamentStats] = useState({
+    played: 0,
+    winRate: 0
   });
-  
+
+  useEffect(() => {
+    if (user) {
+      fetchProfileData();
+      fetchTournamentStats();
+    }
+  }, [user]);
+
+  const fetchProfileData = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('username, ign, bgmi_id, created_at, total_winnings')
+        .eq('id', user?.id)
+        .single();
+
+      if (error) throw error;
+      setProfileData(data);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
+
+  const fetchTournamentStats = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('participants')
+        .select('rank')
+        .eq('user_id', user?.id);
+
+      if (error) throw error;
+
+      const played = data?.length || 0;
+      const wins = data?.filter(p => p.rank === 1).length || 0;
+      const winRate = played > 0 ? Math.round((wins / played) * 100) : 0;
+
+      setTournamentStats({ played, winRate });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   const stats = [
-    { label: "Tournaments Played", value: "12", icon: Trophy },
-    { label: "Win Rate", value: "33%", icon: Target },
-    { label: "Total Winnings", value: "₹1,000", icon: Award },
+    { label: "Tournaments Played", value: tournamentStats.played.toString(), icon: Trophy },
+    { label: "Win Rate", value: `${tournamentStats.winRate}%`, icon: Target },
+    { label: "Total Winnings", value: `₹${profileData?.total_winnings || 0}`, icon: Award },
   ];
+
+  const userInitials = profileData?.username 
+    ? profileData.username.substring(0, 2).toUpperCase()
+    : user.email?.substring(0, 2).toUpperCase() || "U";
+
+  const memberSince = profileData?.created_at 
+    ? new Date(profileData.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    : 'Recently';
 
   return (
     <div className="min-h-screen overflow-x-hidden">
@@ -59,14 +133,17 @@ const Profile = () => {
                   <Avatar className="w-32 h-32 border-4 border-primary/30 neon-glow-cyan">
                     <AvatarImage src="" alt="Profile" />
                     <AvatarFallback className="text-4xl font-gaming bg-gradient-to-br from-primary to-accent text-background">
-                      PX
+                      {userInitials}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1 text-center md:text-left">
-                    <h2 className="text-xl sm:text-2xl md:text-3xl font-gaming font-bold mb-2">ProGamer_X</h2>
-                    <p className="text-sm sm:text-base text-muted-foreground mb-3 md:mb-4">Member since Jan 2024</p>
-                    <Button variant="neon" className="w-full md:w-auto">Edit Profile</Button>
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-gaming font-bold mb-2">
+                      {profileData?.username || user.email?.split('@')[0] || 'Player'}
+                    </h2>
+                    <p className="text-sm sm:text-base text-muted-foreground mb-3 md:mb-4">
+                      Member since {memberSince}
+                    </p>
                   </div>
                 </div>
 
@@ -78,17 +155,7 @@ const Profile = () => {
                     </div>
                     <div>
                       <div className="text-sm text-muted-foreground">Email</div>
-                      <div className="font-medium">progamer@example.com</div>
-                    </div>
-                  </div>
-
-                  <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                      <Phone className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Phone</div>
-                      <div className="font-medium">+91 98765 43210</div>
+                      <div className="font-medium">{user.email}</div>
                     </div>
                   </div>
 
@@ -97,8 +164,18 @@ const Profile = () => {
                       <User className="w-5 h-5 text-primary" />
                     </div>
                     <div>
-                      <div className="text-sm text-muted-foreground">PUBG ID</div>
-                      <div className="font-medium">51234567890</div>
+                      <div className="text-sm text-muted-foreground">IGN (In-Game Name)</div>
+                      <div className="font-medium">{profileData?.ign || 'Not set'}</div>
+                    </div>
+                  </div>
+
+                  <div className="glass-panel rounded-lg p-4 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                      <User className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="text-sm text-muted-foreground">BGMI ID</div>
+                      <div className="font-medium">{profileData?.bgmi_id || 'Not set'}</div>
                     </div>
                   </div>
 
@@ -108,7 +185,7 @@ const Profile = () => {
                     </div>
                     <div>
                       <div className="text-sm text-muted-foreground">Member Since</div>
-                      <div className="font-medium">January 2024</div>
+                      <div className="font-medium">{memberSince}</div>
                     </div>
                   </div>
                 </div>

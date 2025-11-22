@@ -98,19 +98,25 @@ const AdminWithdrawals = () => {
     fetchWithdrawalRequests();
   }, []);
 
-  const handleMarkAsPaid = async (id: string, userId: string) => {
+  const handleMarkAsPaid = async (requestId: string, userId: string) => {
     try {
-      // Update withdrawal request status
-      const { error: updateError } = await supabase
+      console.log("Marking as paid - Request ID:", requestId);
+      
+      // CRITICAL: Target ONLY this specific request by its unique ID
+      const { data, error: updateError } = await supabase
         .from("withdrawal_requests")
         .update({ 
           status: "paid",
           processed_at: new Date().toISOString(),
           processed_by: (await supabase.auth.getUser()).data.user?.id
         })
-        .eq("id", id);
+        .eq("id", requestId) // <-- MUST use request ID, NOT user_id
+        .select()
+        .single(); // Ensure only ONE row is updated
 
       if (updateError) throw updateError;
+      
+      console.log("Updated request:", data);
 
       // Send notification
       await supabase.from("notifications").insert({
@@ -123,18 +129,21 @@ const AdminWithdrawals = () => {
       toast.success("Withdrawal marked as paid!");
       fetchWithdrawalRequests();
     } catch (error: any) {
+      console.error("Mark as paid error:", error);
       toast.error("Failed to mark as paid: " + error.message);
     }
   };
 
-  const handleReject = async (id: string, userId: string, amount: number) => {
+  const handleReject = async (requestId: string, userId: string, amount: number) => {
     try {
+      console.log("Rejecting withdrawal - Request ID:", requestId);
+      
       // 1. Refund to wallet
       const { data: profile, error: fetchError } = await supabase
         .from("profiles")
         .select("wallet_balance")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
 
       if (fetchError) throw fetchError;
       if (!profile) throw new Error("User profile not found");
@@ -146,17 +155,21 @@ const AdminWithdrawals = () => {
 
       if (walletError) throw walletError;
 
-      // 2. Update withdrawal request status
-      const { error: updateError } = await supabase
+      // 2. CRITICAL: Update ONLY this specific request by its unique ID
+      const { data, error: updateError } = await supabase
         .from("withdrawal_requests")
         .update({ 
           status: "rejected",
           processed_at: new Date().toISOString(),
           processed_by: (await supabase.auth.getUser()).data.user?.id
         })
-        .eq("id", id);
+        .eq("id", requestId) // <-- MUST use request ID, NOT user_id
+        .select()
+        .single(); // Ensure only ONE row is updated
 
       if (updateError) throw updateError;
+      
+      console.log("Rejected request:", data);
 
       // 3. Log refund transaction
       await supabase.from("transactions").insert({

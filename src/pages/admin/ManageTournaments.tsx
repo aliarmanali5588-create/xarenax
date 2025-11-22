@@ -448,6 +448,16 @@ const ManageTournaments = () => {
     setUpdatingRoom(true);
 
     try {
+      // Debug: Check current auth status
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      console.log("Current user:", user?.id, user?.email);
+      
+      if (authError || !user) {
+        toast.error("Authentication error. Please log in again.");
+        setUpdatingRoom(false);
+        return;
+      }
+
       // Use upsert to handle both insert and update
       const { error: upsertError } = await supabase
         .from("tournament_secrets")
@@ -461,8 +471,15 @@ const ManageTournaments = () => {
         );
 
       if (upsertError) {
-        console.error("Upsert error:", upsertError);
-        throw new Error(`Failed to save room details: ${upsertError.message}`);
+        console.error("Upsert error details:", {
+          message: upsertError.message,
+          details: upsertError.details,
+          hint: upsertError.hint,
+          code: upsertError.code
+        });
+        toast.error(`Database error: ${upsertError.message}`);
+        setUpdatingRoom(false);
+        return;
       }
 
       // Update tournament status to 'live'
@@ -496,10 +513,9 @@ const ManageTournaments = () => {
       setSelectedTournamentForRoom(null);
       fetchAllTournaments();
       fetchTournaments();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating room details:", error);
-      toast.error("Failed to update room details");
-    } finally {
+      toast.error(error?.message || "Failed to update room details");
       setUpdatingRoom(false);
     }
   };

@@ -89,12 +89,6 @@ const ManageTournaments = () => {
   });
   const [loading, setLoading] = useState(false);
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
-  const [selectedTournamentId, setSelectedTournamentId] = useState("");
-  const [roomCredentials, setRoomCredentials] = useState({
-    roomId: "",
-    roomPassword: "",
-  });
-  const [updatingRoom, setUpdatingRoom] = useState(false);
   const [selectedResultTournamentId, setSelectedResultTournamentId] = useState("");
   const [winnerUsername, setWinnerUsername] = useState("");
   const [distributingPrize, setDistributingPrize] = useState(false);
@@ -113,6 +107,13 @@ const ManageTournaments = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [tournamentToDelete, setTournamentToDelete] = useState<string | null>(null);
   const [allTournaments, setAllTournaments] = useState<Tournament[]>([]);
+  const [roomModalOpen, setRoomModalOpen] = useState(false);
+  const [selectedTournamentForRoom, setSelectedTournamentForRoom] = useState<Tournament | null>(null);
+  const [roomFormData, setRoomFormData] = useState({
+    roomId: "",
+    roomPassword: "",
+  });
+  const [updatingRoom, setUpdatingRoom] = useState(false);
 
   useEffect(() => {
     fetchTournaments();
@@ -124,7 +125,7 @@ const ManageTournaments = () => {
       const { data, error } = await supabase
         .from("tournaments")
         .select("*")
-        .in("status", ["open", "full"])
+        .in("status", ["upcoming", "live", "full"])
         .order("start_time", { ascending: true });
 
       if (error) throw error;
@@ -197,7 +198,7 @@ const ManageTournaments = () => {
           per_kill_prize: parseFloat(formData.perKillPrize) || 0,
           max_slots: parseInt(formData.maxSlots),
           start_time: new Date(formData.dateTime).toISOString(),
-          status: "open",
+          status: "upcoming",
           created_by: user?.id,
         });
 
@@ -336,85 +337,6 @@ const ManageTournaments = () => {
     }
   };
 
-  const handleUpdateRoomDetails = async () => {
-    if (!selectedTournamentId || !roomCredentials.roomId || !roomCredentials.roomPassword) {
-      toast.error("Please select a tournament and fill all room details");
-      return;
-    }
-
-    setUpdatingRoom(true);
-
-    try {
-      // Check if tournament_secrets already exists for this tournament
-      const { data: existingSecret, error: checkError } = await supabase
-        .from("tournament_secrets")
-        .select("id")
-        .eq("tournament_id", selectedTournamentId)
-        .maybeSingle();
-
-      if (checkError) throw checkError;
-
-      if (existingSecret) {
-        // Update existing secret
-        const { error } = await supabase
-          .from("tournament_secrets")
-          .update({
-            room_id: roomCredentials.roomId,
-            room_password: roomCredentials.roomPassword,
-          })
-          .eq("tournament_id", selectedTournamentId);
-
-        if (error) throw error;
-      } else {
-        // Insert new secret
-        const { error } = await supabase
-          .from("tournament_secrets")
-          .insert({
-            tournament_id: selectedTournamentId,
-            room_id: roomCredentials.roomId,
-            room_password: roomCredentials.roomPassword,
-          });
-
-        if (error) throw error;
-      }
-
-      // Get tournament details for notification
-      const { data: tournament } = await supabase
-        .from("tournaments")
-        .select("title")
-        .eq("id", selectedTournamentId)
-        .single();
-
-      // Get all paid participants
-      const { data: participants } = await supabase
-        .from("participants")
-        .select("user_id")
-        .eq("tournament_id", selectedTournamentId)
-        .eq("payment_status", "paid");
-
-      // Send notification to all participants
-      if (participants && participants.length > 0) {
-        const notifications = participants.map(p => ({
-          user_id: p.user_id,
-          title: "🎮 Room ID Available!",
-          message: `Room ID for ${tournament?.title || "your match"} is now available! Check "My Matches" section.`,
-          type: "match"
-        }));
-
-        await supabase.from("notifications").insert(notifications);
-      }
-
-      toast.success(`Room details updated & ${participants?.length || 0} participants notified!`);
-      setRoomCredentials({ roomId: "", roomPassword: "" });
-      setSelectedTournamentId("");
-    } catch (error) {
-      console.error("Error updating room details:", error);
-      toast.error("Failed to update room details");
-    } finally {
-      setUpdatingRoom(false);
-    }
-  };
-
   const handleEditClick = (tournament: Tournament) => {
     setEditingTournament(tournament);
     setEditFormData({
@@ -485,6 +407,116 @@ const ManageTournaments = () => {
     } catch (error) {
       console.error("Error cancelling tournament:", error);
       toast.error("Failed to cancel tournament");
+    }
+  };
+
+  const handleManageRoomClick = async (tournament: Tournament) => {
+    setSelectedTournamentForRoom(tournament);
+    
+    // Fetch existing room credentials if any
+    try {
+      const { data, error } = await supabase
+        .from("tournament_secrets")
+        .select("room_id, room_password")
+        .eq("tournament_id", tournament.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        setRoomFormData({
+          roomId: data.room_id || "",
+          roomPassword: data.room_password || "",
+        });
+      } else {
+        setRoomFormData({ roomId: "", roomPassword: "" });
+      }
+    } catch (error) {
+      console.error("Error fetching room credentials:", error);
+      setRoomFormData({ roomId: "", roomPassword: "" });
+    }
+
+    setRoomModalOpen(true);
+  };
+
+  const handleSaveRoomCredentials = async () => {
+    if (!selectedTournamentForRoom || !roomFormData.roomId || !roomFormData.roomPassword) {
+      toast.error("Please fill all room details");
+      return;
+    }
+
+    setUpdatingRoom(true);
+
+    try {
+      // Check if tournament_secrets already exists
+      const { data: existingSecret, error: checkError } = await supabase
+        .from("tournament_secrets")
+        .select("id")
+        .eq("tournament_id", selectedTournamentForRoom.id)
+        .maybeSingle();
+
+      if (checkError) throw checkError;
+
+      if (existingSecret) {
+        // Update existing secret
+        const { error } = await supabase
+          .from("tournament_secrets")
+          .update({
+            room_id: roomFormData.roomId,
+            room_password: roomFormData.roomPassword,
+          })
+          .eq("tournament_id", selectedTournamentForRoom.id);
+
+        if (error) throw error;
+      } else {
+        // Insert new secret
+        const { error } = await supabase
+          .from("tournament_secrets")
+          .insert({
+            tournament_id: selectedTournamentForRoom.id,
+            room_id: roomFormData.roomId,
+            room_password: roomFormData.roomPassword,
+          });
+
+        if (error) throw error;
+      }
+
+      // Update tournament status to 'live'
+      await supabase
+        .from("tournaments")
+        .update({ status: "live" })
+        .eq("id", selectedTournamentForRoom.id);
+
+      // Get all paid participants
+      const { data: participants } = await supabase
+        .from("participants")
+        .select("user_id")
+        .eq("tournament_id", selectedTournamentForRoom.id)
+        .eq("payment_status", "paid");
+
+      // Send notification to all participants
+      if (participants && participants.length > 0) {
+        const notifications = participants.map(p => ({
+          user_id: p.user_id,
+          title: "🔴 MATCH IS LIVE!",
+          message: `Room ID for ${selectedTournamentForRoom.title} is now available! The match is LIVE. Check "My Matches" section to get room details.`,
+          type: "match"
+        }));
+
+        await supabase.from("notifications").insert(notifications);
+      }
+
+      toast.success(`Room details updated & ${participants?.length || 0} participants notified!`);
+      setRoomModalOpen(false);
+      setRoomFormData({ roomId: "", roomPassword: "" });
+      setSelectedTournamentForRoom(null);
+      fetchAllTournaments();
+      fetchTournaments();
+    } catch (error) {
+      console.error("Error updating room details:", error);
+      toast.error("Failed to update room details");
+    } finally {
+      setUpdatingRoom(false);
     }
   };
 
@@ -645,65 +677,7 @@ const ManageTournaments = () => {
         </CardContent>
       </Card>
 
-      {/* Update Room Details */}
-      <Card className="bg-card/50 backdrop-blur-xl border-admin-red/20">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <Key className="h-6 w-6 text-cyan-400" />
-            <CardTitle className="text-xl font-gaming text-foreground">
-              Update Room Details
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="matchSelect">Select Match</Label>
-              <Select value={selectedTournamentId} onValueChange={setSelectedTournamentId}>
-                <SelectTrigger className="bg-background/50 border-border">
-                  <SelectValue placeholder="Choose match" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tournaments.map((tournament) => (
-                    <SelectItem key={tournament.id} value={tournament.id}>
-                      {tournament.map} {tournament.match_type} - {new Date(tournament.start_time).toLocaleString()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="roomId">Room ID</Label>
-              <Input
-                id="roomId"
-                placeholder="Enter Room ID"
-                value={roomCredentials.roomId}
-                onChange={(e) => setRoomCredentials({ ...roomCredentials, roomId: e.target.value })}
-                className="bg-background/50 border-border"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                placeholder="Enter Password"
-                value={roomCredentials.roomPassword}
-                onChange={(e) => setRoomCredentials({ ...roomCredentials, roomPassword: e.target.value })}
-                className="bg-background/50 border-border"
-              />
-            </div>
-          </div>
-          <Button 
-            onClick={handleUpdateRoomDetails}
-            disabled={updatingRoom}
-            className="bg-cyan-500 hover:bg-cyan-600 text-white"
-          >
-            {updatingRoom ? "Updating..." : "Update & Notify Players"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Match Result Entry */}
+      {/* Manage Tournaments Table */}
       <Card className="bg-card/50 backdrop-blur-xl border-admin-red/20">
         <CardHeader>
           <div className="flex items-center gap-3">
@@ -779,20 +753,41 @@ const ManageTournaments = () => {
                 {allTournaments.map((tournament) => (
                   <TableRow key={tournament.id}>
                     <TableCell className="font-medium">{tournament.title}</TableCell>
-                    <TableCell>{new Date(tournament.start_time).toLocaleString()}</TableCell>
+                    <TableCell>{new Date(tournament.start_time).toLocaleString('en-US', { 
+                      day: '2-digit', 
+                      month: 'short', 
+                      hour: '2-digit', 
+                      minute: '2-digit',
+                      hour12: true 
+                    })}</TableCell>
                     <TableCell>₹{tournament.entry_fee}</TableCell>
                     <TableCell>{tournament.current_slots}/{tournament.max_slots}</TableCell>
                     <TableCell>
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        tournament.status === 'open' ? 'bg-green-500/20 text-green-400' :
+                      <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                        tournament.status === 'upcoming' ? 'bg-blue-500/20 text-blue-400' :
+                        tournament.status === 'live' ? 'bg-red-500/20 text-red-400 animate-pulse' :
                         tournament.status === 'full' ? 'bg-yellow-500/20 text-yellow-400' :
+                        tournament.status === 'open' ? 'bg-green-500/20 text-green-400' :
                         'bg-muted text-muted-foreground'
                       }`}>
-                        {tournament.status}
+                        {tournament.status === 'upcoming' ? '📅 Upcoming' :
+                         tournament.status === 'live' ? '🔴 LIVE' :
+                         tournament.status === 'full' ? '🔒 Full' :
+                         tournament.status === 'open' ? '✅ Open' :
+                         tournament.status}
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleManageRoomClick(tournament)}
+                          className="border-cyan-400/30 hover:bg-cyan-400/10"
+                          title="Manage Room Credentials"
+                        >
+                          <Key className="h-4 w-4" />
+                        </Button>
                         <Button
                           size="sm"
                           variant="outline"
@@ -923,6 +918,79 @@ const ManageTournaments = () => {
               </Button>
               <Button onClick={handleUpdateTournament} className="bg-admin-gold text-admin-gold-foreground hover:bg-admin-gold/80">
                 Save Changes
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Room Credentials Modal */}
+      <Dialog open={roomModalOpen} onOpenChange={setRoomModalOpen}>
+        <DialogContent className="max-w-md bg-background border-cyan-400/30">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-gaming text-cyan-400 flex items-center gap-2">
+              <Key className="h-6 w-6" />
+              Manage Room Credentials
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {selectedTournamentForRoom && (
+              <div className="p-3 bg-muted/50 rounded-lg">
+                <p className="text-sm text-muted-foreground">Tournament</p>
+                <p className="font-semibold">{selectedTournamentForRoom.title}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {new Date(selectedTournamentForRoom.start_time).toLocaleString('en-US', { 
+                    day: '2-digit', 
+                    month: 'short', 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: true 
+                  })}
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="roomIdInput">Room ID</Label>
+              <Input
+                id="roomIdInput"
+                placeholder="Enter Room ID"
+                value={roomFormData.roomId}
+                onChange={(e) => setRoomFormData({ ...roomFormData, roomId: e.target.value })}
+                className="bg-background/50 border-border"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="roomPasswordInput">Room Password</Label>
+              <Input
+                id="roomPasswordInput"
+                placeholder="Enter Password"
+                value={roomFormData.roomPassword}
+                onChange={(e) => setRoomFormData({ ...roomFormData, roomPassword: e.target.value })}
+                className="bg-background/50 border-border"
+              />
+            </div>
+
+            <div className="bg-cyan-500/10 border border-cyan-400/30 rounded-lg p-3">
+              <p className="text-xs text-cyan-400 font-semibold">⚡ What happens when you save:</p>
+              <ul className="text-xs text-muted-foreground mt-2 space-y-1">
+                <li>✓ Tournament status changes to <span className="text-red-400 font-semibold">LIVE</span></li>
+                <li>✓ All paid participants get notified instantly</li>
+                <li>✓ Room credentials become visible to participants</li>
+              </ul>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-2">
+              <Button variant="outline" onClick={() => setRoomModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveRoomCredentials} 
+                disabled={updatingRoom}
+                className="bg-cyan-500 hover:bg-cyan-600 text-white"
+              >
+                {updatingRoom ? "Saving..." : "Save & Go LIVE"}
               </Button>
             </div>
           </div>

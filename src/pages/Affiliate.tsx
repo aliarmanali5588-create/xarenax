@@ -39,13 +39,15 @@ const Affiliate = () => {
   }, [user]);
 
   const fetchAffiliateData = async () => {
+    if (!user?.id) return;
+    
     try {
       setLoading(true);
 
       // Fetch stats using the database function
       const { data: statsData, error: statsError } = await supabase.rpc(
         "get_affiliate_stats",
-        { p_user_id: user?.id }
+        { p_user_id: user.id }
       );
 
       if (statsError) throw statsError;
@@ -55,7 +57,7 @@ const Affiliate = () => {
       const { data: referralsData, error: referralsError } = await supabase
         .from("profiles")
         .select("id, username, created_at, total_deposited, total_winnings")
-        .eq("referred_by", user?.id)
+        .eq("referred_by", user.id)
         .order("created_at", { ascending: false })
         .limit(10);
 

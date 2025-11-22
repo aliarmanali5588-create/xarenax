@@ -45,7 +45,7 @@ const AdminWithdrawals = () => {
           status,
           created_at,
           payment_method_id,
-          user_payment_methods!inner(
+          user_payment_methods(
             upi_id_1,
             upi_id_2,
             bank_account_no,
@@ -77,11 +77,11 @@ const AdminWithdrawals = () => {
         user_id: req.user_id,
         username: profileMap.get(req.user_id) || "Unknown",
         amount: req.amount,
-        upi_id_1: req.user_payment_methods.upi_id_1,
-        upi_id_2: req.user_payment_methods.upi_id_2,
-        bank_account_no: req.user_payment_methods.bank_account_no,
-        bank_name: req.user_payment_methods.bank_name,
-        bank_ifsc: req.user_payment_methods.bank_ifsc,
+        upi_id_1: req.user_payment_methods?.upi_id_1,
+        upi_id_2: req.user_payment_methods?.upi_id_2,
+        bank_account_no: req.user_payment_methods?.bank_account_no,
+        bank_name: req.user_payment_methods?.bank_name,
+        bank_ifsc: req.user_payment_methods?.bank_ifsc,
         status: req.status,
         created_at: req.created_at,
       }));
@@ -279,42 +279,50 @@ const AdminWithdrawals = () => {
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1 text-xs">
-                        {request.upi_id_1 && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">UPI 1:</span>
-                            <span className="text-foreground font-mono">
-                              {request.upi_id_1} 🔒
-                            </span>
-                          </div>
-                        )}
-                        {request.upi_id_2 && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-muted-foreground">UPI 2:</span>
-                            <span className="text-foreground font-mono">
-                              {request.upi_id_2} 🔒
-                            </span>
-                          </div>
-                        )}
-                        {request.bank_account_no && (
+                        {!request.upi_id_1 && !request.upi_id_2 && !request.bank_account_no ? (
+                          <span className="text-orange-400 font-medium">
+                            ⚠️ Not Set Up
+                          </span>
+                        ) : (
                           <>
-                            <div className="flex items-center gap-2">
-                              <span className="text-muted-foreground">Bank:</span>
-                              <span className="text-foreground">
-                                {request.bank_name}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-muted-foreground">A/C:</span>
-                              <span className="text-foreground font-mono">
-                                {request.bank_account_no} 🔒
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-muted-foreground">IFSC:</span>
-                              <span className="text-foreground font-mono">
-                                {request.bank_ifsc}
-                              </span>
-                            </div>
+                            {request.upi_id_1 && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-muted-foreground">UPI 1:</span>
+                                <span className="text-foreground font-mono">
+                                  {request.upi_id_1} 🔒
+                                </span>
+                              </div>
+                            )}
+                            {request.upi_id_2 && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-muted-foreground">UPI 2:</span>
+                                <span className="text-foreground font-mono">
+                                  {request.upi_id_2} 🔒
+                                </span>
+                              </div>
+                            )}
+                            {request.bank_account_no && (
+                              <>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-muted-foreground">Bank:</span>
+                                  <span className="text-foreground">
+                                    {request.bank_name}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-muted-foreground">A/C:</span>
+                                  <span className="text-foreground font-mono">
+                                    {request.bank_account_no} 🔒
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-muted-foreground">IFSC:</span>
+                                  <span className="text-foreground font-mono">
+                                    {request.bank_ifsc}
+                                  </span>
+                                </div>
+                              </>
+                            )}
                           </>
                         )}
                       </div>

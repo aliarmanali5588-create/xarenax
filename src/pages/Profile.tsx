@@ -109,28 +109,28 @@ const Profile = () => {
           </div>
 
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-3 p-2 mb-4 md:mb-6 glass-panel">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 p-2 mb-4 md:mb-6 glass-panel">
               <TabsTrigger 
                 value="overview" 
-                className="font-heading text-sm md:text-base font-bold py-4 data-[state=active]:bg-primary/20 data-[state=active]:neon-glow-cyan data-[state=active]:border-primary/50 data-[state=active]:border transition-all"
+                className="w-full py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-white/5 hover:bg-white/5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:border-primary/50 data-[state=active]:text-foreground data-[state=active]:shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)] data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger 
                 value="my-matches" 
-                className="font-heading text-sm md:text-base font-bold py-4 data-[state=active]:bg-primary/20 data-[state=active]:neon-glow-cyan data-[state=active]:border-primary/50 data-[state=active]:border transition-all"
+                className="w-full py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-white/5 hover:bg-white/5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:border-primary/50 data-[state=active]:text-foreground data-[state=active]:shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)] data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground"
               >
                 My Matches
               </TabsTrigger>
               <TabsTrigger 
                 value="withdrawal" 
-                className="font-heading text-sm md:text-base font-bold py-4 data-[state=active]:bg-primary/20 data-[state=active]:neon-glow-cyan data-[state=active]:border-primary/50 data-[state=active]:border transition-all"
+                className="w-full py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-white/5 hover:bg-white/5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:border-primary/50 data-[state=active]:text-foreground data-[state=active]:shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)] data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground"
               >
                 Withdrawal
               </TabsTrigger>
               <TabsTrigger 
                 value="support" 
-                className="font-heading text-sm md:text-base font-bold py-4 data-[state=active]:bg-primary/20 data-[state=active]:neon-glow-cyan data-[state=active]:border-primary/50 data-[state=active]:border transition-all"
+                className="w-full py-3 text-sm font-medium rounded-lg transition-all duration-200 border border-white/5 hover:bg-white/5 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary/20 data-[state=active]:to-accent/20 data-[state=active]:border-primary/50 data-[state=active]:text-foreground data-[state=active]:shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)] data-[state=inactive]:text-muted-foreground data-[state=inactive]:hover:text-foreground"
               >
                 Support
               </TabsTrigger>

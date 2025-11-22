@@ -67,6 +67,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkAdminRole = async (userId: string) => {
     try {
+      // Get user email for super admin check
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      
+      // Hardcoded super admin access
+      if (currentUser?.email === 'ashadislam333@gmail.com') {
+        setIsAdmin(true);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")

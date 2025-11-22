@@ -55,7 +55,7 @@ const AdminReferrals = () => {
       const { data: commissions } = await supabase
         .from("transactions")
         .select("user_id, amount")
-        .in("type", ["referral_signup_bonus", "referral_win_bonus"]);
+        .in("type", ["referral_bonus", "affiliate_commission", "referral_signup_bonus", "referral_win_bonus"]);
 
       const commissionMap = new Map<string, number>();
       commissions?.forEach(c => {

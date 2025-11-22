@@ -35,7 +35,7 @@ const Tournaments = () => {
       const { data, error } = await supabase
         .from("tournaments")
         .select("*")
-        .in("status", ["open", "full"])
+        .in("status", ["upcoming", "open", "full"])
         .order("start_time", { ascending: true });
 
       if (error) {

@@ -95,6 +95,24 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
 
       if (transactionError) throw transactionError;
 
+      // Send notification to user
+      const notificationMessage = type === "winning" 
+        ? `Congratulations! You received ₹${amountNum} as tournament winnings. ${description.trim()}`
+        : type === "refund"
+        ? `Your refund of ₹${amountNum} has been processed. ${description.trim()}`
+        : `You received a bonus of ₹${amountNum}! ${description.trim()}`;
+
+      const { error: notificationError } = await supabase
+        .from("notifications")
+        .insert({
+          user_id: user.id,
+          title: type === "winning" ? "🏆 Tournament Winning!" : type === "refund" ? "💰 Refund Processed" : "🎁 Bonus Received",
+          message: notificationMessage,
+          type: "payment",
+        });
+
+      if (notificationError) console.error("Notification error:", notificationError);
+
       toast.success(`₹${amountNum} sent to ${user.username} successfully!`);
       
       // Reset form

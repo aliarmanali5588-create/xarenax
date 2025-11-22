@@ -27,6 +27,7 @@ import ManageTournaments from "./pages/admin/ManageTournaments";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminReferrals from "./pages/admin/AdminReferrals";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => {
                 <Route path="tournaments" element={<ManageTournaments />} />
                 <Route path="withdrawals" element={<AdminWithdrawals />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="referrals" element={<AdminReferrals />} />
                 <Route path="settings" element={<AdminSettings />} />
               </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

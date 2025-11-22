@@ -461,30 +461,30 @@ const ManageTournaments = () => {
     }
   };
 
-  const handleDeleteClick = (tournamentId: string) => {
+  const handleCancelClick = (tournamentId: string) => {
     setTournamentToDelete(tournamentId);
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmCancel = async () => {
     if (!tournamentToDelete) return;
 
     try {
-      const { error } = await supabase
-        .from("tournaments")
-        .delete()
-        .eq("id", tournamentToDelete);
+      // Call the cancel_tournament RPC function for automatic refunds
+      const { error } = await supabase.rpc("cancel_tournament", {
+        match_id: tournamentToDelete,
+      });
 
       if (error) throw error;
 
-      toast.success("Tournament deleted successfully!");
+      toast.success("Tournament cancelled & all participants refunded!");
       setDeleteDialogOpen(false);
       setTournamentToDelete(null);
       fetchAllTournaments();
       fetchTournaments();
     } catch (error) {
-      console.error("Error deleting tournament:", error);
-      toast.error("Failed to delete tournament");
+      console.error("Error cancelling tournament:", error);
+      toast.error("Failed to cancel tournament");
     }
   };
 
@@ -804,8 +804,9 @@ const ManageTournaments = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleDeleteClick(tournament.id)}
+                          onClick={() => handleCancelClick(tournament.id)}
                           className="border-destructive/30 hover:bg-destructive/10"
+                          title="Cancel & Refund All"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -928,19 +929,25 @@ const ManageTournaments = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Cancel & Refund Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="bg-background border-destructive/30">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Cancel Tournament & Refund All Participants?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete this tournament. This action cannot be undone.
+              This will:
+              <br />• Cancel the tournament permanently
+              <br />• Refund entry fees to all paid participants
+              <br />• Send refund notifications to all users
+              <br />• Remove all participants from the match
+              <br /><br />
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmDelete} className="bg-destructive hover:bg-destructive/80">
-              Delete
+            <AlertDialogCancel>Keep Tournament</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmCancel} className="bg-destructive hover:bg-destructive/80">
+              Cancel & Refund All
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

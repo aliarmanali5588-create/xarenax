@@ -465,6 +465,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cancel_tournament: { Args: { match_id: string }; Returns: undefined }
       create_user_profile: {
         Args: {
           p_bgmi_id: string

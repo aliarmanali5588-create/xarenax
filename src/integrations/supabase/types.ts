@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_invitations: {
+        Row: {
+          created_at: string
+          created_by: string
+          expires_at: string
+          granted_role: Database["public"]["Enums"]["app_role"]
+          id: string
+          invite_code: string
+          invitee_email: string
+          redeemed_at: string | null
+          redeemed_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          expires_at: string
+          granted_role?: Database["public"]["Enums"]["app_role"]
+          id?: string
+          invite_code: string
+          invitee_email: string
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          expires_at?: string
+          granted_role?: Database["public"]["Enums"]["app_role"]
+          id?: string
+          invite_code?: string
+          invitee_email?: string
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string
@@ -423,6 +465,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      expire_old_invitations: { Args: never; Returns: undefined }
+      generate_invite_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -431,6 +475,7 @@ export type Database = {
         Returns: boolean
       }
       is_super_admin: { Args: { user_email: string }; Returns: boolean }
+      redeem_admin_invite: { Args: { code: string }; Returns: Json }
     }
     Enums: {
       app_role: "user" | "admin"

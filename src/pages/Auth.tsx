@@ -93,7 +93,7 @@ const Auth = () => {
       // Capture device fingerprint for anti-fraud tracking
       const { deviceId, ip } = await getDeviceFingerprint();
       
-      const { error } = await signUp(
+      const { data, error } = await signUp(
         signupForm.email, 
         signupForm.password, 
         signupForm.username, 
@@ -116,10 +116,23 @@ const Auth = () => {
           toast.error(error.message || "Signup failed");
         }
       } else {
-        toast.success("Account created successfully! You can now login.");
-        // Switch to login tab
-        const loginTab = document.querySelector('[value="login"]') as HTMLButtonElement;
-        if (loginTab) loginTab.click();
+        // Check if email verification is required
+        if (data.user && !data.session) {
+          // Email verification required
+          toast.success("Verification link sent!", {
+            description: "Please check your email to activate your account",
+            duration: 6000,
+          });
+          // Clear form fields
+          setSignupForm({ email: "", password: "", confirmPassword: "", username: "", ign: "", bgmiId: "" });
+          setReferralCode("");
+        } else {
+          // Auto-confirmed signup (no verification needed)
+          toast.success("Account created successfully! You can now login.");
+          // Switch to login tab
+          const loginTab = document.querySelector('[value="login"]') as HTMLButtonElement;
+          if (loginTab) loginTab.click();
+        }
       }
     } catch (error: any) {
       if (error instanceof z.ZodError) {

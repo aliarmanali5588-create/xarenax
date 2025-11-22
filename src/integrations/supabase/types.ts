@@ -501,6 +501,10 @@ export type Database = {
         Returns: undefined
       }
       redeem_admin_invite: { Args: { code: string }; Returns: Json }
+      user_is_tournament_participant: {
+        Args: { p_tournament_id: string; p_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "user" | "admin"

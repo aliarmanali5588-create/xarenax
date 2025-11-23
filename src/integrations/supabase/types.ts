@@ -227,6 +227,7 @@ export type Database = {
           created_by: string | null
           current_slots: number
           entry_fee: number
+          game_mode: string | null
           id: string
           map: string
           match_type: string
@@ -235,6 +236,7 @@ export type Database = {
           prize_pool: number
           start_time: string
           status: string
+          tags: string[] | null
           title: string
           updated_at: string
         }
@@ -243,6 +245,7 @@ export type Database = {
           created_by?: string | null
           current_slots?: number
           entry_fee: number
+          game_mode?: string | null
           id?: string
           map: string
           match_type: string
@@ -251,6 +254,7 @@ export type Database = {
           prize_pool: number
           start_time: string
           status?: string
+          tags?: string[] | null
           title: string
           updated_at?: string
         }
@@ -259,6 +263,7 @@ export type Database = {
           created_by?: string | null
           current_slots?: number
           entry_fee?: number
+          game_mode?: string | null
           id?: string
           map?: string
           match_type?: string
@@ -267,6 +272,7 @@ export type Database = {
           prize_pool?: number
           start_time?: string
           status?: string
+          tags?: string[] | null
           title?: string
           updated_at?: string
         }

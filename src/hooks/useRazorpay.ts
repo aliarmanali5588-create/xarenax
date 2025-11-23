@@ -1,5 +1,6 @@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface RazorpayOptions {
   amount: number;
@@ -9,8 +10,20 @@ interface RazorpayOptions {
 
 export const useRazorpay = () => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const initiatePayment = async ({ amount, onSuccess, onFailure }: RazorpayOptions) => {
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to make a payment.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Check if Razorpay is loaded
     if (typeof (window as any).Razorpay === "undefined") {
       toast({
@@ -50,12 +63,39 @@ export const useRazorpay = () => {
       name: "ArenaX",
       description: "Add money to wallet",
       image: "/favicon.ico",
-      handler: function (response: any) {
-        toast({
-          title: "Payment Successful!",
-          description: `₹${amount} has been added to your wallet.`,
-        });
-        onSuccess?.(response);
+      handler: async function (response: any) {
+        try {
+          // Call backend function to credit wallet
+          const { error } = await supabase.rpc('handle_razorpay_success', {
+            p_user_id: user.id,
+            p_amount: amount, // Amount in rupees (not paise)
+            p_order_id: response.razorpay_order_id,
+            p_payment_id: response.razorpay_payment_id
+          });
+
+          if (error) {
+            console.error("Wallet update error:", error);
+            throw error;
+          }
+
+          // Force refresh wallet balance
+          queryClient.invalidateQueries({ queryKey: ['profile'] });
+          queryClient.invalidateQueries({ queryKey: ['wallet'] });
+
+          toast({
+            title: "Payment Successful!",
+            description: `₹${amount} has been added to your wallet.`,
+          });
+          onSuccess?.(response);
+        } catch (err) {
+          console.error("Payment verification failed:", err);
+          toast({
+            title: "Verification Failed",
+            description: "Payment succeeded but wallet update failed. Contact support with your payment ID.",
+            variant: "destructive",
+          });
+          onFailure?.(err);
+        }
       },
       prefill: {
         name: "Player Name",

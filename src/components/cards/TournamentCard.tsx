@@ -15,6 +15,7 @@ interface TournamentCardProps {
   mode: string;
   map: string;
   status?: string;
+  gameMode?: string | null;
 }
 
 const TournamentCard = ({
@@ -28,6 +29,7 @@ const TournamentCard = ({
   mode,
   map,
   status = "Open",
+  gameMode,
 }: TournamentCardProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -51,7 +53,7 @@ const TournamentCard = ({
     <div className="glass-panel-hover rounded-xl p-6 group">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
-        <div>
+        <div className="flex-1">
           <h3 className="text-xl font-heading font-bold mb-1 group-hover:text-primary transition-colors">
             {title}
           </h3>
@@ -60,6 +62,11 @@ const TournamentCard = ({
               {mode} • {map}
             </span>
           </div>
+          {gameMode === 'tdm' && (
+            <Badge className="mt-2 bg-purple-600 text-white border-purple-500 hover:bg-purple-700">
+              TDM ARENA
+            </Badge>
+          )}
         </div>
         {getStatusBadge()}
       </div>

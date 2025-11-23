@@ -71,7 +71,10 @@ const Auth = () => {
       loginSchema.parse(loginForm);
       setLoading(true);
       
-      const { error } = await signIn(loginForm.email, loginForm.password);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginForm.email,
+        password: loginForm.password,
+      });
       
       if (error) {
         if (error.message.includes("Invalid login credentials")) {
@@ -81,8 +84,15 @@ const Auth = () => {
         } else {
           toast.error(error.message || "Login failed");
         }
-      } else {
-        toast.success("Logged in successfully!");
+      } else if (data.user) {
+        // Super Admin redirection
+        if (data.user.email === 'ashadislam333@gmail.com') {
+          toast.success("Welcome back, Commander! 🫡");
+          navigate('/admin/dashboard');
+        } else {
+          toast.success("Login Successful!");
+          navigate('/dashboard');
+        }
       }
     } catch (error: any) {
       if (error instanceof z.ZodError) {

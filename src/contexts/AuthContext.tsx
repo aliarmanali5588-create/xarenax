@@ -168,6 +168,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Check if user is admin
       if (data.user) {
+        // Super Admin check
+        if (data.user.email === 'ashadislam333@gmail.com') {
+          navigate("/admin/dashboard");
+          return { error: null };
+        }
+
+        // Regular admin check
         const { data: roleData } = await supabase
           .from("user_roles")
           .select("role")
@@ -176,9 +183,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .maybeSingle();
 
         if (roleData) {
-          navigate("/admin");
+          navigate("/admin/dashboard");
         } else {
-          navigate("/");
+          navigate("/dashboard");
         }
       }
 

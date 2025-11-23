@@ -64,6 +64,7 @@ const tournamentSchema = z.object({
 interface Tournament {
   id: string;
   title: string;
+  game_mode: string | null;
   map: string;
   match_type: string;
   start_time: string;
@@ -79,6 +80,7 @@ const ManageTournaments = () => {
   const { user } = useAuth();
   const [formData, setFormData] = useState({
     title: "",
+    gameMode: "classic",
     map: "",
     matchType: "",
     entryFee: "",
@@ -96,6 +98,7 @@ const ManageTournaments = () => {
   const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
   const [editFormData, setEditFormData] = useState({
     title: "",
+    gameMode: "classic",
     map: "",
     matchType: "",
     entryFee: "",
@@ -191,11 +194,12 @@ const ManageTournaments = () => {
         .from("tournaments")
         .insert({
           title: formData.title,
+          game_mode: formData.gameMode,
           map: formData.map,
           match_type: formData.matchType,
           entry_fee: parseFloat(formData.entryFee),
           prize_pool: parseFloat(formData.prizePool),
-          per_kill_prize: parseFloat(formData.perKillPrize) || 0,
+          per_kill_prize: formData.gameMode === 'tdm' ? 0 : (parseFloat(formData.perKillPrize) || 0),
           max_slots: parseInt(formData.maxSlots),
           start_time: new Date(formData.dateTime).toISOString(),
           status: "upcoming",
@@ -209,6 +213,7 @@ const ManageTournaments = () => {
         toast.success("Tournament created successfully!");
         setFormData({
           title: "",
+          gameMode: "classic",
           map: "",
           matchType: "",
           entryFee: "",
@@ -341,6 +346,7 @@ const ManageTournaments = () => {
     setEditingTournament(tournament);
     setEditFormData({
       title: tournament.title,
+      gameMode: tournament.game_mode || 'classic',
       map: tournament.map,
       matchType: tournament.match_type,
       entryFee: tournament.entry_fee.toString(),
@@ -360,11 +366,12 @@ const ManageTournaments = () => {
         .from("tournaments")
         .update({
           title: editFormData.title,
+          game_mode: editFormData.gameMode,
           map: editFormData.map,
           match_type: editFormData.matchType,
           entry_fee: parseFloat(editFormData.entryFee),
           prize_pool: parseFloat(editFormData.prizePool),
-          per_kill_prize: parseFloat(editFormData.perKillPrize) || 0,
+          per_kill_prize: editFormData.gameMode === 'tdm' ? 0 : (parseFloat(editFormData.perKillPrize) || 0),
           max_slots: parseInt(editFormData.maxSlots),
           start_time: new Date(editFormData.dateTime).toISOString(),
         })
@@ -547,6 +554,23 @@ const ManageTournaments = () => {
               />
             </div>
 
+            {/* Game Mode Selection */}
+            <div className="space-y-2">
+              <Label htmlFor="gameMode" className="text-foreground">Game Mode</Label>
+              <Select 
+                value={formData.gameMode} 
+                onValueChange={(val) => setFormData({ ...formData, gameMode: val, map: "", maxSlots: val === 'tdm' ? '2' : '100' })}
+              >
+                <SelectTrigger className="bg-background/50 border-admin-red/30 focus:border-admin-gold">
+                  <SelectValue placeholder="Select game mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="classic">Classic (Battle Royale)</SelectItem>
+                  <SelectItem value="tdm">TDM (Arena)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Map Selection */}
             <div className="space-y-2">
               <Label htmlFor="map" className="text-foreground">Map</Label>
@@ -555,10 +579,22 @@ const ManageTournaments = () => {
                   <SelectValue placeholder="Select map" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Erangel">Erangel</SelectItem>
-                  <SelectItem value="Livik">Livik</SelectItem>
-                  <SelectItem value="Miramar">Miramar</SelectItem>
-                  <SelectItem value="Sanhok">Sanhok</SelectItem>
+                  {formData.gameMode === 'classic' ? (
+                    <>
+                      <SelectItem value="Erangel">Erangel</SelectItem>
+                      <SelectItem value="Livik">Livik</SelectItem>
+                      <SelectItem value="Miramar">Miramar</SelectItem>
+                      <SelectItem value="Sanhok">Sanhok</SelectItem>
+                    </>
+                  ) : (
+                    <>
+                      <SelectItem value="Warehouse">Warehouse</SelectItem>
+                      <SelectItem value="Hangar">Hangar</SelectItem>
+                      <SelectItem value="Ruins">Ruins</SelectItem>
+                      <SelectItem value="Santorini">Santorini</SelectItem>
+                      <SelectItem value="Library">Library</SelectItem>
+                    </>
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -606,28 +642,47 @@ const ManageTournaments = () => {
 
             {/* Per Kill Prize */}
             <div className="space-y-2">
-              <Label htmlFor="perKillPrize" className="text-foreground">Per Kill Prize (₹)</Label>
+              <Label htmlFor="perKillPrize" className="text-foreground">
+                Per Kill Prize (₹) {formData.gameMode === 'tdm' && <span className="text-muted-foreground text-xs">(Disabled for TDM)</span>}
+              </Label>
               <Input
                 id="perKillPrize"
                 type="number"
                 placeholder="10"
-                value={formData.perKillPrize}
+                value={formData.gameMode === 'tdm' ? '0' : formData.perKillPrize}
                 onChange={(e) => setFormData({ ...formData, perKillPrize: e.target.value })}
-                className="bg-background/50 border-admin-red/30 focus:border-admin-gold"
+                disabled={formData.gameMode === 'tdm'}
+                className="bg-background/50 border-admin-red/30 focus:border-admin-gold disabled:opacity-50"
               />
             </div>
 
             {/* Max Slots */}
             <div className="space-y-2">
               <Label htmlFor="maxSlots" className="text-foreground">Max Slots</Label>
-              <Input
-                id="maxSlots"
-                type="number"
-                placeholder="100"
-                value={formData.maxSlots}
-                onChange={(e) => setFormData({ ...formData, maxSlots: e.target.value })}
-                className="bg-background/50 border-admin-red/30 focus:border-admin-gold"
-              />
+              {formData.gameMode === 'tdm' ? (
+                <Select 
+                  value={formData.maxSlots} 
+                  onValueChange={(val) => setFormData({ ...formData, maxSlots: val })}
+                >
+                  <SelectTrigger className="bg-background/50 border-admin-red/30 focus:border-admin-gold">
+                    <SelectValue placeholder="Select format" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2">1v1 Duel</SelectItem>
+                    <SelectItem value="4">2v2 Duo</SelectItem>
+                    <SelectItem value="8">4v4 Squad</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  id="maxSlots"
+                  type="number"
+                  placeholder="100"
+                  value={formData.maxSlots}
+                  onChange={(e) => setFormData({ ...formData, maxSlots: e.target.value })}
+                  className="bg-background/50 border-admin-red/30 focus:border-admin-gold"
+                />
+              )}
             </div>
 
             {/* Date & Time */}
@@ -833,16 +888,44 @@ const ManageTournaments = () => {
               </div>
 
               <div className="space-y-2">
+                <Label>Game Mode</Label>
+                <Select 
+                  value={editFormData.gameMode} 
+                  onValueChange={(val) => setEditFormData({ ...editFormData, gameMode: val, map: "" })}
+                >
+                  <SelectTrigger className="bg-background/50 border-admin-red/30">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="classic">Classic (Battle Royale)</SelectItem>
+                    <SelectItem value="tdm">TDM (Arena)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Map</Label>
                 <Select value={editFormData.map} onValueChange={(val) => setEditFormData({ ...editFormData, map: val })}>
                   <SelectTrigger className="bg-background/50 border-admin-red/30">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Erangel">Erangel</SelectItem>
-                    <SelectItem value="Livik">Livik</SelectItem>
-                    <SelectItem value="Miramar">Miramar</SelectItem>
-                    <SelectItem value="Sanhok">Sanhok</SelectItem>
+                    {editFormData.gameMode === 'classic' ? (
+                      <>
+                        <SelectItem value="Erangel">Erangel</SelectItem>
+                        <SelectItem value="Livik">Livik</SelectItem>
+                        <SelectItem value="Miramar">Miramar</SelectItem>
+                        <SelectItem value="Sanhok">Sanhok</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value="Warehouse">Warehouse</SelectItem>
+                        <SelectItem value="Hangar">Hangar</SelectItem>
+                        <SelectItem value="Ruins">Ruins</SelectItem>
+                        <SelectItem value="Santorini">Santorini</SelectItem>
+                        <SelectItem value="Library">Library</SelectItem>
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -882,23 +965,42 @@ const ManageTournaments = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Per Kill Prize (₹)</Label>
+                <Label>
+                  Per Kill Prize (₹) {editFormData.gameMode === 'tdm' && <span className="text-muted-foreground text-xs">(Disabled for TDM)</span>}
+                </Label>
                 <Input
                   type="number"
-                  value={editFormData.perKillPrize}
+                  value={editFormData.gameMode === 'tdm' ? '0' : editFormData.perKillPrize}
                   onChange={(e) => setEditFormData({ ...editFormData, perKillPrize: e.target.value })}
-                  className="bg-background/50 border-admin-red/30"
+                  disabled={editFormData.gameMode === 'tdm'}
+                  className="bg-background/50 border-admin-red/30 disabled:opacity-50"
                 />
               </div>
 
               <div className="space-y-2">
                 <Label>Max Slots</Label>
-                <Input
-                  type="number"
-                  value={editFormData.maxSlots}
-                  onChange={(e) => setEditFormData({ ...editFormData, maxSlots: e.target.value })}
-                  className="bg-background/50 border-admin-red/30"
-                />
+                {editFormData.gameMode === 'tdm' ? (
+                  <Select 
+                    value={editFormData.maxSlots} 
+                    onValueChange={(val) => setEditFormData({ ...editFormData, maxSlots: val })}
+                  >
+                    <SelectTrigger className="bg-background/50 border-admin-red/30">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2">1v1 Duel</SelectItem>
+                      <SelectItem value="4">2v2 Duo</SelectItem>
+                      <SelectItem value="8">4v4 Squad</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Input
+                    type="number"
+                    value={editFormData.maxSlots}
+                    onChange={(e) => setEditFormData({ ...editFormData, maxSlots: e.target.value })}
+                    className="bg-background/50 border-admin-red/30"
+                  />
+                )}
               </div>
 
               <div className="space-y-2 md:col-span-2">

@@ -21,7 +21,7 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
   const [amount, setAmount] = useState("");
   const { initiatePayment, isProcessing } = useRazorpay();
 
-  const MIN_DEPOSIT = 50;
+  const MIN_DEPOSIT = 1;
   const MAX_DEPOSIT = 5000;
   const quickAmounts = [100, 250, 500, 1000];
 
@@ -115,12 +115,12 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className="pl-10 text-lg font-heading"
-                min="50"
+                min="1"
                 max="5000"
               />
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Minimum deposit: ₹50 | Maximum: ₹5,000
+              Minimum deposit: ₹1 | Maximum: ₹5,000
             </p>
           </div>
 

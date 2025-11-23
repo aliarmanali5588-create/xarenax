@@ -20,23 +20,23 @@ Deno.serve(async (req) => {
   try {
     // Get authorization header
     const authHeader = req.headers.get('authorization');
+    console.log('Auth header present:', !!authHeader);
+    
     if (!authHeader) {
       throw new Error('Missing authorization header');
     }
 
-    // Create Supabase client with user's auth
-    const supabaseClient = createClient(
+    // Create admin client to verify JWT token
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: authHeader },
-        },
-      }
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Get authenticated user
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    // Extract JWT token from authorization header
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Verify the JWT and get user
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
     
     if (userError || !user) {
       console.error('Auth error:', userError);
@@ -53,12 +53,6 @@ Deno.serve(async (req) => {
     }
 
     console.log('Payment details:', { amount, orderId, paymentId });
-
-    // Create admin client for database operations
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
 
     // 1. Update wallet balance and total deposited
     const { data: currentProfile, error: fetchError } = await supabaseAdmin

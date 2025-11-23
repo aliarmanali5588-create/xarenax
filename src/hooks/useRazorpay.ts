@@ -1,6 +1,7 @@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { usePaymentRetry } from "./usePaymentRetry";
 
 interface RazorpayOptions {
   amount: number;
@@ -11,6 +12,7 @@ interface RazorpayOptions {
 export const useRazorpay = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { executeWithRetry } = usePaymentRetry();
 
   const initiatePayment = async ({ amount, onSuccess, onFailure }: RazorpayOptions) => {
     // Get current user
@@ -65,24 +67,44 @@ export const useRazorpay = () => {
       image: "/favicon.ico",
       handler: async function (response: any) {
         try {
-          // Call edge function to credit wallet
-          const { data, error } = await supabase.functions.invoke('handle-payment-success', {
-            body: {
-              amount: amount,
-              orderId: response.razorpay_order_id,
-              paymentId: response.razorpay_payment_id
+          // Get current session to ensure we have a valid auth token
+          const { data: { session } } = await supabase.auth.getSession();
+          
+          if (!session) {
+            throw new Error('No active session found');
+          }
+
+          console.log('Processing payment with session token');
+
+          // Call edge function with retry logic
+          await executeWithRetry(async () => {
+            const { data, error } = await supabase.functions.invoke('handle-payment-success', {
+              body: {
+                amount: amount,
+                orderId: response.razorpay_order_id,
+                paymentId: response.razorpay_payment_id
+              },
+              headers: {
+                Authorization: `Bearer ${session.access_token}`
+              }
+            });
+
+            if (error) {
+              console.error("Payment processing error:", error);
+              throw error;
             }
+
+            if (!data?.success) {
+              console.error("Payment processing failed:", data);
+              throw new Error(data?.error || 'Payment processing failed');
+            }
+
+            return data;
+          }, {
+            maxRetries: 3,
+            initialDelay: 1000,
+            backoffMultiplier: 2
           });
-
-          if (error) {
-            console.error("Payment processing error:", error);
-            throw error;
-          }
-
-          if (!data?.success) {
-            console.error("Payment processing failed:", data);
-            throw new Error(data?.error || 'Payment processing failed');
-          }
 
           // Force refresh wallet balance
           queryClient.invalidateQueries({ queryKey: ['profile'] });

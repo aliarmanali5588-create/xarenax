@@ -10,11 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import DepositModal from "@/components/wallet/DepositModal";
 import WithdrawalModal from "@/components/wallet/WithdrawalModal";
 import TransactionSkeleton from "@/components/wallet/TransactionSkeleton";
+import PaymentHistoryModal from "@/components/wallet/PaymentHistoryModal";
 
 const Wallet = () => {
   const { user } = useAuth();
   const [depositModalOpen, setDepositModalOpen] = useState(false);
   const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
+  const [paymentHistoryOpen, setPaymentHistoryOpen] = useState(false);
   const [currentBalance, setCurrentBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [addingTestMoney, setAddingTestMoney] = useState(false);
@@ -195,6 +197,19 @@ const Wallet = () => {
               </Button>
             </div>
 
+            {/* Payment History Button */}
+            <div className="mt-3">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="w-full h-12 hover:scale-105 transition-transform text-sm sm:text-base"
+                onClick={() => setPaymentHistoryOpen(true)}
+              >
+                <History className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                View Payment History
+              </Button>
+            </div>
+
             {/* Test Money Button - Super Admin Only */}
             {user?.email === 'ashadislam333@gmail.com' && (
               <div className="mt-4 pt-4 border-t border-border/30">
@@ -304,6 +319,10 @@ const Wallet = () => {
         open={withdrawalModalOpen} 
         onOpenChange={setWithdrawalModalOpen}
         currentBalance={currentBalance}
+      />
+      <PaymentHistoryModal
+        open={paymentHistoryOpen}
+        onOpenChange={setPaymentHistoryOpen}
       />
     </div>
   );

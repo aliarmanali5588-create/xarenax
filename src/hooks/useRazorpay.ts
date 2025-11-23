@@ -3,6 +3,8 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePaymentRetry } from "./usePaymentRetry";
+import confetti from "canvas-confetti";
+import { playSuccessSound, playErrorSound } from "@/lib/soundEffects";
 
 interface RazorpayOptions {
   amount: number;
@@ -124,6 +126,17 @@ export const useRazorpay = () => {
           queryClient.invalidateQueries({ queryKey: ['profile'] });
           queryClient.invalidateQueries({ queryKey: ['wallet'] });
 
+          // Trigger confetti celebration
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#00f0ff', '#ff00ff', '#00ff88']
+          });
+          
+          // Play success sound
+          playSuccessSound();
+          
           toast({
             title: "Payment Successful!",
             description: `₹${amount} has been added to your wallet.`,
@@ -136,10 +149,14 @@ export const useRazorpay = () => {
           // Reload page after a brief delay to show success message
           setTimeout(() => {
             window.location.reload();
-          }, 1000);
+          }, 2000);
         } catch (err) {
           console.error("Payment verification failed:", err);
           setIsProcessing(false);
+          
+          // Play error sound
+          playErrorSound();
+          
           toast({
             title: "Verification Failed",
             description: "Payment succeeded but wallet update failed. Contact support with your payment ID.",

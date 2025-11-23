@@ -67,14 +67,19 @@ export const useRazorpay = () => {
       image: "/favicon.ico",
       handler: async function (response: any) {
         try {
+          console.log('=== Razorpay Payment Success ===');
+          console.log('Payment ID:', response.razorpay_payment_id);
+          console.log('Order ID:', response.razorpay_order_id);
+          
           // Get current session to ensure we have a valid auth token
           const { data: { session } } = await supabase.auth.getSession();
           
           if (!session) {
+            console.error('No active session found');
             throw new Error('No active session found');
           }
 
-          console.log('Processing payment with session token');
+          console.log('Session found, calling edge function...');
 
           // Call edge function with retry logic
           await executeWithRetry(async () => {
@@ -91,8 +96,11 @@ export const useRazorpay = () => {
 
             if (error) {
               console.error("Payment processing error:", error);
+              console.error("Error details:", JSON.stringify(error));
               throw error;
             }
+
+            console.log('Edge function response:', data);
 
             if (!data?.success) {
               console.error("Payment processing failed:", data);

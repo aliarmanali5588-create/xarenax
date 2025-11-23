@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IndianRupee, CreditCard } from "lucide-react";
+import { IndianRupee, CreditCard, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ interface DepositModalProps {
 
 const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
   const [amount, setAmount] = useState("");
-  const { initiatePayment } = useRazorpay();
+  const { initiatePayment, isProcessing } = useRazorpay();
 
   const MIN_DEPOSIT = 50;
   const MAX_DEPOSIT = 5000;
@@ -47,16 +47,40 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="glass-panel border-border/50 max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-gaming text-glow-cyan">
-            Add Money to Wallet
-          </DialogTitle>
-          <DialogDescription>
-            Enter the amount you want to add to your wallet
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      {/* Processing Overlay */}
+      {isProcessing && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/95 backdrop-blur-sm">
+          <div className="glass-panel p-8 rounded-lg border border-primary/20 shadow-glow max-w-sm mx-4 text-center space-y-6">
+            <div className="flex justify-center">
+              <Loader2 className="w-16 h-16 text-primary animate-spin" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-gaming text-glow-cyan">
+                Verifying Payment...
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Please do not close or refresh this window.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                This may take 10-20 seconds.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Deposit Modal */}
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="glass-panel border-border/50 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-gaming text-glow-cyan">
+              Add Money to Wallet
+            </DialogTitle>
+            <DialogDescription>
+              Enter the amount you want to add to your wallet
+            </DialogDescription>
+          </DialogHeader>
 
         <div className="space-y-6 py-4">
           {/* Quick Amount Selection */}
@@ -121,6 +145,7 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
         </div>
       </DialogContent>
     </Dialog>
+    </>
   );
 };
 

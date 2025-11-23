@@ -20,9 +20,12 @@ Deno.serve(async (req) => {
   try {
     // Get authorization header
     const authHeader = req.headers.get('authorization');
+    console.log('=== Payment Processing Started ===');
     console.log('Auth header present:', !!authHeader);
+    console.log('Request method:', req.method);
     
     if (!authHeader) {
+      console.error('Missing authorization header');
       throw new Error('Missing authorization header');
     }
 
@@ -116,13 +119,14 @@ Deno.serve(async (req) => {
       // Don't throw - notification failure shouldn't fail the whole payment
     }
 
-    console.log('Payment processing completed successfully');
+    console.log('=== Payment processing completed successfully ===');
 
     return new Response(
       JSON.stringify({ 
         success: true,
         message: 'Payment processed successfully',
-        amount: amount
+        amount: amount,
+        newBalance: (currentProfile.wallet_balance || 0) + amount
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

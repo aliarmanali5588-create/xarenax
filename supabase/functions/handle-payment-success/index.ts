@@ -49,9 +49,15 @@ Deno.serve(async (req) => {
     console.log('Processing payment for user:', user.id);
 
     // Parse request body
-    const { amount, orderId, paymentId }: PaymentSuccessRequest = await req.json();
+    const requestBody = await req.json();
+    console.log('Raw request body:', JSON.stringify(requestBody));
+    
+    const { amount, orderId, paymentId }: PaymentSuccessRequest = requestBody;
+
+    console.log('Parsed values:', { amount, orderId, paymentId });
 
     if (!amount || !orderId || !paymentId) {
+      console.error('Missing parameters - amount:', amount, 'orderId:', orderId, 'paymentId:', paymentId);
       throw new Error('Missing required parameters');
     }
 

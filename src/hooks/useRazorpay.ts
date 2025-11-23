@@ -65,17 +65,23 @@ export const useRazorpay = () => {
       image: "/favicon.ico",
       handler: async function (response: any) {
         try {
-          // Call backend function to credit wallet
-          // Note: amount is already in rupees, not paise
-          const { error } = await supabase.rpc('handle_razorpay_success', {
-            p_amount: amount,
-            p_order_id: response.razorpay_order_id,
-            p_payment_id: response.razorpay_payment_id
+          // Call edge function to credit wallet
+          const { data, error } = await supabase.functions.invoke('handle-payment-success', {
+            body: {
+              amount: amount,
+              orderId: response.razorpay_order_id,
+              paymentId: response.razorpay_payment_id
+            }
           });
 
           if (error) {
-            console.error("Wallet update error:", error);
+            console.error("Payment processing error:", error);
             throw error;
+          }
+
+          if (!data?.success) {
+            console.error("Payment processing failed:", data);
+            throw new Error(data?.error || 'Payment processing failed');
           }
 
           // Force refresh wallet balance

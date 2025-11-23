@@ -87,9 +87,11 @@ const Auth = () => {
       } else if (data.user) {
         // Super Admin redirection
         if (data.user.email === 'ashadislam333@gmail.com') {
+          console.log("Super Admin Detected. Redirecting...");
           toast.success("Welcome back, Commander! 🫡");
           navigate('/admin/dashboard');
         } else {
+          console.log("Regular user detected. Redirecting to dashboard...");
           toast.success("Login Successful!");
           navigate('/dashboard');
         }

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -13,6 +14,7 @@ export const useRazorpay = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { executeWithRetry } = usePaymentRetry();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const initiatePayment = async ({ amount, onSuccess, onFailure }: RazorpayOptions) => {
     // Get current user
@@ -67,6 +69,9 @@ export const useRazorpay = () => {
       image: "/favicon.ico",
       handler: async function (response: any) {
         try {
+          // Immediately show processing state
+          setIsProcessing(true);
+          
           console.log('=== Razorpay Payment Success ===');
           console.log('Full Razorpay Response:', response);
           console.log('Payment ID:', response.razorpay_payment_id);
@@ -123,9 +128,18 @@ export const useRazorpay = () => {
             title: "Payment Successful!",
             description: `₹${amount} has been added to your wallet.`,
           });
+          
+          // Hide processing state and reload page
+          setIsProcessing(false);
           onSuccess?.(response);
+          
+          // Reload page after a brief delay to show success message
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         } catch (err) {
           console.error("Payment verification failed:", err);
+          setIsProcessing(false);
           toast({
             title: "Verification Failed",
             description: "Payment succeeded but wallet update failed. Contact support with your payment ID.",
@@ -158,5 +172,5 @@ export const useRazorpay = () => {
     razorpay.open();
   };
 
-  return { initiatePayment };
+  return { initiatePayment, isProcessing };
 };

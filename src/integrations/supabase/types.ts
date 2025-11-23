@@ -444,12 +444,7 @@ export type Database = {
       get_affiliate_stats: { Args: { p_user_id: string }; Returns: Json }
       get_referrer_id: { Args: { code: string }; Returns: string }
       handle_razorpay_success: {
-        Args: {
-          p_amount: number
-          p_order_id: string
-          p_payment_id: string
-          p_user_id: string
-        }
+        Args: { p_amount: number; p_order_id: string; p_payment_id: string }
         Returns: undefined
       }
       has_role: {

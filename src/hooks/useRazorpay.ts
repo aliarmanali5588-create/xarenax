@@ -66,9 +66,9 @@ export const useRazorpay = () => {
       handler: async function (response: any) {
         try {
           // Call backend function to credit wallet
+          // Note: amount is already in rupees, not paise
           const { error } = await supabase.rpc('handle_razorpay_success', {
-            p_user_id: user.id,
-            p_amount: amount, // Amount in rupees (not paise)
+            p_amount: amount,
             p_order_id: response.razorpay_order_id,
             p_payment_id: response.razorpay_payment_id
           });

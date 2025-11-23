@@ -56,9 +56,9 @@ Deno.serve(async (req) => {
 
     console.log('Parsed values:', { amount, orderId, paymentId });
 
-    if (!amount || !orderId || !paymentId) {
+    if (!amount || !paymentId) {
       console.error('Missing parameters - amount:', amount, 'orderId:', orderId, 'paymentId:', paymentId);
-      throw new Error('Missing required parameters');
+      throw new Error('Missing required parameters: amount and paymentId are required');
     }
 
     console.log('Payment details:', { amount, orderId, paymentId });

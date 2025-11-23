@@ -68,6 +68,7 @@ export const useRazorpay = () => {
       handler: async function (response: any) {
         try {
           console.log('=== Razorpay Payment Success ===');
+          console.log('Full Razorpay Response:', response);
           console.log('Payment ID:', response.razorpay_payment_id);
           console.log('Order ID:', response.razorpay_order_id);
           
@@ -86,7 +87,7 @@ export const useRazorpay = () => {
             const { data, error } = await supabase.functions.invoke('handle-payment-success', {
               body: {
                 amount: amount,
-                orderId: response.razorpay_order_id,
+                orderId: response.razorpay_order_id || 'MANUAL_PAYMENT',
                 paymentId: response.razorpay_payment_id
               },
               headers: {

@@ -385,34 +385,46 @@ export type Database = {
           admin_notes: string | null
           amount: number
           created_at: string
+          fraud_flags: string[] | null
+          fraud_score: number | null
           id: string
+          is_suspicious: boolean | null
           processed_at: string | null
           processed_by: string | null
           status: string
           user_id: string
           utr_number: string
+          verification_status: string | null
         }
         Insert: {
           admin_notes?: string | null
           amount: number
           created_at?: string
+          fraud_flags?: string[] | null
+          fraud_score?: number | null
           id?: string
+          is_suspicious?: boolean | null
           processed_at?: string | null
           processed_by?: string | null
           status?: string
           user_id: string
           utr_number: string
+          verification_status?: string | null
         }
         Update: {
           admin_notes?: string | null
           amount?: number
           created_at?: string
+          fraud_flags?: string[] | null
+          fraud_score?: number | null
           id?: string
+          is_suspicious?: boolean | null
           processed_at?: string | null
           processed_by?: string | null
           status?: string
           user_id?: string
           utr_number?: string
+          verification_status?: string | null
         }
         Relationships: []
       }
@@ -466,6 +478,8 @@ export type Database = {
     }
     Functions: {
       cancel_tournament: { Args: { match_id: string }; Returns: undefined }
+      check_duplicate_utr: { Args: { p_utr_number: string }; Returns: boolean }
+      check_rapid_submissions: { Args: { p_user_id: string }; Returns: number }
       create_user_profile: {
         Args: {
           p_bgmi_id: string
@@ -482,6 +496,10 @@ export type Database = {
       credit_referral_bonus: {
         Args: { new_user_name: string; referrer_id: string }
         Returns: undefined
+      }
+      detect_utr_fraud: {
+        Args: { p_amount: number; p_user_id: string; p_utr_number: string }
+        Returns: Json
       }
       get_affiliate_stats: { Args: { p_user_id: string }; Returns: Json }
       get_referrer_id: { Args: { code: string }; Returns: string }

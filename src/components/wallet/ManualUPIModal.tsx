@@ -77,11 +77,34 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
+      // Run fraud detection
+      const { data: fraudData, error: fraudError } = await supabase.rpc(
+        "detect_utr_fraud",
+        {
+          p_user_id: user.id,
+          p_utr_number: utrNumber,
+          p_amount: amount,
+        }
+      );
+
+      if (fraudError) {
+        console.error("Fraud detection error:", fraudError);
+        // Continue with submission even if fraud detection fails
+      }
+
+      // Parse fraud data safely
+      const fraudResult = fraudData ? (fraudData as any) : { fraud_score: 0, fraud_flags: [], is_suspicious: false };
+
+      // Insert UTR submission with fraud detection results
       const { error } = await supabase.from("utr_submissions").insert({
         user_id: user.id,
         amount,
         utr_number: utrNumber,
         status: "pending",
+        fraud_score: fraudResult.fraud_score || 0,
+        fraud_flags: fraudResult.fraud_flags || [],
+        is_suspicious: fraudResult.is_suspicious || false,
+        verification_status: "pending",
       });
 
       if (error) throw error;

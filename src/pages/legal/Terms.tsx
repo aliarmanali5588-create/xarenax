@@ -12,8 +12,11 @@ const Terms = () => {
             <h1 className="text-4xl md:text-5xl font-gaming font-bold mb-6 text-glow-cyan">
               Terms & Conditions
             </h1>
-            <p className="text-sm text-muted-foreground mb-8">
-              Last Updated: January 2024
+            <p className="text-sm text-muted-foreground mb-4">
+              Last Updated: November 24, 2025
+            </p>
+            <p className="text-sm text-primary font-semibold mb-8">
+              ArenaX - 100% Skill-Based Gaming Platform (NOT Gambling)
             </p>
 
             <div className="prose prose-invert max-w-none space-y-8">
@@ -21,9 +24,17 @@ const Terms = () => {
                 <h2 className="text-2xl font-heading font-bold mb-4 text-primary">
                   1. Acceptance of Terms
                 </h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  By accessing and using ArenaX, you accept and agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our platform. We reserve the right to modify these terms at any time, and your continued use constitutes acceptance of any changes.
+                <p className="text-muted-foreground leading-relaxed mb-4">
+                  By accessing and using ArenaX ("Platform"), you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our platform.
                 </p>
+                <div className="glass-panel rounded-lg p-4 border-2 border-primary/30">
+                  <p className="text-foreground font-semibold mb-2">
+                    ⚖️ Important: Skill-Based Gaming Platform
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    ArenaX is a <strong className="text-foreground">100% skill-based competitive gaming platform</strong>. We are NOT a gambling, betting, or game of chance platform. All tournament outcomes are determined purely by player skill, strategy, and in-game performance metrics (kills, rank, survival time). We comply with all applicable Indian laws governing skill-based gaming.
+                  </p>
+                </div>
               </section>
 
               <section>

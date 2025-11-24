@@ -10,10 +10,13 @@ const RefundPolicy = () => {
         <div className="container mx-auto max-w-4xl">
           <div className="glass-panel rounded-2xl p-8 md:p-12">
             <h1 className="text-4xl md:text-5xl font-gaming font-bold mb-6 text-glow-cyan">
-              Refund Policy
+              Refund & Cancellation Policy
             </h1>
-            <p className="text-sm text-muted-foreground mb-8">
-              Last Updated: January 2024
+            <p className="text-sm text-muted-foreground mb-4">
+              Last Updated: November 24, 2025
+            </p>
+            <p className="text-sm text-primary font-semibold mb-8">
+              ArenaX - 100% Skill-Based Gaming Platform (NOT Gambling)
             </p>
 
             <div className="prose prose-invert max-w-none space-y-8">
@@ -208,23 +211,32 @@ const RefundPolicy = () => {
 
               <section>
                 <h2 className="text-2xl font-heading font-bold mb-4 text-primary">
-                  9. Contact for Refunds
+                  9. Contact Information
                 </h2>
+                <p className="text-muted-foreground leading-relaxed mb-4">
+                  For refund requests or questions about this policy, please contact us at:
+                </p>
                 <div className="glass-panel rounded-lg p-4">
-                  <p className="text-foreground mb-2">
-                    <strong>Refund Support Team</strong>
+                  <p className="text-foreground">
+                    Email:{" "}
+                    <a
+                      href="mailto:helparenax@zohomail.in"
+                      className="text-primary hover:text-primary/80 transition-colors"
+                    >
+                      helparenax@zohomail.in
+                    </a>
                   </p>
-                  <p className="text-muted-foreground">Email: helparenax@zohomail.in</p>
-                  <p className="text-muted-foreground">Response Time: Within 24-48 hours</p>
+                  <p className="text-foreground">Telegram: <a href="https://t.me/+6IoFwhsuUkEzMGM9" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">@ArenaXSupport</a></p>
+                  <p className="text-muted-foreground text-sm mt-2">Response Time: Within 24-48 hours</p>
                 </div>
               </section>
 
               <section>
                 <h2 className="text-2xl font-heading font-bold mb-4 text-primary">
-                  10. Changes to This Policy
+                  10. Policy Updates
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  We may update this Refund Policy from time to time. Changes will be posted on this page with an updated date. We recommend reviewing this policy periodically.
+                  We may update this Refund & Cancellation Policy from time to time. Changes will be posted on this page with an updated date. We recommend reviewing this policy periodically.
                 </p>
               </section>
             </div>

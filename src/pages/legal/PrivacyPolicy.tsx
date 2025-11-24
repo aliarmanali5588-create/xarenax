@@ -12,8 +12,11 @@ const PrivacyPolicy = () => {
             <h1 className="text-4xl md:text-5xl font-gaming font-bold mb-6 text-glow-cyan">
               Privacy Policy
             </h1>
-            <p className="text-sm text-muted-foreground mb-8">
-              Last Updated: January 2024
+            <p className="text-sm text-muted-foreground mb-4">
+              Last Updated: November 24, 2025
+            </p>
+            <p className="text-sm text-primary font-semibold mb-8">
+              ArenaX - 100% Skill-Based Gaming Platform (NOT Gambling)
             </p>
 
             <div className="prose prose-invert max-w-none space-y-8">
@@ -135,8 +138,12 @@ const PrivacyPolicy = () => {
                   If you have questions about this Privacy Policy or our data practices, please contact us at:
                 </p>
                 <div className="mt-4 glass-panel rounded-lg p-4">
-                  <p className="text-foreground">Email: privacy@arenax.in</p>
-                  <p className="text-foreground">Phone: +91 98765 43210</p>
+                  <p className="text-foreground">
+                    Email:{" "}
+                    <a href="mailto:helparenax@zohomail.in" className="text-primary hover:text-primary/80 transition-colors">
+                      helparenax@zohomail.in
+                    </a>
+                  </p>
                   <p className="text-foreground">Address: Mumbai, Maharashtra, India</p>
                 </div>
               </section>

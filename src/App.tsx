@@ -15,6 +15,7 @@ import Affiliate from "./pages/Affiliate";
 import HowItWorks from "./pages/HowItWorks";
 import Wallet from "./pages/Wallet";
 import Profile from "./pages/Profile";
+import AboutUs from "./pages/AboutUs";
 import Faq from "./pages/support/Faq";
 import ContactUs from "./pages/support/ContactUs";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
@@ -56,6 +57,7 @@ const App = () => {
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/affiliate" element={<ProtectedRoute><Affiliate /></ProtectedRoute>} />
               <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/about" element={<AboutUs />} />
               <Route path="/dashboard" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/wallet" element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

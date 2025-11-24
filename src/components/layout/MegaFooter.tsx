@@ -7,6 +7,7 @@ const MegaFooter = () => {
     {
       title: "Platform",
       links: [
+        { name: "About Us", path: "/about" },
         { name: "Tournaments", path: "/tournaments" },
         { name: "Leaderboard", path: "/leaderboard" },
         { name: "How It Works", path: "/how-it-works" },

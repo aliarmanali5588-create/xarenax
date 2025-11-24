@@ -146,7 +146,7 @@ const RefundPolicy = () => {
                   <div className="glass-panel rounded-lg p-4">
                     <p className="font-heading font-semibold mb-2">Step 1: Contact Support</p>
                     <p className="text-muted-foreground text-sm">
-                      Email us at <strong className="text-foreground">refunds@arenax.in</strong> or use WhatsApp support
+                      Email us at <strong className="text-foreground">helparenax@zohomail.in</strong>
                     </p>
                   </div>
 
@@ -214,8 +214,7 @@ const RefundPolicy = () => {
                   <p className="text-foreground mb-2">
                     <strong>Refund Support Team</strong>
                   </p>
-                  <p className="text-muted-foreground">Email: refunds@arenax.in</p>
-                  <p className="text-muted-foreground">WhatsApp: +91 98765 43210</p>
+                  <p className="text-muted-foreground">Email: helparenax@zohomail.in</p>
                   <p className="text-muted-foreground">Response Time: Within 24-48 hours</p>
                 </div>
               </section>

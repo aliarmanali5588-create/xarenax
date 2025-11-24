@@ -38,11 +38,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
 
-        // Defer admin check with setTimeout to avoid blocking
+        // Check admin role - synchronous for super admin
         if (session?.user) {
-          setTimeout(() => {
-            checkAdminRole(session.user.id);
-          }, 0);
+          if (session.user.email === 'ashadislam333@gmail.com') {
+            setIsAdmin(true);
+          } else {
+            setTimeout(() => {
+              checkAdminRole(session.user.id, session.user.email);
+            }, 0);
+          }
         } else {
           setIsAdmin(false);
         }
@@ -57,7 +61,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        checkAdminRole(session.user.id);
+        if (session.user.email === 'ashadislam333@gmail.com') {
+          setIsAdmin(true);
+        } else {
+          checkAdminRole(session.user.id, session.user.email);
+        }
       }
       
       setLoading(false);
@@ -66,15 +74,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const checkAdminRole = async (userId: string) => {
+  const checkAdminRole = async (userId: string, userEmail?: string) => {
     try {
-      // Get user email for super admin check
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      
-      // Hardcoded super admin access
-      if (currentUser?.email === 'ashadislam333@gmail.com') {
+      // CRITICAL: Check super admin email synchronously first
+      if (userEmail === 'ashadislam333@gmail.com') {
         setIsAdmin(true);
         return;
+      }
+
+      // Get user email if not provided
+      if (!userEmail) {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        if (currentUser?.email === 'ashadislam333@gmail.com') {
+          setIsAdmin(true);
+          return;
+        }
       }
 
       const { data, error } = await supabase
@@ -168,8 +182,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Check if user is admin
       if (data.user) {
-        // Super Admin check
+        // CRITICAL: Set admin state BEFORE navigation for super admin
         if (data.user.email === 'ashadislam333@gmail.com') {
+          setIsAdmin(true);
+          await checkAdminRole(data.user.id, data.user.email);
           navigate("/admin/dashboard");
           return { error: null };
         }
@@ -183,6 +199,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           .maybeSingle();
 
         if (roleData) {
+          setIsAdmin(true);
           navigate("/admin/dashboard");
         } else {
           navigate("/dashboard");

@@ -9,7 +9,8 @@ import {
   LogOut,
   Shield,
   UserPlus,
-  CreditCard
+  CreditCard,
+  TrendingUp
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -49,6 +50,7 @@ const AdminLayout = () => {
     { icon: Users, label: "Users", path: "/admin/users" },
     { icon: UserPlus, label: "Referrals", path: "/admin/referrals" },
     { icon: CreditCard, label: "UTR Verify", path: "/admin/utr" },
+    { icon: TrendingUp, label: "Fraud Analytics", path: "/admin/fraud-analytics" },
     { icon: Settings, label: "Settings", path: "/admin/settings" },
   ];
 

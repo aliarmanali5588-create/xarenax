@@ -29,6 +29,7 @@ import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminReferrals from "./pages/admin/AdminReferrals";
+import AdminLogin from "./pages/admin/AdminLogin";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,8 @@ const App = () => {
               <Route path="/legal/privacy" element={<PrivacyPolicy />} />
               <Route path="/legal/terms" element={<Terms />} />
               <Route path="/legal/refund" element={<RefundPolicy />} />
+              {/* Admin Login - Public */}
+              <Route path="/admin/login" element={<AdminLogin />} />
               {/* Admin Routes - Protected */}
               <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />

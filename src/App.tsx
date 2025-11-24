@@ -28,6 +28,7 @@ import ManageTournaments from "./pages/admin/ManageTournaments";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminUTR from "./pages/admin/AdminUTR";
 import AdminReferrals from "./pages/admin/AdminReferrals";
 
 
@@ -69,9 +70,10 @@ const App = () => {
                 <Route path="tournaments" element={<ManageTournaments />} />
                 <Route path="withdrawals" element={<AdminWithdrawals />} />
                 <Route path="users" element={<AdminUsers />} />
-                <Route path="referrals" element={<AdminReferrals />} />
-                <Route path="settings" element={<AdminSettings />} />
-              </Route>
+              <Route path="referrals" element={<AdminReferrals />} />
+              <Route path="utr" element={<AdminUTR />} />
+              <Route path="settings" element={<AdminSettings />} />
+            </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

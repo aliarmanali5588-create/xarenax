@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 const AdminSettings = () => {
   const [razorpayKeyId, setRazorpayKeyId] = useState("");
   const [razorpayKeySecret, setRazorpayKeySecret] = useState("");
+  const [upiId, setUpiId] = useState("");
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -23,7 +25,7 @@ const AdminSettings = () => {
       const { data, error } = await supabase
         .from("platform_settings")
         .select("setting_key, setting_value")
-        .in("setting_key", ["razorpay_key_id", "razorpay_key_secret"]);
+        .in("setting_key", ["razorpay_key_id", "razorpay_key_secret", "upi_id", "qr_code_url"]);
 
       if (error) throw error;
 
@@ -32,6 +34,10 @@ const AdminSettings = () => {
           setRazorpayKeyId(setting.setting_value);
         } else if (setting.setting_key === "razorpay_key_secret") {
           setRazorpayKeySecret(setting.setting_value);
+        } else if (setting.setting_key === "upi_id") {
+          setUpiId(setting.setting_value);
+        } else if (setting.setting_key === "qr_code_url") {
+          setQrCodeUrl(setting.setting_value);
         }
       });
     } catch (error: any) {
@@ -78,9 +84,39 @@ const AdminSettings = () => {
 
       if (secretError) throw secretError;
 
+      // Upsert UPI ID
+      const { error: upiError } = await supabase
+        .from("platform_settings")
+        .upsert(
+          {
+            setting_key: "upi_id",
+            setting_value: upiId,
+            description: "UPI ID for manual payments",
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "setting_key" }
+        );
+
+      if (upiError) throw upiError;
+
+      // Upsert QR Code URL
+      const { error: qrError } = await supabase
+        .from("platform_settings")
+        .upsert(
+          {
+            setting_key: "qr_code_url",
+            setting_value: qrCodeUrl,
+            description: "QR Code URL for UPI payments",
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "setting_key" }
+        );
+
+      if (qrError) throw qrError;
+
       toast({
         title: "Success!",
-        description: "Razorpay settings updated successfully.",
+        description: "Payment settings updated successfully.",
       });
     } catch (error: any) {
       toast({
@@ -109,29 +145,66 @@ const AdminSettings = () => {
             <p className="text-muted-foreground">Loading...</p>
           ) : (
             <>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="razorpay_key_id">Razorpay Key ID (Public)</Label>
-                  <Input
-                    id="razorpay_key_id"
-                    type="text"
-                    value={razorpayKeyId}
-                    onChange={(e) => setRazorpayKeyId(e.target.value)}
-                    placeholder="rzp_test_XXXXXXXXXXXXXXXX"
-                    className="bg-background/50"
-                  />
+              <div className="space-y-6">
+                {/* Manual UPI Payment Settings */}
+                <div className="space-y-4 p-4 border border-admin-gold/20 rounded-lg bg-admin-gold/5">
+                  <h3 className="text-lg font-gaming text-admin-gold">Manual UPI Payment</h3>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="upi_id">UPI ID</Label>
+                    <Input
+                      id="upi_id"
+                      type="text"
+                      value={upiId}
+                      onChange={(e) => setUpiId(e.target.value)}
+                      placeholder="your-upi@paytm"
+                      className="bg-background/50"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="qr_code_url">QR Code URL</Label>
+                    <Input
+                      id="qr_code_url"
+                      type="text"
+                      value={qrCodeUrl}
+                      onChange={(e) => setQrCodeUrl(e.target.value)}
+                      placeholder="https://your-domain.com/qr-code.png"
+                      className="bg-background/50"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Upload QR code image and paste the URL here
+                    </p>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="razorpay_key_secret">Razorpay Key Secret (Private)</Label>
-                  <Input
-                    id="razorpay_key_secret"
-                    type="password"
-                    value={razorpayKeySecret}
-                    onChange={(e) => setRazorpayKeySecret(e.target.value)}
-                    placeholder="YOUR_SECRET_KEY_HERE"
-                    className="bg-background/50"
-                  />
+                {/* Razorpay Settings */}
+                <div className="space-y-4 p-4 border border-muted/20 rounded-lg">
+                  <h3 className="text-lg font-gaming text-muted-foreground">Razorpay (Optional)</h3>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="razorpay_key_id">Razorpay Key ID (Public)</Label>
+                    <Input
+                      id="razorpay_key_id"
+                      type="text"
+                      value={razorpayKeyId}
+                      onChange={(e) => setRazorpayKeyId(e.target.value)}
+                      placeholder="rzp_test_XXXXXXXXXXXXXXXX"
+                      className="bg-background/50"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="razorpay_key_secret">Razorpay Key Secret (Private)</Label>
+                    <Input
+                      id="razorpay_key_secret"
+                      type="password"
+                      value={razorpayKeySecret}
+                      onChange={(e) => setRazorpayKeySecret(e.target.value)}
+                      placeholder="YOUR_SECRET_KEY_HERE"
+                      className="bg-background/50"
+                    />
+                  </div>
                 </div>
               </div>
 

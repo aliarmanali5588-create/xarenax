@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IndianRupee, CreditCard, Loader2 } from "lucide-react";
+import { IndianRupee, CreditCard, Loader2, Smartphone } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRazorpay } from "@/hooks/useRazorpay";
+import { ManualUPIModal } from "./ManualUPIModal";
 
 interface DepositModalProps {
   open: boolean;
@@ -19,13 +20,15 @@ interface DepositModalProps {
 
 const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
   const [amount, setAmount] = useState("");
+  const [showUPIModal, setShowUPIModal] = useState(false);
+  const [selectedAmount, setSelectedAmount] = useState(0);
   const { initiatePayment, isProcessing } = useRazorpay();
 
   const MIN_DEPOSIT = 1;
   const MAX_DEPOSIT = 5000;
   const quickAmounts = [100, 250, 500, 1000];
 
-  const handleDeposit = () => {
+  const handlePaymentMethod = (method: "razorpay" | "upi") => {
     const depositAmount = parseFloat(amount);
     if (isNaN(depositAmount) || depositAmount < MIN_DEPOSIT) {
       return;
@@ -34,16 +37,22 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
       return;
     }
 
-    initiatePayment({
-      amount: depositAmount,
-      onSuccess: () => {
-        onOpenChange(false);
-        setAmount("");
-      },
-      onFailure: () => {
-        // Handle failure
-      },
-    });
+    if (method === "upi") {
+      setSelectedAmount(depositAmount);
+      setShowUPIModal(true);
+      onOpenChange(false);
+    } else {
+      initiatePayment({
+        amount: depositAmount,
+        onSuccess: () => {
+          onOpenChange(false);
+          setAmount("");
+        },
+        onFailure: () => {
+          // Handle failure
+        },
+      });
+    }
   };
 
   return (
@@ -124,17 +133,41 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
             </p>
           </div>
 
-          {/* Payment Button */}
-          <Button
-            onClick={handleDeposit}
-            variant="gaming"
-            size="lg"
-            className="w-full"
-            disabled={!amount || parseFloat(amount) < MIN_DEPOSIT || parseFloat(amount) > MAX_DEPOSIT}
-          >
-            <CreditCard className="w-5 h-5 mr-2" />
-            Pay with Razorpay
-          </Button>
+          {/* Payment Method Buttons */}
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-center">Choose Payment Method</p>
+            
+            <Button
+              onClick={() => handlePaymentMethod("upi")}
+              disabled={!amount || parseFloat(amount) < MIN_DEPOSIT || parseFloat(amount) > MAX_DEPOSIT}
+              variant="gaming"
+              size="lg"
+              className="w-full"
+            >
+              <Smartphone className="mr-2 h-5 w-5" />
+              Pay via UPI (Recommended)
+            </Button>
+
+            <Button
+              onClick={() => handlePaymentMethod("razorpay")}
+              disabled={!amount || parseFloat(amount) < MIN_DEPOSIT || parseFloat(amount) > MAX_DEPOSIT || isProcessing}
+              variant="outline"
+              className="w-full"
+              size="lg"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <CreditCard className="mr-2 h-5 w-5" />
+                  Pay with Razorpay
+                </>
+              )}
+            </Button>
+          </div>
 
           {/* Security Notice */}
           <div className="glass-panel rounded-lg p-3 text-center">
@@ -145,6 +178,17 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
         </div>
       </DialogContent>
     </Dialog>
+
+      <ManualUPIModal
+        open={showUPIModal}
+        onOpenChange={(open) => {
+          setShowUPIModal(open);
+          if (!open) {
+            setAmount("");
+          }
+        }}
+        amount={selectedAmount}
+      />
     </>
   );
 };

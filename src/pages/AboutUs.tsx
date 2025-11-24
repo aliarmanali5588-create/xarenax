@@ -153,7 +153,7 @@ const AboutUs = () => {
                   helparenax@zohomail.in
                 </a>
               </p>
-              <p className="text-foreground">Location: Mumbai, Maharashtra, India</p>
+              <p className="text-foreground">Location: Jaipur, Rajasthan, India</p>
             </div>
           </div>
         </div>

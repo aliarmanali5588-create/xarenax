@@ -69,7 +69,7 @@ const MegaFooter = () => {
               </a>
               <div className="flex items-start gap-2 text-muted-foreground">
                 <MapPin className="w-4 h-4 mt-0.5 md:mt-1 text-primary flex-shrink-0" />
-                <span>Mumbai, Maharashtra, India</span>
+                <span>Jaipur, Rajasthan, India</span>
               </div>
             </div>
           </div>

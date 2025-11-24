@@ -17,6 +17,10 @@ interface UTRSubmission {
   status: string;
   created_at: string;
   admin_notes: string | null;
+  fraud_score: number | null;
+  fraud_flags: string[] | null;
+  is_suspicious: boolean | null;
+  verification_status: string | null;
   username?: string;
 }
 
@@ -42,7 +46,11 @@ const AdminUTR = () => {
           utr_number,
           status,
           created_at,
-          admin_notes
+          admin_notes,
+          fraud_score,
+          fraud_flags,
+          is_suspicious,
+          verification_status
         `)
         .order("created_at", { ascending: false });
 
@@ -176,6 +184,21 @@ const AdminUTR = () => {
     }
   };
 
+  const getFraudBadge = (submission: UTRSubmission) => {
+    if (!submission.is_suspicious) return null;
+    
+    const score = submission.fraud_score || 0;
+    let color = "bg-yellow-500/20 text-yellow-400";
+    if (score >= 70) color = "bg-red-500/20 text-red-400";
+    else if (score >= 40) color = "bg-orange-500/20 text-orange-400";
+
+    return (
+      <Badge variant="secondary" className={color}>
+        ⚠️ Suspicious ({score})
+      </Badge>
+    );
+  };
+
   return (
     <div className="space-y-6">
       <Card className="bg-card/50 backdrop-blur-xl border-admin-red/20">
@@ -207,6 +230,7 @@ const AdminUTR = () => {
                     <TableHead>Amount</TableHead>
                     <TableHead>UTR Number</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Fraud Check</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
@@ -220,11 +244,25 @@ const AdminUTR = () => {
                     </TableRow>
                   ) : (
                     filteredSubmissions.map((submission) => (
-                      <TableRow key={submission.id}>
+                      <TableRow key={submission.id} className={submission.is_suspicious ? "bg-red-500/5" : ""}>
                         <TableCell className="font-medium">{submission.username}</TableCell>
                         <TableCell className="text-admin-gold">₹{submission.amount}</TableCell>
                         <TableCell className="font-mono text-sm">{submission.utr_number}</TableCell>
                         <TableCell>{getStatusBadge(submission.status)}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            {getFraudBadge(submission)}
+                            {submission.fraud_flags && submission.fraud_flags.length > 0 && (
+                              <div className="text-xs text-muted-foreground">
+                                {submission.fraud_flags.map(flag => (
+                                  <span key={flag} className="inline-block mr-1 px-1 py-0.5 rounded bg-muted">
+                                    {flag.replace(/_/g, ' ')}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           {new Date(submission.created_at).toLocaleString()}
                         </TableCell>

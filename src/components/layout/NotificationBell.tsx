@@ -1,10 +1,12 @@
-import { Bell } from "lucide-react";
+import { Bell, Settings } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,6 +25,7 @@ interface Notification {
 
 const NotificationBell = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -197,6 +200,16 @@ const NotificationBell = () => {
             ))}
           </div>
         )}
+        
+        <DropdownMenuSeparator />
+        
+        <DropdownMenuItem
+          className="flex items-center gap-2 cursor-pointer p-3 hover:bg-card/60"
+          onClick={() => navigate("/notification-preferences")}
+        >
+          <Settings className="w-4 h-4 text-primary" />
+          <span className="font-medium text-sm">Notification Settings</span>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

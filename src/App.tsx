@@ -25,6 +25,7 @@ import RefundPolicy from "./pages/legal/RefundPolicy";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import InstallApp from "./pages/InstallApp";
+import NotificationPreferences from "./pages/NotificationPreferences";
 import AdminLayout from "./components/layout/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageTournaments from "./pages/admin/ManageTournaments";
@@ -69,6 +70,7 @@ const App = () => {
               <Route path="/legal/terms" element={<Terms />} />
               <Route path="/legal/refund" element={<RefundPolicy />} />
               <Route path="/install" element={<InstallApp />} />
+              <Route path="/notification-preferences" element={<ProtectedRoute><NotificationPreferences /></ProtectedRoute>} />
               {/* Admin Routes - Protected */}
               <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />

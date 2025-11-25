@@ -16,9 +16,6 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "logo.png", "robots.txt"],
-      strategies: "injectManifest",
-      srcDir: "public",
-      filename: "sw.js",
       manifest: {
         name: "ArenaX - PUBG Tournament Platform",
         short_name: "ArenaX",

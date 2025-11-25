@@ -35,6 +35,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminUTR from "./pages/admin/AdminUTR";
 import AdminReferrals from "./pages/admin/AdminReferrals";
 import FraudAnalytics from "./pages/admin/FraudAnalytics";
+import AdminSupport from "./pages/admin/AdminSupport";
 
 
 const queryClient = new QueryClient();
@@ -81,6 +82,7 @@ const App = () => {
               <Route path="referrals" element={<AdminReferrals />} />
               <Route path="utr" element={<AdminUTR />} />
               <Route path="fraud-analytics" element={<FraudAnalytics />} />
+              <Route path="support" element={<AdminSupport />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

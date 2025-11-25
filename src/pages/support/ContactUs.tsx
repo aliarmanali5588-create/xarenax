@@ -6,11 +6,40 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const ContactUs = () => {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast.success("Your message has been sent! We'll respond within 24 hours.");
+    setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      const { error } = await supabase.from('support_tickets').insert({
+        user_id: user?.id || null,
+        name: formData.get('name') as string,
+        email: formData.get('email') as string,
+        phone: formData.get('phone') as string || null,
+        subject: formData.get('subject') as string,
+        message: formData.get('message') as string,
+      });
+
+      if (error) throw error;
+
+      toast.success("Support ticket submitted! We'll respond within 24 hours.");
+      e.currentTarget.reset();
+    } catch (error) {
+      console.error('Error submitting ticket:', error);
+      toast.error("Failed to submit ticket. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactMethods = [
@@ -91,6 +120,7 @@ const ContactUs = () => {
                   </Label>
                   <Input
                     id="name"
+                    name="name"
                     placeholder="Enter your name"
                     required
                     className="glass-panel border-border/50"
@@ -102,6 +132,7 @@ const ContactUs = () => {
                   </Label>
                   <Input
                     id="email"
+                    name="email"
                     type="email"
                     placeholder="your@email.com"
                     required
@@ -116,6 +147,7 @@ const ContactUs = () => {
                 </Label>
                 <Input
                   id="phone"
+                  name="phone"
                   type="tel"
                   placeholder="+91 98765 43210"
                   className="glass-panel border-border/50"
@@ -128,6 +160,7 @@ const ContactUs = () => {
                 </Label>
                 <Input
                   id="subject"
+                  name="subject"
                   placeholder="How can we help you?"
                   required
                   className="glass-panel border-border/50"
@@ -140,6 +173,7 @@ const ContactUs = () => {
                 </Label>
                 <Textarea
                   id="message"
+                  name="message"
                   placeholder="Describe your issue in detail..."
                   required
                   rows={6}
@@ -147,9 +181,15 @@ const ContactUs = () => {
                 />
               </div>
 
-              <Button type="submit" variant="gaming" size="lg" className="w-full">
+              <Button 
+                type="submit" 
+                variant="gaming" 
+                size="lg" 
+                className="w-full"
+                disabled={isSubmitting}
+              >
                 <Send className="w-5 h-5 mr-2" />
-                Send Message
+                {isSubmitting ? 'Submitting...' : 'Send Message'}
               </Button>
 
               <p className="text-sm text-muted-foreground text-center">

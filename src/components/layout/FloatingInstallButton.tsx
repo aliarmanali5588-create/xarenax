@@ -34,36 +34,31 @@ const FloatingInstallButton = () => {
   }
 
   return (
-    <div className="fixed bottom-20 lg:bottom-6 right-4 z-50 animate-in slide-in-from-bottom-5 duration-500">
+    <div className="fixed bottom-24 lg:bottom-8 right-4 z-50 animate-in slide-in-from-right duration-300">
       <div className="relative group">
         {/* Dismiss button */}
         <button
           onClick={handleDismiss}
-          className="absolute -top-2 -right-2 w-7 h-7 bg-destructive/90 backdrop-blur-sm text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg z-10"
+          className="absolute -top-1 -right-1 w-5 h-5 bg-background/90 backdrop-blur-sm text-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-md border border-border z-10"
           aria-label="Dismiss"
         >
-          <X className="w-4 h-4" />
+          <X className="w-3 h-3" />
         </button>
 
-        {/* Animated Glowing effect */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-2xl blur-lg opacity-75 animate-pulse" />
-        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 rounded-2xl blur-lg opacity-50 animate-pulse" style={{ animationDelay: '1s' }} />
-        
-        {/* Main button with bounce */}
+        {/* Main button - clean and professional */}
         <Button
           asChild
-          size="lg"
-          className="relative h-16 px-6 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 animate-bounce hover:animate-none rounded-2xl border-2 border-white/20"
+          size="sm"
+          className="h-12 px-4 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl border border-primary/20"
         >
-          <Link to="/install-app" className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm animate-pulse">
-              <Download className="w-7 h-7 drop-shadow-lg" />
+          <Link to="/install-app" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+              <Download className="w-4 h-4" />
             </div>
-            <div className="text-left hidden sm:block">
-              <div className="text-xs font-semibold opacity-95 tracking-wide">FREE APP</div>
-              <div className="text-base font-black tracking-tight">Install Now</div>
+            <div className="text-left">
+              <div className="text-[10px] font-medium opacity-80 leading-tight">Get App</div>
+              <div className="text-xs font-bold leading-tight">Install</div>
             </div>
-            <Download className="w-6 h-6 sm:hidden animate-pulse" />
           </Link>
         </Button>
       </div>

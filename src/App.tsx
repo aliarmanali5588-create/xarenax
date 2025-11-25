@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import LoadingScreen from "@/components/LoadingScreen";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
+import FloatingInstallButton from "@/components/layout/FloatingInstallButton";
 import Home from "./pages/Home";
 import Tournaments from "./pages/Tournaments";
 import TournamentDetail from "./pages/TournamentDetail";
@@ -72,6 +73,7 @@ const App = () => {
               <Route path="/legal/terms" element={<Terms />} />
               <Route path="/legal/refund" element={<RefundPolicy />} />
               <Route path="/install" element={<InstallApp />} />
+              <Route path="/install-app" element={<InstallApp />} />
               <Route path="/notification-preferences" element={<ProtectedRoute><NotificationPreferences /></ProtectedRoute>} />
               {/* Admin Routes - Protected */}
               <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
@@ -91,6 +93,7 @@ const App = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
             <MobileBottomNav />
+            <FloatingInstallButton />
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>

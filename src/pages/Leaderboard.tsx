@@ -131,7 +131,7 @@ const Leaderboard = () => {
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Trophy className="w-12 h-12 text-admin-gold animate-pulse" />
-              <h1 className="text-4xl md:text-6xl font-gaming font-bold text-glow-cyan">
+              <h1 className="text-3xl md:text-6xl font-gaming font-bold text-glow-cyan">
                 Leaderboard
               </h1>
               <Trophy className="w-12 h-12 text-admin-gold animate-pulse" />

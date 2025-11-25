@@ -132,7 +132,7 @@ const Faq = () => {
         <div className="container mx-auto max-w-4xl">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-gaming font-bold mb-4 text-glow-cyan">
+            <h1 className="text-3xl md:text-5xl font-gaming font-bold mb-4 text-glow-cyan">
               Frequently Asked Questions
             </h1>
             <p className="text-xl text-muted-foreground mb-6">

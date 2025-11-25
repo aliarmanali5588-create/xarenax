@@ -207,7 +207,7 @@ const Auth = () => {
               <Trophy className="w-10 h-10 text-background" />
             </div>
           </div>
-          <h1 className="text-4xl font-gaming font-bold text-glow-cyan mb-2">
+          <h1 className="text-3xl font-gaming font-bold text-glow-cyan mb-2">
             Arena<span className="text-secondary">X</span>
           </h1>
           <p className="text-muted-foreground">Join the Ultimate PUBG Tournament Platform</p>

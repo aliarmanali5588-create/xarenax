@@ -59,7 +59,7 @@ const HowItWorks = () => {
         <div className="modern-container">
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-6xl font-gaming font-bold mb-4">
+            <h1 className="text-3xl md:text-6xl font-gaming font-bold mb-4">
               How It Works
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -114,7 +114,7 @@ const HowItWorks = () => {
 
           {/* FAQ Section */}
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-gaming font-bold text-center mb-12">
+            <h2 className="text-2xl md:text-4xl font-gaming font-bold text-center mb-12">
               Frequently Asked Questions
             </h2>
             <div className="space-y-4">

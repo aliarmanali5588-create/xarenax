@@ -34,7 +34,7 @@ const AboutUs = () => {
         <div className="modern-container max-w-5xl">
           {/* Header */}
           <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-6xl font-gaming font-bold mb-4">
+            <h1 className="text-3xl md:text-6xl font-gaming font-bold mb-4">
               About ArenaX
             </h1>
             <p className="text-xl text-muted-foreground">

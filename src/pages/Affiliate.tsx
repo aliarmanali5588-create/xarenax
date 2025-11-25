@@ -115,7 +115,7 @@ const Affiliate = () => {
                 Earn While You Game
               </span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-gaming font-bold mb-4">
+            <h1 className="text-3xl md:text-6xl font-gaming font-bold mb-4">
               <span className="text-glow-cyan">Affiliate</span>{" "}
               <span className="text-glow-orange">Dashboard</span>
             </h1>

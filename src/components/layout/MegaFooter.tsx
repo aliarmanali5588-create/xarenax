@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Mail, MapPin } from "lucide-react";
 import TelegramIcon from "../icons/TelegramIcon";
-import trophyIcon from "@/assets/trophy-icon.png";
+import arenaxLogo from "@/assets/arenax-logo.png";
 
 const MegaFooter = () => {
   const footerSections = [
@@ -40,15 +40,12 @@ const MegaFooter = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center space-x-3 mb-6 group">
+            <Link to="/" className="flex items-center mb-6 group">
               <img 
-                src={trophyIcon} 
+                src={arenaxLogo} 
                 alt="ArenaX" 
-                className="w-16 h-16 transition-transform group-hover:scale-110"
+                className="h-12 transition-transform group-hover:scale-105"
               />
-              <span className="text-4xl font-gaming font-bold tracking-wide">
-                Arena<span className="text-primary">X</span>
-              </span>
             </Link>
             <p className="text-muted-foreground mb-6 leading-relaxed">
               India's most trusted PUBG/BGMI tournament platform. Join thousands of players competing for real prizes.

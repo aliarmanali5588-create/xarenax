@@ -51,6 +51,31 @@ const MegaFooter = () => {
               India's most trusted PUBG/BGMI tournament platform. Join thousands of players competing for real prizes.
             </p>
             
+            {/* Trust Indicators */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-full">
+                  <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  <span className="font-semibold text-foreground">100% Secure</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-full">
+                  <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="font-semibold text-foreground">Verified Platform</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
+                </svg>
+                <span><span className="font-bold text-primary">10,000+</span> Trusted Players</span>
+              </div>
+            </div>
+            
             {/* Contact Info */}
             <div className="space-y-3">
               <a 

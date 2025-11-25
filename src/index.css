@@ -67,6 +67,48 @@
     --chart-4: 188 100% 50%;
     --chart-5: 270 50% 40%;
   }
+
+  /* Admin Light Theme */
+  .admin-light {
+    /* Lighter Background */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    /* Light Glass Card */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    /* Vibrant Purple Primary */
+    --primary: 271 91% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Electric Blue Secondary */
+    --secondary: 199 89% 48%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Light Muted */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Pink Accent */
+    --accent: 330 81% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Borders */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+
+    /* Admin Colors - Light Mode */
+    --admin-red: 330 81% 60%;
+    --admin-gold: 45 93% 47%;
+
+    /* Chart Colors - Light Theme */
+    --chart-1: 271 91% 65%;
+    --chart-2: 330 81% 60%;
+    --chart-3: 45 93% 47%;
+    --chart-4: 199 89% 48%;
+    --chart-5: 142 76% 36%;
+  }
 }
 
 @layer base {

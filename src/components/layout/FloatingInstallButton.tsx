@@ -39,30 +39,31 @@ const FloatingInstallButton = () => {
         {/* Dismiss button */}
         <button
           onClick={handleDismiss}
-          className="absolute -top-2 -right-2 w-6 h-6 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:scale-110 z-10"
+          className="absolute -top-2 -right-2 w-7 h-7 bg-destructive/90 backdrop-blur-sm text-destructive-foreground rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg z-10"
           aria-label="Dismiss"
         >
-          <X className="w-3 h-3" />
+          <X className="w-4 h-4" />
         </button>
 
-        {/* Glowing effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-primary blur-xl opacity-60 animate-pulse" />
+        {/* Animated Glowing effect */}
+        <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 rounded-2xl blur-lg opacity-75 animate-pulse" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 rounded-2xl blur-lg opacity-50 animate-pulse" style={{ animationDelay: '1s' }} />
         
-        {/* Main button */}
+        {/* Main button with bounce */}
         <Button
           asChild
           size="lg"
-          className="relative h-14 px-6 bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 shadow-2xl hover:shadow-primary/50 transition-all duration-300 hover:scale-105"
+          className="relative h-16 px-6 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 shadow-2xl hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 animate-bounce hover:animate-none rounded-2xl border-2 border-white/20"
         >
           <Link to="/install-app" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
-              <Download className="w-6 h-6" />
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm animate-pulse">
+              <Download className="w-7 h-7 drop-shadow-lg" />
             </div>
             <div className="text-left hidden sm:block">
-              <div className="text-xs font-normal opacity-90">Get the App</div>
-              <div className="text-sm font-bold">Install ArenaX</div>
+              <div className="text-xs font-semibold opacity-95 tracking-wide">FREE APP</div>
+              <div className="text-base font-black tracking-tight">Install Now</div>
             </div>
-            <Download className="w-5 h-5 sm:hidden" />
+            <Download className="w-6 h-6 sm:hidden animate-pulse" />
           </Link>
         </Button>
       </div>

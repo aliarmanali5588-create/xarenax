@@ -36,6 +36,7 @@ import AdminUTR from "./pages/admin/AdminUTR";
 import AdminReferrals from "./pages/admin/AdminReferrals";
 import FraudAnalytics from "./pages/admin/FraudAnalytics";
 import AdminSupport from "./pages/admin/AdminSupport";
+import TournamentAnalytics from "./pages/admin/TournamentAnalytics";
 
 
 const queryClient = new QueryClient();
@@ -83,6 +84,7 @@ const App = () => {
               <Route path="utr" element={<AdminUTR />} />
               <Route path="fraud-analytics" element={<FraudAnalytics />} />
               <Route path="support" element={<AdminSupport />} />
+              <Route path="tournament-analytics" element={<TournamentAnalytics />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

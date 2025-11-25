@@ -11,7 +11,8 @@ import {
   UserPlus,
   CreditCard,
   TrendingUp,
-  MessageSquare
+  MessageSquare,
+  BarChart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -72,6 +73,7 @@ const AdminLayout = () => {
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
     { icon: Trophy, label: "Tournaments", path: "/admin/tournaments" },
+    { icon: BarChart, label: "Analytics", path: "/admin/tournament-analytics" },
     { icon: Wallet, label: "Withdrawals", path: "/admin/withdrawals" },
     { icon: Users, label: "Users", path: "/admin/users" },
     { icon: UserPlus, label: "Referrals", path: "/admin/referrals" },

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { Trophy, Mail, MapPin } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 import TelegramIcon from "../icons/TelegramIcon";
+import trophyIcon from "@/assets/trophy-icon.png";
 
 const MegaFooter = () => {
   const footerSections = [
@@ -39,13 +40,12 @@ const MegaFooter = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center space-x-3 mb-6 group">
-              <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                <Trophy className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-3xl font-gaming font-bold">
-                Arena<span className="text-primary">X</span>
-              </span>
+            <Link to="/" className="flex items-center mb-6 group">
+              <img 
+                src={trophyIcon} 
+                alt="ArenaX" 
+                className="w-16 h-16 transition-transform group-hover:scale-110"
+              />
             </Link>
             <p className="text-muted-foreground mb-6 leading-relaxed">
               India's most trusted PUBG/BGMI tournament platform. Join thousands of players competing for real prizes.

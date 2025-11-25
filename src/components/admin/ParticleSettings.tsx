@@ -10,55 +10,56 @@ export interface ParticleConfig {
   count: number;
   speed: number;
   colorScheme: "gold-red" | "cyan-magenta" | "rainbow" | "purple-blue" | "green-yellow";
+  enabled: boolean;
 }
 
 const colorSchemes = {
   "gold-red": {
     name: "Gold & Red",
     colors: [
-      "rgba(255, 215, 0, 0.6)",
-      "rgba(239, 68, 68, 0.6)",
-      "rgba(255, 140, 0, 0.6)",
-      "rgba(220, 20, 60, 0.6)",
+      "rgba(255, 215, 0, 0.15)",
+      "rgba(239, 68, 68, 0.15)",
+      "rgba(255, 140, 0, 0.12)",
+      "rgba(220, 20, 60, 0.12)",
     ],
   },
   "cyan-magenta": {
     name: "Cyan & Magenta",
     colors: [
-      "rgba(0, 255, 255, 0.6)",
-      "rgba(255, 0, 255, 0.6)",
-      "rgba(0, 191, 255, 0.6)",
-      "rgba(255, 105, 180, 0.6)",
+      "rgba(0, 255, 255, 0.15)",
+      "rgba(255, 0, 255, 0.15)",
+      "rgba(0, 191, 255, 0.12)",
+      "rgba(255, 105, 180, 0.12)",
     ],
   },
   rainbow: {
     name: "Rainbow",
     colors: [
-      "rgba(255, 0, 0, 0.6)",
-      "rgba(255, 127, 0, 0.6)",
-      "rgba(255, 255, 0, 0.6)",
-      "rgba(0, 255, 0, 0.6)",
-      "rgba(0, 0, 255, 0.6)",
-      "rgba(75, 0, 130, 0.6)",
-      "rgba(148, 0, 211, 0.6)",
+      "rgba(255, 0, 0, 0.15)",
+      "rgba(255, 127, 0, 0.12)",
+      "rgba(255, 255, 0, 0.12)",
+      "rgba(0, 255, 0, 0.12)",
+      "rgba(0, 0, 255, 0.15)",
+      "rgba(75, 0, 130, 0.12)",
+      "rgba(148, 0, 211, 0.12)",
     ],
   },
   "purple-blue": {
     name: "Purple & Blue",
     colors: [
-      "rgba(138, 43, 226, 0.6)",
-      "rgba(75, 0, 130, 0.6)",
-      "rgba(0, 0, 255, 0.6)",
-      "rgba(65, 105, 225, 0.6)",
+      "rgba(138, 43, 226, 0.15)",
+      "rgba(75, 0, 130, 0.12)",
+      "rgba(0, 0, 255, 0.12)",
+      "rgba(65, 105, 225, 0.15)",
     ],
   },
   "green-yellow": {
     name: "Green & Yellow",
     colors: [
-      "rgba(0, 255, 0, 0.6)",
-      "rgba(127, 255, 0, 0.6)",
-      "rgba(255, 255, 0, 0.6)",
-      "rgba(173, 255, 47, 0.6)",
+      "rgba(0, 255, 0, 0.12)",
+      "rgba(127, 255, 0, 0.12)",
+      "rgba(255, 255, 0, 0.15)",
+      "rgba(173, 255, 47, 0.12)",
     ],
   },
 };
@@ -83,16 +84,19 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
     onChange({ ...config, colorScheme: value as ParticleConfig["colorScheme"] });
   };
 
+  const handleToggleParticles = () => {
+    onChange({ ...config, enabled: !config.enabled });
+  };
+
   return (
     <>
       {/* Floating Settings Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-lg admin-neon-card admin-glow-gold group"
+        className="fixed bottom-6 right-6 z-50 h-12 w-12 rounded-full shadow-md bg-card/90 backdrop-blur border border-border hover:border-admin-gold/30 transition-all group"
         size="icon"
       >
-        <Settings className="h-6 w-6 text-admin-gold group-hover:rotate-90 transition-transform duration-300" />
-        <div className="absolute inset-0 bg-gradient-to-r from-admin-gold/0 via-admin-gold/20 to-admin-gold/0 opacity-0 group-hover:opacity-100 transition-opacity rounded-full" />
+        <Settings className="h-5 w-5 text-muted-foreground group-hover:text-admin-gold group-hover:rotate-90 transition-all duration-300" />
       </Button>
 
       {/* Settings Panel */}
@@ -105,10 +109,10 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
           />
 
           {/* Panel */}
-          <Card className="fixed bottom-24 right-6 w-96 z-50 bg-card/95 backdrop-blur-xl border-admin-gold/50 admin-neon-card animate-scale-in shadow-2xl">
+          <Card className="fixed bottom-20 right-6 w-96 z-50 bg-card/95 backdrop-blur-xl border border-border/50 animate-scale-in shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
-              <CardTitle className="text-lg font-gaming bg-gradient-to-r from-admin-gold to-admin-red bg-clip-text text-transparent">
-                Particle Settings
+              <CardTitle className="text-lg font-semibold text-foreground">
+                Background Effects
               </CardTitle>
               <Button
                 variant="ghost"
@@ -120,6 +124,28 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
               </Button>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Enable/Disable Particles */}
+              <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                <div>
+                  <Label className="text-sm font-semibold text-foreground">
+                    Background Particles
+                  </Label>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {config.enabled ? "Animations active" : "Animations disabled"}
+                  </p>
+                </div>
+                <Button
+                  variant={config.enabled ? "default" : "outline"}
+                  size="sm"
+                  onClick={handleToggleParticles}
+                  className="min-w-[80px]"
+                >
+                  {config.enabled ? "ON" : "OFF"}
+                </Button>
+              </div>
+
+              {config.enabled && (
+                <>
               {/* Particle Count */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -204,22 +230,23 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
                   {colorSchemes[config.colorScheme].colors.map((color, i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-lg border-2 border-border admin-glow-gold"
+                      className="w-8 h-8 rounded-lg border border-border"
                       style={{
                         backgroundColor: color,
-                        boxShadow: `0 0 15px ${color}`,
                       }}
                     />
                   ))}
                 </div>
               </div>
+              </>
+              )}
 
               {/* Reset Button */}
               <Button
                 variant="outline"
-                className="w-full border-admin-red/50 hover:bg-admin-red/10"
+                className="w-full"
                 onClick={() =>
-                  onChange({ count: 50, speed: 1, colorScheme: "gold-red" })
+                  onChange({ count: 30, speed: 0.5, colorScheme: "gold-red", enabled: true })
                 }
               >
                 Reset to Default

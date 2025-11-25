@@ -29,7 +29,7 @@ const AdminLayout = () => {
     const saved = localStorage.getItem("admin-particle-config");
     return saved
       ? JSON.parse(saved)
-      : { count: 50, speed: 1, colorScheme: "gold-red" };
+      : { count: 30, speed: 0.5, colorScheme: "gold-red", enabled: true };
   });
 
   // Save particle config to localStorage
@@ -108,14 +108,14 @@ const AdminLayout = () => {
                 variant="ghost"
                 className={`w-full justify-start gap-3 transition-all relative group ${
                   isActive(item.path)
-                    ? "bg-admin-red/20 text-admin-gold border border-admin-gold/50 admin-glow-gold"
-                    : "text-foreground hover:bg-admin-red/10 hover:text-admin-gold admin-rgb-glow"
+                    ? "bg-admin-gold/10 text-admin-gold border border-admin-gold/30"
+                    : "text-foreground hover:bg-muted/50 hover:text-admin-gold"
                 }`}
               >
                 <item.icon className="h-5 w-5 relative z-10" />
                 <span className="relative z-10">{item.label}</span>
                 {!isActive(item.path) && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-admin-gold/0 via-admin-gold/10 to-admin-gold/0 opacity-0 group-hover:opacity-100 transition-opacity rounded" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-admin-gold/0 via-admin-gold/5 to-admin-gold/0 opacity-0 group-hover:opacity-100 transition-opacity rounded" />
                 )}
               </Button>
             </Link>
@@ -126,12 +126,11 @@ const AdminLayout = () => {
         <div className="p-4 border-t border-admin-red/20 relative">
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 text-destructive hover:bg-destructive/10 admin-glow-red group relative overflow-hidden"
+            className="w-full justify-start gap-3 text-destructive hover:bg-destructive/10 group relative overflow-hidden"
             onClick={signOut}
           >
             <LogOut className="h-5 w-5 relative z-10" />
             <span className="relative z-10">Exit Admin</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-destructive/0 via-destructive/20 to-destructive/0 opacity-0 group-hover:opacity-100 transition-opacity" />
           </Button>
         </div>
       </aside>
@@ -152,9 +151,9 @@ const AdminLayout = () => {
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <div className="px-4 py-2 bg-admin-red/20 border border-admin-red/50 rounded-lg admin-neon-card admin-glow-gold">
+              <div className="px-4 py-2 bg-card/50 border border-border rounded-lg">
                 <p className="text-xs text-muted-foreground">Role</p>
-                <p className="text-sm font-bold bg-gradient-to-r from-admin-gold to-admin-red bg-clip-text text-transparent">
+                <p className="text-sm font-bold text-admin-gold">
                   SUPER ADMIN
                 </p>
               </div>

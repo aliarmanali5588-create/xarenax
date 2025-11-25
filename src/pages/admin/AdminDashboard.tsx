@@ -294,9 +294,9 @@ const AdminDashboard = () => {
           {statsCards.map((stat) => (
             <Card
               key={stat.title}
-              className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border border-border/50 hover:border-admin-gold/50 transition-all duration-300 group admin-neon-card admin-rgb-glow"
+              className="relative overflow-hidden bg-card/50 backdrop-blur-xl border border-border/50 hover:border-admin-gold/30 transition-all duration-300 group"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-admin-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-br from-admin-gold/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 relative z-10">
                 <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   {stat.title}
@@ -325,8 +325,8 @@ const AdminDashboard = () => {
 
       {/* Weekly Chart - Trading Style */}
       {!loading && (
-        <Card className="bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border border-border/50 admin-neon-card admin-rgb-glow group">
-          <CardHeader className="relative z-10">
+        <Card className="bg-card/50 backdrop-blur-xl border border-border/50">
+          <CardHeader>
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-xl font-gaming bg-gradient-to-r from-admin-gold via-admin-red to-admin-gold bg-clip-text text-transparent">
@@ -403,8 +403,8 @@ const AdminDashboard = () => {
       {loading ? (
         <ActivityTableSkeleton />
       ) : (
-        <Card className="bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border border-border/50 admin-neon-card admin-rgb-glow group">
-          <CardHeader className="relative z-10">
+        <Card className="bg-card/50 backdrop-blur-xl border border-border/50">
+          <CardHeader>
             <CardTitle className="text-xl font-gaming bg-gradient-to-r from-admin-gold via-yellow-400 to-admin-red bg-clip-text text-transparent">
               Live Activity Feed
             </CardTitle>
@@ -422,23 +422,22 @@ const AdminDashboard = () => {
               </TableHeader>
               <TableBody>
                 {recentActivity.map((activity, idx) => (
-                  <TableRow key={idx} className="border-border/30 hover:bg-admin-gold/5 transition-colors group relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-admin-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                    <TableCell className="font-semibold text-foreground relative z-10">
+                  <TableRow key={idx} className="border-border/30 hover:bg-muted/30 transition-colors">
+                    <TableCell className="font-semibold text-foreground">
                       {activity.type}
                     </TableCell>
-                    <TableCell className="text-cyan-400 font-medium relative z-10">
+                    <TableCell className="text-cyan-400 font-medium">
                       {activity.user}
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm relative z-10">
+                    <TableCell className="text-muted-foreground text-sm">
                       {activity.time}
                     </TableCell>
-                    <TableCell className="text-right relative z-10">
+                    <TableCell className="text-right">
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
                           activity.status === "success"
-                            ? "bg-green-500/20 text-green-400 border border-green-500/30 hover:shadow-[0_0_15px_rgba(34,197,94,0.5)]"
-                            : "bg-orange-500/20 text-orange-400 border border-orange-500/30 hover:shadow-[0_0_15px_rgba(249,115,22,0.5)]"
+                            ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                            : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
                         }`}
                       >
                         {activity.status}

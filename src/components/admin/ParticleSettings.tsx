@@ -69,6 +69,27 @@ interface ParticleSettingsProps {
   onChange: (config: ParticleConfig) => void;
 }
 
+const presets = {
+  minimal: {
+    name: "Minimal",
+    icon: "✨",
+    description: "Subtle & clean",
+    config: { count: 15, speed: 0.3, colorScheme: "gold-red" as const, enabled: true },
+  },
+  balanced: {
+    name: "Balanced",
+    icon: "🎯",
+    description: "Perfect balance",
+    config: { count: 30, speed: 0.5, colorScheme: "gold-red" as const, enabled: true },
+  },
+  dynamic: {
+    name: "Dynamic",
+    icon: "⚡",
+    description: "Lively & energetic",
+    config: { count: 60, speed: 1, colorScheme: "rainbow" as const, enabled: true },
+  },
+};
+
 const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -86,6 +107,10 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
 
   const handleToggleParticles = () => {
     onChange({ ...config, enabled: !config.enabled });
+  };
+
+  const applyPreset = (presetKey: keyof typeof presets) => {
+    onChange(presets[presetKey].config);
   };
 
   return (
@@ -146,6 +171,42 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
 
               {config.enabled && (
                 <>
+                  {/* Presets */}
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-foreground">
+                      Quick Presets
+                    </Label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {(Object.keys(presets) as Array<keyof typeof presets>).map((key) => {
+                        const preset = presets[key];
+                        const isActive = 
+                          config.count === preset.config.count &&
+                          config.speed === preset.config.speed &&
+                          config.colorScheme === preset.config.colorScheme;
+                        
+                        return (
+                          <Button
+                            key={key}
+                            variant={isActive ? "default" : "outline"}
+                            className={`h-auto py-3 px-2 flex flex-col items-center gap-1 transition-all ${
+                              isActive ? "ring-2 ring-admin-gold/50" : "hover:border-admin-gold/30"
+                            }`}
+                            onClick={() => applyPreset(key)}
+                          >
+                            <span className="text-2xl">{preset.icon}</span>
+                            <span className="text-xs font-semibold">{preset.name}</span>
+                            <span className="text-[10px] text-muted-foreground">
+                              {preset.description}
+                            </span>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Click a preset to quickly switch animation styles
+                    </p>
+                  </div>
+
               {/* Particle Count */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -240,6 +301,13 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
               </div>
               </>
               )}
+
+              {/* Info Box */}
+              <div className="p-3 bg-admin-gold/5 border border-admin-gold/20 rounded-lg">
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-semibold text-admin-gold">Tip:</span> {config.enabled ? "Use presets for quick changes, or customize settings above for fine-tuned control." : "Enable particles to access animation controls."}
+                </p>
+              </div>
 
               {/* Reset Button */}
               <Button

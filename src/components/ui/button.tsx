@@ -9,20 +9,20 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg",
+        outline: "border-2 border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-primary/50",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-lg",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        neon: "glass-panel neon-border-cyan text-primary font-heading font-bold uppercase tracking-wider hover:neon-glow-cyan hover:bg-primary/10",
-        neonOrange: "glass-panel neon-border-orange text-secondary font-heading font-bold uppercase tracking-wider hover:neon-glow-orange hover:bg-secondary/10",
-        gaming: "bg-gradient-to-r from-primary to-accent text-background font-gaming font-bold uppercase tracking-wider hover:shadow-2xl hover:scale-105 transition-transform",
+        neon: "glass-panel neon-border-cyan text-primary font-heading font-bold uppercase tracking-wider hover:neon-glow-cyan hover:bg-primary/10 hover:scale-105",
+        neonOrange: "glass-panel neon-border-orange text-secondary font-heading font-bold uppercase tracking-wider hover:neon-glow-orange hover:bg-secondary/10 hover:scale-105",
+        gaming: "bg-gradient-to-r from-primary via-accent to-secondary text-background font-gaming font-bold uppercase tracking-wider shadow-2xl hover:shadow-[0_0_30px_rgba(0,255,255,0.6)] hover:scale-105 transition-all duration-300 border-2 border-primary/50",
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
+        lg: "h-12 rounded-lg px-8",
         icon: "h-10 w-10",
       },
     },

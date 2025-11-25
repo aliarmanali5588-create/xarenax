@@ -106,6 +106,21 @@ Deno.serve(async (req) => {
         } else {
           console.log(`Notification sent to user ${participant.user_id}`);
           totalNotificationsSent++;
+          
+          // Also send push notification
+          try {
+            await supabase.functions.invoke('send-push-notification', {
+              body: {
+                userId: participant.user_id,
+                title: '⚔️ Match Starting Soon!',
+                message: `Your tournament "${tournament.title}" starts in ${minutesUntil} minutes!`,
+                type: 'match',
+                url: '/tournaments'
+              }
+            });
+          } catch (pushError) {
+            console.error(`Error sending push notification to user ${participant.user_id}:`, pushError);
+          }
         }
       }
     }

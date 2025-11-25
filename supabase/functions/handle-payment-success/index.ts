@@ -124,6 +124,22 @@ Deno.serve(async (req) => {
       console.error('Failed to send notification:', notificationError);
       // Don't throw - notification failure shouldn't fail the whole payment
     }
+    
+    // 4. Send push notification
+    try {
+      await supabaseAdmin.functions.invoke('send-push-notification', {
+        body: {
+          userId: user.id,
+          title: '💰 Deposit Successful!',
+          message: `Your wallet has been credited with ₹${amount}. Happy Gaming!`,
+          type: 'wallet',
+          url: '/wallet'
+        }
+      });
+    } catch (pushError) {
+      console.error('Failed to send push notification:', pushError);
+      // Don't throw - notification failure shouldn't fail the whole payment
+    }
 
     console.log('=== Payment processing completed successfully ===');
 

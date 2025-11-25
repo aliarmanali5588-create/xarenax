@@ -1,0 +1,155 @@
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+
+const VAPID_PUBLIC_KEY = 'BKxJJZ8QZ8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8Z8';
+
+export const usePushNotifications = () => {
+  const { user } = useAuth();
+  const [isSupported, setIsSupported] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [permission, setPermission] = useState<NotificationPermission>('default');
+
+  useEffect(() => {
+    // Check if push notifications are supported
+    const supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+    setIsSupported(supported);
+    
+    if (supported) {
+      setPermission(Notification.permission);
+      checkSubscription();
+    }
+  }, [user]);
+
+  const checkSubscription = async () => {
+    if (!user) return;
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      setIsSubscribed(!!subscription);
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+    }
+  };
+
+  const urlBase64ToUint8Array = (base64String: string) => {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+  };
+
+  const requestPermission = async () => {
+    if (!isSupported) {
+      toast.error('Push notifications are not supported on this device');
+      return false;
+    }
+
+    try {
+      const result = await Notification.requestPermission();
+      setPermission(result);
+      
+      if (result === 'granted') {
+        return true;
+      } else if (result === 'denied') {
+        toast.error('Notification permission denied');
+      }
+      return false;
+    } catch (error) {
+      console.error('Error requesting permission:', error);
+      toast.error('Failed to request notification permission');
+      return false;
+    }
+  };
+
+  const subscribe = async () => {
+    if (!user || !isSupported) return;
+
+    setIsLoading(true);
+
+    try {
+      // Request permission first
+      const hasPermission = await requestPermission();
+      if (!hasPermission) {
+        setIsLoading(false);
+        return;
+      }
+
+      // Get service worker registration
+      const registration = await navigator.serviceWorker.ready;
+
+      // Subscribe to push notifications
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+
+      // Save subscription to database
+      const { error } = await supabase
+        .from('push_subscriptions')
+        .insert({
+          user_id: user.id,
+          subscription_data: subscription.toJSON() as any,
+          device_info: navigator.userAgent
+        });
+
+      if (error) throw error;
+
+      setIsSubscribed(true);
+      toast.success('Push notifications enabled! 🔔');
+    } catch (error: any) {
+      console.error('Error subscribing to push notifications:', error);
+      toast.error('Failed to enable push notifications');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const unsubscribe = async () => {
+    if (!user || !isSupported) return;
+
+    setIsLoading(true);
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+
+      if (subscription) {
+        await subscription.unsubscribe();
+
+        // Remove from database
+        const { error } = await supabase
+          .from('push_subscriptions')
+          .delete()
+          .eq('user_id', user.id);
+
+        if (error) throw error;
+      }
+
+      setIsSubscribed(false);
+      toast.success('Push notifications disabled');
+    } catch (error) {
+      console.error('Error unsubscribing from push notifications:', error);
+      toast.error('Failed to disable push notifications');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    isSupported,
+    isSubscribed,
+    isLoading,
+    permission,
+    subscribe,
+    unsubscribe,
+    requestPermission
+  };
+};

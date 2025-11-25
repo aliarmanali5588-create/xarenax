@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { PushNotificationToggle } from "@/components/notifications/PushNotificationToggle";
 
 interface Notification {
   id: string;
@@ -151,6 +152,10 @@ const NotificationBell = () => {
       >
         <div className="px-3 py-2 border-b border-border/50 mb-2">
           <h3 className="font-heading font-semibold text-sm">Notifications</h3>
+        </div>
+
+        <div className="px-2 py-2 mb-2">
+          <PushNotificationToggle />
         </div>
 
         {loading ? (

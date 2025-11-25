@@ -93,7 +93,7 @@ const Profile = () => {
     : 'Recently';
 
   return (
-    <div className="min-h-screen overflow-x-hidden">
+    <div className="min-h-screen pb-20 lg:pb-0 overflow-x-hidden">
       <Navbar />
 
       <div className="pt-24 pb-20 px-4 md:px-6">

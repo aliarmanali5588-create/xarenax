@@ -129,7 +129,7 @@ const Wallet = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20 lg:pb-0">
       <Navbar />
 
       <div className="pt-24 pb-20 px-4 md:px-6 overflow-x-hidden">

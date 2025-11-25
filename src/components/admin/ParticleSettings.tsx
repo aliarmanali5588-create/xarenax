@@ -96,6 +96,8 @@ const colorSchemes = {
 interface ParticleSettingsProps {
   config: ParticleConfig;
   onChange: (config: ParticleConfig) => void;
+  fps?: number;
+  particleCount?: number;
 }
 
 const presets = {
@@ -119,8 +121,18 @@ const presets = {
   },
 };
 
-const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
+const ParticleSettings = ({ config, onChange, fps = 0, particleCount = 0 }: ParticleSettingsProps) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Performance status based on FPS
+  const getPerformanceStatus = () => {
+    if (fps >= 55) return { label: "Excellent", color: "text-green-500", bgColor: "bg-green-500/10", borderColor: "border-green-500/30" };
+    if (fps >= 45) return { label: "Good", color: "text-blue-500", bgColor: "bg-blue-500/10", borderColor: "border-blue-500/30" };
+    if (fps >= 30) return { label: "Average", color: "text-yellow-500", bgColor: "bg-yellow-500/10", borderColor: "border-yellow-500/30" };
+    return { label: "Low", color: "text-red-500", bgColor: "bg-red-500/10", borderColor: "border-red-500/30" };
+  };
+
+  const performanceStatus = getPerformanceStatus();
 
   const handleCountChange = (value: number[]) => {
     onChange({ ...config, count: value[0] });
@@ -208,6 +220,48 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
 
               {config.enabled && (
                 <>
+                  {/* Performance Monitor */}
+                  <div className={`p-4 rounded-lg border ${performanceStatus.bgColor} ${performanceStatus.borderColor}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <Label className="text-sm font-semibold text-foreground">
+                        Performance Monitor
+                      </Label>
+                      <span className={`text-xs font-bold px-2 py-1 rounded ${performanceStatus.bgColor} ${performanceStatus.color} border ${performanceStatus.borderColor}`}>
+                        {performanceStatus.label}
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* FPS Counter */}
+                      <div className="bg-card/50 p-3 rounded-lg border border-border/30">
+                        <p className="text-xs text-muted-foreground mb-1">Frame Rate</p>
+                        <div className="flex items-baseline gap-1">
+                          <span className={`text-2xl font-bold ${performanceStatus.color}`}>{fps}</span>
+                          <span className="text-xs text-muted-foreground">FPS</span>
+                        </div>
+                      </div>
+                      
+                      {/* Particle Count */}
+                      <div className="bg-card/50 p-3 rounded-lg border border-border/30">
+                        <p className="text-xs text-muted-foreground mb-1">Active Particles</p>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-bold text-admin-gold">{particleCount}</span>
+                          <span className="text-xs text-muted-foreground">PCS</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Performance Tip */}
+                    <div className="mt-3 pt-3 border-t border-border/30">
+                      <p className="text-xs text-muted-foreground">
+                        {fps >= 55 && "🎯 Performance is optimal. You can increase particle count if desired."}
+                        {fps >= 45 && fps < 55 && "✅ Good performance. Consider this a balanced setup."}
+                        {fps >= 30 && fps < 45 && "⚠️ Average performance. Try reducing particle count or speed."}
+                        {fps < 30 && "❌ Low performance detected. Reduce particles, speed, or connection distance."}
+                      </p>
+                    </div>
+                  </div>
+
                   {/* Presets */}
                   <div className="space-y-3">
                     <Label className="text-sm font-semibold text-foreground">

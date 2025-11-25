@@ -32,6 +32,15 @@ const AdminLayout = () => {
       : { count: 30, speed: 0.5, colorScheme: "gold-red", enabled: true, particleSize: 2.5, connectionDistance: 120 };
   });
 
+  // Performance tracking state
+  const [fps, setFps] = useState<number>(0);
+  const [particleCount, setParticleCount] = useState<number>(0);
+
+  const handleFpsUpdate = (newFps: number, count: number) => {
+    setFps(newFps);
+    setParticleCount(count);
+  };
+
   // Save particle config to localStorage
   useEffect(() => {
     localStorage.setItem("admin-particle-config", JSON.stringify(particleConfig));
@@ -75,10 +84,15 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen bg-background flex relative">
       {/* Animated Particles Background */}
-      <ParticlesBackground config={particleConfig} />
+      <ParticlesBackground config={particleConfig} onFpsUpdate={handleFpsUpdate} />
       
       {/* Particle Settings Panel */}
-      <ParticleSettings config={particleConfig} onChange={setParticleConfig} />
+      <ParticleSettings 
+        config={particleConfig} 
+        onChange={setParticleConfig}
+        fps={fps}
+        particleCount={particleCount}
+      />
       
       {/* Sidebar */}
       <aside className="w-64 bg-card/50 backdrop-blur-xl border-r border-admin-red/20 flex flex-col relative z-10">

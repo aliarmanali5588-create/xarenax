@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IndianRupee, CreditCard, Loader2, Smartphone } from "lucide-react";
+import { IndianRupee, Smartphone } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRazorpay } from "@/hooks/useRazorpay";
 import { ManualUPIModal } from "./ManualUPIModal";
 
 interface DepositModalProps {
@@ -22,63 +21,24 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
   const [amount, setAmount] = useState("");
   const [showUPIModal, setShowUPIModal] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState(0);
-  const { initiatePayment, isProcessing } = useRazorpay();
 
   const MIN_DEPOSIT = 50;
   const MAX_DEPOSIT = 5000;
   const quickAmounts = [100, 250, 500, 1000];
 
-  const handlePaymentMethod = (method: "razorpay" | "upi") => {
+  const handleUPIPayment = () => {
     const depositAmount = parseFloat(amount);
-    if (isNaN(depositAmount) || depositAmount < MIN_DEPOSIT) {
-      return;
-    }
-    if (depositAmount > MAX_DEPOSIT) {
+    if (isNaN(depositAmount) || depositAmount < MIN_DEPOSIT || depositAmount > MAX_DEPOSIT) {
       return;
     }
 
-    if (method === "upi") {
-      setSelectedAmount(depositAmount);
-      setShowUPIModal(true);
-      onOpenChange(false);
-    } else {
-      initiatePayment({
-        amount: depositAmount,
-        onSuccess: () => {
-          onOpenChange(false);
-          setAmount("");
-        },
-        onFailure: () => {
-          // Handle failure
-        },
-      });
-    }
+    setSelectedAmount(depositAmount);
+    setShowUPIModal(true);
+    onOpenChange(false);
   };
 
   return (
     <>
-      {/* Processing Overlay */}
-      {isProcessing && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/95 backdrop-blur-sm">
-          <div className="glass-panel p-8 rounded-lg border border-primary/20 shadow-glow max-w-sm mx-4 text-center space-y-6">
-            <div className="flex justify-center">
-              <Loader2 className="w-16 h-16 text-primary animate-spin" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-2xl font-gaming text-glow-cyan">
-                Verifying Payment...
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Please do not close or refresh this window.
-              </p>
-              <p className="text-xs text-muted-foreground">
-                This may take 10-20 seconds.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Deposit Modal */}
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="glass-panel border-border/50 max-w-md">
@@ -133,46 +93,24 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
             </p>
           </div>
 
-          {/* Payment Method Buttons */}
+          {/* Payment Button */}
           <div className="space-y-3">
-            <p className="text-sm font-medium text-center">Choose Payment Method</p>
-            
             <Button
-              onClick={() => handlePaymentMethod("upi")}
+              onClick={handleUPIPayment}
               disabled={!amount || parseFloat(amount) < MIN_DEPOSIT || parseFloat(amount) > MAX_DEPOSIT}
               variant="gaming"
               size="lg"
               className="w-full"
             >
               <Smartphone className="mr-2 h-5 w-5" />
-              Pay via UPI (Recommended)
-            </Button>
-
-            <Button
-              onClick={() => handlePaymentMethod("razorpay")}
-              disabled={!amount || parseFloat(amount) < MIN_DEPOSIT || parseFloat(amount) > MAX_DEPOSIT || isProcessing}
-              variant="outline"
-              className="w-full"
-              size="lg"
-            >
-              {isProcessing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <CreditCard className="mr-2 h-5 w-5" />
-                  Pay with Razorpay
-                </>
-              )}
+              Pay via UPI
             </Button>
           </div>
 
           {/* Security Notice */}
           <div className="glass-panel rounded-lg p-3 text-center">
             <p className="text-xs text-muted-foreground">
-              🔒 Secured by Razorpay • 100% Safe & Encrypted
+              🔒 100% Safe & Secure Payment
             </p>
           </div>
         </div>

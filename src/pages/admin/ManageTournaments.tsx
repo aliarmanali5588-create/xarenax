@@ -42,24 +42,18 @@ import { z } from "zod";
 
 // SECURITY: Tournament Creation Validation Schema
 const tournamentSchema = z.object({
-  title: z.string().trim().min(5, "Title too short").max(100, "Title too long"),
+  title: z.string().trim().min(3, "Title must be at least 3 characters").max(100, "Title too long"),
   map: z.string().min(1, "Map is required"),
   matchType: z.string().min(1, "Match type is required"),
   entryFee: z.number().min(1, "Entry fee must be at least ₹1").max(10000, "Entry fee too high"),
-  prizePool: z.number().min(1, "Prize pool must be at least ₹1"),
+  prizePool: z.number().min(1, "Prize pool must be at least ₹1").max(100000, "Prize pool too high"),
   perKillPrize: z.number().min(0, "Per kill prize cannot be negative").max(1000, "Per kill prize too high"),
   maxSlots: z.number().min(2, "Minimum 2 slots required").max(200, "Maximum 200 slots allowed"),
   dateTime: z.string().refine(
     (dt) => new Date(dt) > new Date(),
     "Start time must be in the future"
   )
-}).refine(
-  (data) => data.prizePool < (data.entryFee * data.maxSlots * 0.9),
-  {
-    message: "Prize pool exceeds 90% of revenue - financially unsustainable!",
-    path: ["prizePool"]
-  }
-);
+});
 
 interface Tournament {
   id: string;

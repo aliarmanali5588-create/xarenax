@@ -6,7 +6,6 @@ import { NavLink } from "@/components/NavLink";
 import NotificationBell from "./NotificationBell";
 import UserMenu from "./UserMenu";
 import { useAuth } from "@/contexts/AuthContext";
-import navbarLogo from "@/assets/navbar-logo.png";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -26,12 +25,15 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center group">
+          <Link to="/" className="flex items-center space-x-2 group">
             <img 
-              src={navbarLogo} 
+              src="/logo.png" 
               alt="ArenaX" 
-              className="h-12 w-12 object-contain transition-all duration-300 group-hover:scale-110" 
+              className="h-10 w-10 object-contain transition-all duration-300 group-hover:scale-110" 
             />
+            <span className="text-2xl font-gaming font-bold text-glow-cyan">
+              Arena<span className="text-secondary">X</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

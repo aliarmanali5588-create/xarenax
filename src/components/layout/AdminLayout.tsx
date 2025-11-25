@@ -15,6 +15,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import ParticlesBackground from "@/components/admin/ParticlesBackground";
+import ThemeToggle from "@/components/admin/ThemeToggle";
 
 const AdminLayout = () => {
   const location = useLocation();
@@ -57,9 +59,12 @@ const AdminLayout = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex relative">
+      {/* Animated Particles Background */}
+      <ParticlesBackground />
+      
       {/* Sidebar */}
-      <aside className="w-64 bg-card/50 backdrop-blur-xl border-r border-admin-red/20 flex flex-col relative">
+      <aside className="w-64 bg-card/50 backdrop-blur-xl border-r border-admin-red/20 flex flex-col relative z-10">
         <div className="absolute inset-0 bg-gradient-to-b from-admin-gold/5 via-transparent to-admin-red/5 pointer-events-none" />
         
         {/* Admin Brand */}
@@ -115,7 +120,7 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto relative z-10">
         {/* Header */}
         <header className="bg-card/30 backdrop-blur-xl border-b border-admin-red/20 p-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-admin-gold/5 via-transparent to-admin-red/5 pointer-events-none" />
@@ -128,7 +133,8 @@ const AdminLayout = () => {
                 Manage your tournament platform
               </p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
               <div className="px-4 py-2 bg-admin-red/20 border border-admin-red/50 rounded-lg admin-neon-card admin-glow-gold">
                 <p className="text-xs text-muted-foreground">Role</p>
                 <p className="text-sm font-bold bg-gradient-to-r from-admin-gold to-admin-red bg-clip-text text-transparent">

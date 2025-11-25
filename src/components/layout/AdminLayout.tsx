@@ -1,5 +1,5 @@
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { 
   LayoutDashboard, 
   Trophy, 
@@ -17,11 +17,25 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import ParticlesBackground from "@/components/admin/ParticlesBackground";
 import ThemeToggle from "@/components/admin/ThemeToggle";
+import ParticleSettings, { ParticleConfig } from "@/components/admin/ParticleSettings";
 
 const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut, isAdmin, loading } = useAuth();
+  
+  // Particle settings state
+  const [particleConfig, setParticleConfig] = useState<ParticleConfig>(() => {
+    const saved = localStorage.getItem("admin-particle-config");
+    return saved
+      ? JSON.parse(saved)
+      : { count: 50, speed: 1, colorScheme: "gold-red" };
+  });
+
+  // Save particle config to localStorage
+  useEffect(() => {
+    localStorage.setItem("admin-particle-config", JSON.stringify(particleConfig));
+  }, [particleConfig]);
 
   // CRITICAL SECURITY: Protect admin routes
   useEffect(() => {
@@ -61,7 +75,10 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen bg-background flex relative">
       {/* Animated Particles Background */}
-      <ParticlesBackground />
+      <ParticlesBackground config={particleConfig} />
+      
+      {/* Particle Settings Panel */}
+      <ParticleSettings config={particleConfig} onChange={setParticleConfig} />
       
       {/* Sidebar */}
       <aside className="w-64 bg-card/50 backdrop-blur-xl border-r border-admin-red/20 flex flex-col relative z-10">

@@ -294,18 +294,18 @@ const AdminDashboard = () => {
           {statsCards.map((stat) => (
             <Card
               key={stat.title}
-              className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border border-border/50 hover:border-admin-gold/50 transition-all duration-300 group"
+              className="relative overflow-hidden bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border border-border/50 hover:border-admin-gold/50 transition-all duration-300 group admin-neon-card admin-rgb-glow"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-admin-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 relative z-10">
                 <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   {stat.title}
                 </CardTitle>
-                <div className="h-10 w-10 rounded-full bg-admin-gold/10 flex items-center justify-center">
-                  <stat.icon className="h-5 w-5 text-admin-gold" />
+                <div className="h-10 w-10 rounded-full bg-admin-gold/10 flex items-center justify-center group-hover:bg-admin-gold/20 transition-all">
+                  <stat.icon className="h-5 w-5 text-admin-gold group-hover:scale-110 transition-transform" />
                 </div>
               </CardHeader>
-              <CardContent className="space-y-1">
+              <CardContent className="space-y-1 relative z-10">
                 <div className="text-2xl font-bold text-foreground">
                   {stat.value}
                 </div>
@@ -325,11 +325,11 @@ const AdminDashboard = () => {
 
       {/* Weekly Chart - Trading Style */}
       {!loading && (
-        <Card className="bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border border-border/50">
-          <CardHeader>
+        <Card className="bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border border-border/50 admin-neon-card admin-rgb-glow group">
+          <CardHeader className="relative z-10">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-xl font-gaming text-admin-gold">
+                <CardTitle className="text-xl font-gaming bg-gradient-to-r from-admin-gold via-admin-red to-admin-gold bg-clip-text text-transparent">
                   Weekly Performance
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -403,9 +403,9 @@ const AdminDashboard = () => {
       {loading ? (
         <ActivityTableSkeleton />
       ) : (
-        <Card className="bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border border-border/50">
-          <CardHeader>
-            <CardTitle className="text-xl font-gaming bg-gradient-to-r from-admin-gold to-admin-red bg-clip-text text-transparent">
+        <Card className="bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl border border-border/50 admin-neon-card admin-rgb-glow group">
+          <CardHeader className="relative z-10">
+            <CardTitle className="text-xl font-gaming bg-gradient-to-r from-admin-gold via-yellow-400 to-admin-red bg-clip-text text-transparent">
               Live Activity Feed
             </CardTitle>
             <p className="text-sm text-muted-foreground">Real-time platform events</p>
@@ -422,22 +422,23 @@ const AdminDashboard = () => {
               </TableHeader>
               <TableBody>
                 {recentActivity.map((activity, idx) => (
-                  <TableRow key={idx} className="border-border/30 hover:bg-admin-gold/5 transition-colors">
-                    <TableCell className="font-semibold text-foreground">
+                  <TableRow key={idx} className="border-border/30 hover:bg-admin-gold/5 transition-colors group relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-admin-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                    <TableCell className="font-semibold text-foreground relative z-10">
                       {activity.type}
                     </TableCell>
-                    <TableCell className="text-cyan-400 font-medium">
+                    <TableCell className="text-cyan-400 font-medium relative z-10">
                       {activity.user}
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">
+                    <TableCell className="text-muted-foreground text-sm relative z-10">
                       {activity.time}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right relative z-10">
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold transition-all ${
                           activity.status === "success"
-                            ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                            : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+                            ? "bg-green-500/20 text-green-400 border border-green-500/30 hover:shadow-[0_0_15px_rgba(34,197,94,0.5)]"
+                            : "bg-orange-500/20 text-orange-400 border border-orange-500/30 hover:shadow-[0_0_15px_rgba(249,115,22,0.5)]"
                         }`}
                       >
                         {activity.status}

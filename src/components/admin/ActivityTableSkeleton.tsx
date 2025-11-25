@@ -11,11 +11,12 @@ import {
 
 const ActivityTableSkeleton = () => {
   return (
-    <Card className="bg-card/50 backdrop-blur-xl border-admin-red/20">
-      <CardHeader>
+    <Card className="bg-card/50 backdrop-blur-xl border-admin-red/20 admin-neon-card admin-rgb-glow relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-admin-gold/5 to-transparent opacity-50" />
+      <CardHeader className="relative z-10">
         <Skeleton className="h-6 w-40" />
       </CardHeader>
-      <CardContent>
+      <CardContent className="relative z-10">
         <Table>
           <TableHeader>
             <TableRow className="border-admin-red/20">

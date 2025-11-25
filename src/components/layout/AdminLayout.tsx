@@ -59,46 +59,57 @@ const AdminLayout = () => {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-card/50 backdrop-blur-xl border-r border-admin-red/20 flex flex-col">
+      <aside className="w-64 bg-card/50 backdrop-blur-xl border-r border-admin-red/20 flex flex-col relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-admin-gold/5 via-transparent to-admin-red/5 pointer-events-none" />
+        
         {/* Admin Brand */}
-        <div className="p-6 border-b border-admin-red/20">
+        <div className="p-6 border-b border-admin-red/20 relative">
           <div className="flex items-center gap-3">
-            <Shield className="h-8 w-8 text-admin-gold" />
+            <div className="relative">
+              <Shield className="h-8 w-8 text-admin-gold animate-pulse" />
+              <div className="absolute inset-0 bg-admin-gold/20 blur-xl rounded-full" />
+            </div>
             <div>
-              <h1 className="text-xl font-gaming font-bold text-admin-gold">Admin Panel</h1>
+              <h1 className="text-xl font-gaming font-bold bg-gradient-to-r from-admin-gold via-admin-red to-admin-gold bg-clip-text text-transparent">
+                Admin Panel
+              </h1>
               <p className="text-xs text-muted-foreground">God Mode Active</p>
             </div>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 relative">
           {menuItems.map((item) => (
             <Link key={item.path} to={item.path}>
               <Button
                 variant="ghost"
-                className={`w-full justify-start gap-3 transition-all ${
+                className={`w-full justify-start gap-3 transition-all relative group ${
                   isActive(item.path)
-                    ? "bg-admin-red/20 text-admin-gold border border-admin-gold/50 shadow-[0_0_15px_rgba(255,215,0,0.3)]"
-                    : "text-foreground hover:bg-admin-red/10 hover:text-admin-gold"
+                    ? "bg-admin-red/20 text-admin-gold border border-admin-gold/50 admin-glow-gold"
+                    : "text-foreground hover:bg-admin-red/10 hover:text-admin-gold admin-rgb-glow"
                 }`}
               >
-                <item.icon className="h-5 w-5" />
-                {item.label}
+                <item.icon className="h-5 w-5 relative z-10" />
+                <span className="relative z-10">{item.label}</span>
+                {!isActive(item.path) && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-admin-gold/0 via-admin-gold/10 to-admin-gold/0 opacity-0 group-hover:opacity-100 transition-opacity rounded" />
+                )}
               </Button>
             </Link>
           ))}
         </nav>
 
         {/* Logout */}
-        <div className="p-4 border-t border-admin-red/20">
+        <div className="p-4 border-t border-admin-red/20 relative">
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 text-destructive hover:bg-destructive/10"
+            className="w-full justify-start gap-3 text-destructive hover:bg-destructive/10 admin-glow-red group relative overflow-hidden"
             onClick={signOut}
           >
-            <LogOut className="h-5 w-5" />
-            Exit Admin
+            <LogOut className="h-5 w-5 relative z-10" />
+            <span className="relative z-10">Exit Admin</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-destructive/0 via-destructive/20 to-destructive/0 opacity-0 group-hover:opacity-100 transition-opacity" />
           </Button>
         </div>
       </aside>
@@ -106,10 +117,11 @@ const AdminLayout = () => {
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         {/* Header */}
-        <header className="bg-card/30 backdrop-blur-xl border-b border-admin-red/20 p-6">
-          <div className="flex items-center justify-between">
+        <header className="bg-card/30 backdrop-blur-xl border-b border-admin-red/20 p-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-admin-gold/5 via-transparent to-admin-red/5 pointer-events-none" />
+          <div className="flex items-center justify-between relative z-10">
             <div>
-              <h2 className="text-2xl font-gaming font-bold text-foreground">
+              <h2 className="text-2xl font-gaming font-bold bg-gradient-to-r from-foreground via-admin-gold to-foreground bg-clip-text text-transparent">
                 Command Center
               </h2>
               <p className="text-sm text-muted-foreground">
@@ -117,9 +129,11 @@ const AdminLayout = () => {
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="px-4 py-2 bg-admin-red/20 border border-admin-red/50 rounded-lg">
+              <div className="px-4 py-2 bg-admin-red/20 border border-admin-red/50 rounded-lg admin-neon-card admin-glow-gold">
                 <p className="text-xs text-muted-foreground">Role</p>
-                <p className="text-sm font-bold text-admin-gold">SUPER ADMIN</p>
+                <p className="text-sm font-bold bg-gradient-to-r from-admin-gold to-admin-red bg-clip-text text-transparent">
+                  SUPER ADMIN
+                </p>
               </div>
             </div>
           </div>

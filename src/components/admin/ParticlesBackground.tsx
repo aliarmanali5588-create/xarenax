@@ -13,10 +13,14 @@ interface Particle {
 
 interface ParticlesBackgroundProps {
   config: ParticleConfig;
+  onFpsUpdate?: (fps: number, particleCount: number) => void;
 }
 
-const ParticlesBackground = ({ config }: ParticlesBackgroundProps) => {
+const ParticlesBackground = ({ config, onFpsUpdate }: ParticlesBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fpsRef = useRef<number>(0);
+  const frameCountRef = useRef<number>(0);
+  const lastTimeRef = useRef<number>(performance.now());
 
   useEffect(() => {
     if (!config.enabled) return;
@@ -59,6 +63,22 @@ const ParticlesBackground = ({ config }: ParticlesBackgroundProps) => {
     // Animation loop
     let animationFrameId: number;
     const animate = () => {
+      // FPS calculation
+      frameCountRef.current++;
+      const currentTime = performance.now();
+      const deltaTime = currentTime - lastTimeRef.current;
+      
+      if (deltaTime >= 1000) {
+        fpsRef.current = Math.round((frameCountRef.current * 1000) / deltaTime);
+        frameCountRef.current = 0;
+        lastTimeRef.current = currentTime;
+        
+        // Report FPS to parent component
+        if (onFpsUpdate) {
+          onFpsUpdate(fpsRef.current, particles.length);
+        }
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw particles

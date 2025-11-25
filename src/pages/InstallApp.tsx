@@ -77,46 +77,65 @@ const InstallApp = () => {
       <div className="pt-24 pb-16 px-4">
         <div className="modern-container max-w-3xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-6">
-              <Download className="w-10 h-10 text-primary" />
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-3xl mb-6 shadow-2xl">
+              <Download className="w-12 h-12 text-white" />
             </div>
-            <h1 className="text-3xl md:text-5xl font-gaming font-bold mb-4 text-glow-cyan">
+            <h1 className="text-4xl md:text-6xl font-gaming font-bold mb-4 text-gradient">
               Install ArenaX App
             </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Get the full app experience on your phone - faster, smoother, and works offline!
+            <p className="text-muted-foreground text-xl max-w-2xl mx-auto mb-8">
+              India's most trusted PUBG/BGMI tournament platform. Join thousands of players competing for real prizes.
             </p>
           </div>
 
-          {/* Install Status */}
+          {/* Big Install Button */}
           {isInstalled ? (
-            <Card className="bg-green-500/10 border-green-500/30 mb-8">
-              <CardContent className="p-6 text-center">
-                <Award className="w-12 h-12 text-green-500 mx-auto mb-3" />
-                <h3 className="text-xl font-bold text-green-500 mb-2">
+            <Card className="bg-green-500/10 border-green-500/30 mb-12">
+              <CardContent className="p-8 text-center">
+                <Award className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                <h3 className="text-2xl font-bold text-green-500 mb-3">
                   App Already Installed! 🎉
                 </h3>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-lg">
                   You're all set! Open ArenaX from your home screen.
                 </p>
               </CardContent>
             </Card>
           ) : (
-            <div className="mb-8 text-center">
-              <Button
-                size="lg"
-                className="h-14 px-8 text-base font-bold"
-                onClick={handleInstall}
-              >
-                <Download className="w-5 h-5 mr-2" />
-                {isInstallable ? "Install Now" : "Install Instructions"}
-              </Button>
-              {!isInstallable && (
-                <p className="text-xs text-muted-foreground mt-3">
-                  Open this page in your mobile browser to see the install button
+            <div className="mb-12">
+              {/* Primary Install Button */}
+              <div className="relative mb-6">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-primary blur-2xl opacity-40 animate-pulse" />
+                <Button
+                  size="lg"
+                  className="relative w-full h-20 text-2xl font-gaming font-bold bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 shadow-2xl hover:shadow-primary/50 transition-all duration-300"
+                  onClick={handleInstall}
+                >
+                  <Download className="w-8 h-8 mr-3" />
+                  {isInstallable ? "Install ArenaX Now" : "View Install Guide"}
+                </Button>
+              </div>
+              
+              {/* Info Text */}
+              <div className="text-center space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  {isInstallable 
+                    ? "✅ Your device supports instant installation" 
+                    : "📱 Open this page in your mobile browser to install"}
                 </p>
-              )}
+                <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Shield className="w-3 h-3" /> Secure
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Zap className="w-3 h-3" /> Fast
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Smartphone className="w-3 h-3" /> No Store Required
+                  </span>
+                </div>
+              </div>
             </div>
           )}
 
@@ -135,43 +154,79 @@ const InstallApp = () => {
             ))}
           </div>
 
-          {/* Manual Installation Guide */}
-          <Card className="glass-card">
-            <CardContent className="p-6">
-              <h3 className="font-bold text-xl mb-4">
-                Manual Installation Guide
+          {/* How to Install Guide */}
+          <Card className="glass-card border-primary/20 mb-8">
+            <CardContent className="p-8">
+              <h3 className="font-gaming font-bold text-3xl mb-6 text-center text-gradient">
+                📱 How to Install ArenaX
               </h3>
               
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* iPhone Instructions */}
-                <div>
-                  <h4 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                    <Smartphone className="w-5 h-5 text-primary" />
-                    On iPhone/iPad (Safari)
-                  </h4>
-                  <ol className="space-y-2 text-sm text-muted-foreground list-decimal list-inside">
-                    <li>Open this page in Safari browser</li>
-                    <li>Tap the Share button at the bottom</li>
-                    <li>Scroll down and tap "Add to Home Screen"</li>
-                    <li>Tap "Add" in the top right corner</li>
-                    <li>Open ArenaX from your home screen!</li>
-                  </ol>
+                <div className="bg-primary/5 rounded-2xl p-6 border border-primary/10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                      <Smartphone className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-xl">iPhone/iPad</h4>
+                      <p className="text-sm text-muted-foreground">Safari Browser</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {[
+                      "Open arenax.app in Safari browser",
+                      "Tap the Share button (box with arrow) at the bottom",
+                      "Scroll down and tap 'Add to Home Screen'",
+                      "Tap 'Add' in the top right corner",
+                      "Done! Open ArenaX from your home screen"
+                    ].map((step, index) => (
+                      <div key={index} className="flex gap-3">
+                        <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm flex-shrink-0">
+                          {index + 1}
+                        </div>
+                        <p className="text-sm text-foreground pt-1">{step}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Android Instructions */}
-                <div>
-                  <h4 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                    <Smartphone className="w-5 h-5 text-secondary" />
-                    On Android (Chrome)
-                  </h4>
-                  <ol className="space-y-2 text-sm text-muted-foreground list-decimal list-inside">
-                    <li>Open this page in Chrome browser</li>
-                    <li>Tap the menu (three dots) in the top right</li>
-                    <li>Tap "Install App" or "Add to Home screen"</li>
-                    <li>Tap "Install"</li>
-                    <li>Open ArenaX from your home screen!</li>
-                  </ol>
+                <div className="bg-secondary/5 rounded-2xl p-6 border border-secondary/10">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
+                      <Smartphone className="w-6 h-6 text-secondary" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-xl">Android</h4>
+                      <p className="text-sm text-muted-foreground">Chrome Browser</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {[
+                      "Open arenax.app in Chrome browser",
+                      "Tap the menu (three dots) in the top right",
+                      "Tap 'Install App' or 'Add to Home screen'",
+                      "Tap 'Install' to confirm",
+                      "Done! Open ArenaX from your home screen"
+                    ].map((step, index) => (
+                      <div key={index} className="flex gap-3">
+                        <div className="w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-sm flex-shrink-0">
+                          {index + 1}
+                        </div>
+                        <p className="text-sm text-foreground pt-1">{step}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
+              </div>
+
+              {/* Help Note */}
+              <div className="mt-6 p-4 bg-accent/5 rounded-xl border border-accent/10">
+                <p className="text-sm text-center text-muted-foreground">
+                  <strong className="text-foreground">Need Help?</strong> If you face any issues installing the app, 
+                  contact our support team and we'll help you out!
+                </p>
               </div>
             </CardContent>
           </Card>

@@ -9,7 +9,7 @@ const RefundPolicy = () => {
       <div className="pt-24 pb-16 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="glass-panel rounded-2xl p-8 md:p-12">
-            <h1 className="text-4xl md:text-5xl font-gaming font-bold mb-6 text-glow-cyan">
+            <h1 className="text-2xl md:text-5xl font-gaming font-bold mb-6 text-glow-cyan">
               Refund & Cancellation Policy
             </h1>
             <p className="text-sm text-muted-foreground mb-4">

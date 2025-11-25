@@ -40,7 +40,7 @@ const ContactUs = () => {
         <div className="container mx-auto max-w-5xl">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-gaming font-bold mb-4 text-glow-cyan">
+            <h1 className="text-3xl md:text-5xl font-gaming font-bold mb-4 text-glow-cyan">
               Contact Us
             </h1>
             <p className="text-xl text-muted-foreground">

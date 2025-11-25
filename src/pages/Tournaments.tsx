@@ -66,7 +66,7 @@ const Tournaments = () => {
         <div className="modern-container">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-6xl font-gaming font-bold mb-4">
+            <h1 className="text-3xl md:text-6xl font-gaming font-bold mb-4">
               Live Tournaments
             </h1>
             <p className="text-xl text-muted-foreground">

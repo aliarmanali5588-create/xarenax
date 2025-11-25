@@ -53,7 +53,7 @@ const Home = () => {
             </Badge>
 
             {/* Main Heading */}
-            <h1 className="text-5xl md:text-7xl font-gaming font-bold mb-6 leading-tight">
+            <h1 className="text-3xl md:text-7xl font-gaming font-bold mb-6 leading-tight">
               Compete in <span className="text-gradient">PUBG Tournaments</span>
               <br />
               <span className="text-foreground">Win Real Cash</span>
@@ -120,7 +120,7 @@ const Home = () => {
       <section className="py-20 px-4">
         <div className="modern-container">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-gaming font-bold mb-4">
+            <h2 className="text-2xl md:text-5xl font-gaming font-bold mb-4">
               Why Choose ArenaX?
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -151,7 +151,7 @@ const Home = () => {
         <div className="modern-container">
           <div className="glass-card p-12 md:p-16 text-center card-shadow-lg">
             <Trophy className="w-16 h-16 mx-auto mb-6 text-primary" />
-            <h2 className="text-4xl md:text-5xl font-gaming font-bold mb-6">
+            <h2 className="text-2xl md:text-5xl font-gaming font-bold mb-6">
               Ready to Start Winning?
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">

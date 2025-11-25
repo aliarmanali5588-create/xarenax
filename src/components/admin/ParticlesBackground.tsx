@@ -45,7 +45,7 @@ const ParticlesBackground = ({ config }: ParticlesBackgroundProps) => {
         particles.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 3 + 1,
+          size: Math.random() * config.particleSize + 1,
           speedX: (Math.random() - 0.5) * 0.5 * config.speed,
           speedY: (Math.random() - 0.5) * 0.5 * config.speed,
           color: colors[Math.floor(Math.random() * colors.length)],
@@ -100,7 +100,7 @@ const ParticlesBackground = ({ config }: ParticlesBackgroundProps) => {
           const dy = p1.y - p2.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 120) {
+          if (distance < config.connectionDistance) {
             ctx.beginPath();
             ctx.strokeStyle = "rgba(255, 215, 0, 0.1)";
             ctx.lineWidth = 0.3;

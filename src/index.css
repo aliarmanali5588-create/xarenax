@@ -164,6 +164,76 @@
   .holographic-border:hover::before {
     opacity: 1;
   }
+
+  /* RGB Gaming Effects */
+  .rgb-border {
+    position: relative;
+    border: 2px solid transparent;
+    background: linear-gradient(var(--background), var(--background)) padding-box,
+                linear-gradient(90deg, 
+                  hsl(var(--primary)), 
+                  hsl(var(--secondary)), 
+                  hsl(var(--accent)),
+                  hsl(var(--primary))
+                ) border-box;
+    animation: rgb-animation 3s linear infinite;
+  }
+
+  @keyframes rgb-animation {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+
+  .neon-glow-multi {
+    box-shadow: 
+      0 0 10px hsl(var(--primary) / 0.4),
+      0 0 20px hsl(var(--secondary) / 0.3),
+      0 0 30px hsl(var(--accent) / 0.2);
+  }
+
+  .hover-glow-intense {
+    transition: all 0.3s ease;
+  }
+
+  .hover-glow-intense:hover {
+    box-shadow: 
+      0 0 20px hsl(var(--primary) / 0.6),
+      0 0 40px hsl(var(--secondary) / 0.4),
+      0 0 60px hsl(var(--accent) / 0.3);
+    transform: translateY(-4px);
+  }
+
+  .gradient-gaming {
+    background: linear-gradient(135deg, 
+      hsl(var(--primary)) 0%, 
+      hsl(var(--accent)) 50%, 
+      hsl(var(--secondary)) 100%
+    );
+  }
+
+  .text-gradient-gaming {
+    background: linear-gradient(135deg, 
+      hsl(var(--primary)), 
+      hsl(var(--secondary))
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Pulse Glow Animation */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
+    }
+    50% {
+      box-shadow: 0 0 40px hsl(var(--primary) / 0.8);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
 }
 
 @layer base {

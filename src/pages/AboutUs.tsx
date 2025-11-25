@@ -30,33 +30,37 @@ const AboutUs = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4">
-        <div className="container mx-auto max-w-5xl">
+      <div className="pt-24 pb-16 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-background" />
+        <div className="container mx-auto max-w-5xl relative z-10">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-gaming font-bold mb-4 text-glow-cyan">
+          <div className="text-center mb-16">
+            <h1 className="text-5xl md:text-6xl font-gaming font-bold mb-6 text-gradient-gaming">
               About ArenaX
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              India's Premier Skill-Based PUBG/BGMI Tournament Platform
+            <p className="text-xl md:text-2xl text-foreground/90 max-w-3xl mx-auto font-medium">
+              India's Premier <span className="text-primary">Skill-Based</span> PUBG/BGMI Tournament Platform
             </p>
           </div>
 
           {/* Who We Are */}
-          <div className="glass-panel rounded-2xl p-8 mb-8">
-            <h2 className="text-3xl font-gaming font-bold mb-6 text-glow-cyan">
-              Who We Are
-            </h2>
-            <div className="space-y-4 text-muted-foreground leading-relaxed">
-              <p>
-                ArenaX is a <strong className="text-foreground">100% skill-based competitive gaming platform</strong> that connects PUBG and BGMI players across India. We are NOT a game of chance or gambling platform. Every tournament outcome is determined purely by player skill, strategy, and gameplay performance.
-              </p>
-              <p>
-                Our platform enables gamers to showcase their abilities, compete in organized tournaments, and earn rewards based entirely on their gaming skills. We strictly comply with Indian laws and operate as a legitimate skill-gaming platform under applicable regulations.
-              </p>
-              <p>
-                Founded with a mission to professionalize esports in India, ArenaX provides a secure, transparent, and fair environment where talent meets opportunity.
-              </p>
+          <div className="glass-panel-hover rounded-2xl p-8 md:p-10 mb-8 hover-glow-intense relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 hover:opacity-100 transition-opacity" />
+            <div className="relative z-10">
+              <h2 className="text-3xl md:text-4xl font-gaming font-bold mb-6 text-gradient-gaming">
+                Who We Are
+              </h2>
+              <div className="space-y-4 text-foreground/80 leading-relaxed text-base md:text-lg">
+                <p>
+                  ArenaX is a <strong className="text-primary">100% skill-based competitive gaming platform</strong> that connects PUBG and BGMI players across India. We are NOT a game of chance or gambling platform. Every tournament outcome is determined purely by player skill, strategy, and gameplay performance.
+                </p>
+                <p>
+                  Our platform enables gamers to showcase their abilities, compete in organized tournaments, and earn rewards based entirely on their gaming skills. We strictly comply with Indian laws and operate as a legitimate skill-gaming platform under applicable regulations.
+                </p>
+                <p>
+                  Founded with a mission to professionalize esports in India, ArenaX provides a secure, transparent, and fair environment where talent meets opportunity.
+                </p>
+              </div>
             </div>
           </div>
 

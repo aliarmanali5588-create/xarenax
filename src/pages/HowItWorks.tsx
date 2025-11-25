@@ -59,15 +59,16 @@ const HowItWorks = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4">
-        <div className="container mx-auto">
+      <div className="pt-24 pb-16 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-accent/5 to-background" />
+        <div className="container mx-auto relative z-10">
           {/* Header */}
-          <div className="text-center mb-16">
-            <h1 className="text-5xl md:text-6xl font-gaming font-bold mb-4 text-glow-cyan">
+          <div className="text-center mb-16 md:mb-20">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-gaming font-bold mb-6 text-gradient-gaming">
               How It Works
             </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Get started in 4 simple steps and start competing for real prizes
+            <p className="text-xl md:text-2xl text-foreground/90 max-w-3xl mx-auto font-medium">
+              Get started in <span className="text-primary">4 simple steps</span> and start competing for <span className="text-secondary">real prizes</span>
             </p>
           </div>
 
@@ -75,24 +76,25 @@ const HowItWorks = () => {
           <div className="max-w-4xl mx-auto mb-20">
             {steps.map((step, index) => (
               <div key={step.step} className="relative">
-                <div className="glass-panel-hover rounded-xl p-8 mb-8">
-                  <div className="flex flex-col md:flex-row gap-6 items-start">
+                <div className="glass-panel-hover rounded-2xl p-8 md:p-10 mb-8 hover-glow-intense relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 hover:opacity-100 transition-opacity" />
+                  <div className="flex flex-col md:flex-row gap-6 items-start relative z-10">
                     {/* Icon */}
                     <div className="flex-shrink-0">
-                      <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border-2 border-primary/30 neon-glow-cyan">
-                        <step.icon className="w-10 h-10 text-primary" />
+                      <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl gradient-gaming flex items-center justify-center neon-glow-multi shadow-2xl transform hover:scale-110 hover:rotate-6 transition-all duration-300">
+                        <step.icon className="w-12 h-12 md:w-14 md:h-14 text-background" />
                       </div>
                     </div>
 
                     {/* Content */}
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-background font-gaming font-bold">
+                      <div className="flex items-center gap-4 mb-4">
+                        <span className="w-12 h-12 rounded-full gradient-gaming flex items-center justify-center text-background font-gaming font-bold text-xl shadow-lg">
                           {step.step}
                         </span>
-                        <h3 className="text-2xl font-heading font-bold">{step.title}</h3>
+                        <h3 className="text-3xl font-gaming font-bold text-gradient-gaming">{step.title}</h3>
                       </div>
-                      <p className="text-muted-foreground leading-relaxed">
+                      <p className="text-lg text-foreground/80 leading-relaxed">
                         {step.description}
                       </p>
                     </div>
@@ -102,7 +104,7 @@ const HowItWorks = () => {
                 {/* Connector */}
                 {index < steps.length - 1 && (
                   <div className="flex justify-center mb-8">
-                    <div className="w-0.5 h-8 bg-gradient-to-b from-primary to-transparent" />
+                    <div className="w-1 h-12 bg-gradient-to-b from-primary via-accent to-secondary rounded-full" />
                   </div>
                 )}
               </div>
@@ -110,22 +112,34 @@ const HowItWorks = () => {
           </div>
 
           {/* CTA */}
-          <div className="text-center mb-20">
-            <Button variant="gaming" size="lg" asChild className="text-lg px-12">
-              <Link to="/tournaments">Start Playing Now</Link>
-            </Button>
+          <div className="text-center mb-24">
+            <div className="glass-panel rounded-3xl p-12 rgb-border relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10" />
+              <div className="relative z-10">
+                <Trophy className="w-20 h-20 mx-auto mb-6 text-admin-gold animate-pulse" />
+                <h3 className="text-3xl md:text-4xl font-gaming font-bold mb-6 text-gradient-gaming">
+                  Ready to Dominate?
+                </h3>
+                <Button variant="gaming" size="lg" asChild className="text-xl px-16 py-7 hover-glow-intense font-bold">
+                  <Link to="/tournaments">⚡ Start Playing Now</Link>
+                </Button>
+              </div>
+            </div>
           </div>
 
           {/* FAQ Section */}
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-gaming font-bold text-center mb-12 text-glow-cyan">
+            <h2 className="text-4xl md:text-5xl font-gaming font-bold text-center mb-12 md:mb-16 text-gradient-gaming">
               Frequently Asked Questions
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-6">
               {faqs.map((faq, index) => (
-                <div key={index} className="glass-panel rounded-xl p-6">
-                  <h3 className="font-heading font-bold text-lg mb-2">{faq.question}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{faq.answer}</p>
+                <div key={index} className="glass-panel-hover rounded-2xl p-6 md:p-8 hover-glow-intense relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 hover:opacity-100 transition-opacity" />
+                  <div className="relative z-10">
+                    <h3 className="font-gaming font-bold text-xl md:text-2xl mb-3 text-primary">{faq.question}</h3>
+                    <p className="text-foreground/80 leading-relaxed text-base md:text-lg">{faq.answer}</p>
+                  </div>
                 </div>
               ))}
             </div>

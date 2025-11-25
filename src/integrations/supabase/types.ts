@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          enable_affiliate_notifications: boolean | null
+          enable_match_notifications: boolean | null
+          enable_payment_notifications: boolean | null
+          enable_prize_notifications: boolean | null
+          enable_system_notifications: boolean | null
+          id: string
+          quiet_hours_enabled: boolean | null
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          enable_affiliate_notifications?: boolean | null
+          enable_match_notifications?: boolean | null
+          enable_payment_notifications?: boolean | null
+          enable_prize_notifications?: boolean | null
+          enable_system_notifications?: boolean | null
+          id?: string
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          enable_affiliate_notifications?: boolean | null
+          enable_match_notifications?: boolean | null
+          enable_payment_notifications?: boolean | null
+          enable_prize_notifications?: boolean | null
+          enable_system_notifications?: boolean | null
+          id?: string
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string

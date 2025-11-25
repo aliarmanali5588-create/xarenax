@@ -1,4 +1,7 @@
 // Custom Service Worker for Push Notifications
+// Precache manifest placeholder
+self.__WB_MANIFEST;
+
 self.addEventListener('push', (event) => {
   if (!event.data) return;
 

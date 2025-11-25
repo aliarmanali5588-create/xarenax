@@ -29,7 +29,7 @@ const AdminLayout = () => {
     const saved = localStorage.getItem("admin-particle-config");
     return saved
       ? JSON.parse(saved)
-      : { count: 30, speed: 0.5, colorScheme: "gold-red", enabled: true };
+      : { count: 30, speed: 0.5, colorScheme: "gold-red", enabled: true, particleSize: 2.5, connectionDistance: 120 };
   });
 
   // Save particle config to localStorage

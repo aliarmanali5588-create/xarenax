@@ -9,8 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export interface ParticleConfig {
   count: number;
   speed: number;
-  colorScheme: "gold-red" | "cyan-magenta" | "rainbow" | "purple-blue" | "green-yellow";
+  colorScheme: "gold-red" | "cyan-magenta" | "rainbow" | "purple-blue" | "green-yellow" | "neon-pink" | "ocean-deep" | "sunset-glow";
   enabled: boolean;
+  particleSize: number;
+  connectionDistance: number;
 }
 
 const colorSchemes = {
@@ -62,6 +64,33 @@ const colorSchemes = {
       "rgba(173, 255, 47, 0.12)",
     ],
   },
+  "neon-pink": {
+    name: "Neon Pink",
+    colors: [
+      "rgba(255, 20, 147, 0.15)",
+      "rgba(255, 105, 180, 0.12)",
+      "rgba(255, 0, 127, 0.15)",
+      "rgba(219, 112, 147, 0.12)",
+    ],
+  },
+  "ocean-deep": {
+    name: "Ocean Deep",
+    colors: [
+      "rgba(0, 105, 148, 0.15)",
+      "rgba(0, 191, 255, 0.12)",
+      "rgba(30, 144, 255, 0.12)",
+      "rgba(0, 150, 199, 0.15)",
+    ],
+  },
+  "sunset-glow": {
+    name: "Sunset Glow",
+    colors: [
+      "rgba(255, 94, 77, 0.15)",
+      "rgba(255, 140, 0, 0.12)",
+      "rgba(255, 69, 0, 0.15)",
+      "rgba(255, 99, 71, 0.12)",
+    ],
+  },
 };
 
 interface ParticleSettingsProps {
@@ -74,19 +103,19 @@ const presets = {
     name: "Minimal",
     icon: "✨",
     description: "Subtle & clean",
-    config: { count: 15, speed: 0.3, colorScheme: "gold-red" as const, enabled: true },
+    config: { count: 15, speed: 0.3, colorScheme: "gold-red" as const, enabled: true, particleSize: 2, connectionDistance: 100 },
   },
   balanced: {
     name: "Balanced",
     icon: "🎯",
     description: "Perfect balance",
-    config: { count: 30, speed: 0.5, colorScheme: "gold-red" as const, enabled: true },
+    config: { count: 30, speed: 0.5, colorScheme: "gold-red" as const, enabled: true, particleSize: 2.5, connectionDistance: 120 },
   },
   dynamic: {
     name: "Dynamic",
     icon: "⚡",
     description: "Lively & energetic",
-    config: { count: 60, speed: 1, colorScheme: "rainbow" as const, enabled: true },
+    config: { count: 60, speed: 1, colorScheme: "rainbow" as const, enabled: true, particleSize: 3, connectionDistance: 150 },
   },
 };
 
@@ -107,6 +136,14 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
 
   const handleToggleParticles = () => {
     onChange({ ...config, enabled: !config.enabled });
+  };
+
+  const handleParticleSizeChange = (value: number[]) => {
+    onChange({ ...config, particleSize: value[0] });
+  };
+
+  const handleConnectionDistanceChange = (value: number[]) => {
+    onChange({ ...config, connectionDistance: value[0] });
   };
 
   const applyPreset = (presetKey: keyof typeof presets) => {
@@ -134,7 +171,7 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
           />
 
           {/* Panel */}
-          <Card className="fixed bottom-20 right-6 w-96 z-50 bg-card/95 backdrop-blur-xl border border-border/50 animate-scale-in shadow-xl">
+          <Card className="fixed bottom-20 right-6 w-96 max-h-[80vh] overflow-y-auto z-50 bg-card/95 backdrop-blur-xl border border-border/50 animate-scale-in shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="text-lg font-semibold text-foreground">
                 Background Effects
@@ -249,6 +286,48 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
                 </p>
               </div>
 
+              {/* Particle Size */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-semibold text-foreground">
+                    Particle Size
+                  </Label>
+                  <span className="text-sm text-admin-gold font-bold">{config.particleSize.toFixed(1)}px</span>
+                </div>
+                <Slider
+                  value={[config.particleSize]}
+                  onValueChange={handleParticleSizeChange}
+                  min={1}
+                  max={5}
+                  step={0.5}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Adjust individual particle size (1px-5px)
+                </p>
+              </div>
+
+              {/* Connection Distance */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-semibold text-foreground">
+                    Connection Distance
+                  </Label>
+                  <span className="text-sm text-admin-gold font-bold">{config.connectionDistance}px</span>
+                </div>
+                <Slider
+                  value={[config.connectionDistance]}
+                  onValueChange={handleConnectionDistanceChange}
+                  min={50}
+                  max={200}
+                  step={10}
+                  className="cursor-pointer"
+                />
+                <p className="text-xs text-muted-foreground">
+                  How far particles connect to each other (50px-200px)
+                </p>
+              </div>
+
               {/* Color Scheme */}
               <div className="space-y-3">
                 <Label className="text-sm font-semibold text-foreground">
@@ -285,15 +364,16 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
               {/* Preview Colors */}
               <div className="pt-3 border-t border-border/50">
                 <Label className="text-xs text-muted-foreground mb-2 block">
-                  Current Colors Preview
+                  Active Color Palette
                 </Label>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-2 flex-wrap p-3 bg-muted/20 rounded-lg">
                   {colorSchemes[config.colorScheme].colors.map((color, i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-lg border border-border"
+                      className="w-10 h-10 rounded-lg border-2 border-border shadow-sm transition-transform hover:scale-110"
                       style={{
                         backgroundColor: color,
+                        boxShadow: `0 0 10px ${color}`,
                       }}
                     />
                   ))}
@@ -314,7 +394,7 @@ const ParticleSettings = ({ config, onChange }: ParticleSettingsProps) => {
                 variant="outline"
                 className="w-full"
                 onClick={() =>
-                  onChange({ count: 30, speed: 0.5, colorScheme: "gold-red", enabled: true })
+                  onChange({ count: 30, speed: 0.5, colorScheme: "gold-red", enabled: true, particleSize: 2.5, connectionDistance: 120 })
                 }
               >
                 Reset to Default

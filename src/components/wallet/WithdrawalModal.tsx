@@ -28,7 +28,7 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModal
   const [totalWinnings, setTotalWinnings] = useState(0);
   const [loading, setLoading] = useState(true);
   const MIN_WITHDRAWAL = 110;
-  const MAX_WITHDRAWAL = 10000;
+  const MAX_WITHDRAWAL = 5000;
 
   const quickAmounts = [500, 1000, 2000, 5000];
 
@@ -231,11 +231,11 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModal
                 onChange={(e) => setAmount(e.target.value)}
                 className="pl-10 text-lg font-heading"
                 min="110"
-                max="10000"
+                max="5000"
               />
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              Minimum withdrawal: ₹110 | Maximum: ₹10,000
+              Minimum withdrawal: ₹110 | Maximum: ₹5,000
             </p>
           </div>
 

@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, Upload, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ManualUPIModalProps {
   open: boolean;
@@ -19,6 +20,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
   const [utrNumber, setUtrNumber] = useState("");
   const [copied, setCopied] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [utrValidation, setUtrValidation] = useState<"idle" | "valid" | "invalid">("idle");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -62,11 +64,48 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Real-time UTR validation
+  const validateUTR = (utr: string) => {
+    // UTR format: Typically 12 digits for UPI transactions
+    // Can be alphanumeric but usually numeric
+    const trimmed = utr.trim();
+    
+    if (trimmed.length === 0) {
+      setUtrValidation("idle");
+      return;
+    }
+    
+    // Check if 12 characters, alphanumeric
+    if (trimmed.length === 12 && /^[A-Z0-9]{12}$/i.test(trimmed)) {
+      setUtrValidation("valid");
+    } else if (trimmed.length >= 10 && trimmed.length <= 22 && /^[A-Z0-9]+$/i.test(trimmed)) {
+      // Some payment apps use different lengths
+      setUtrValidation("valid");
+    } else {
+      setUtrValidation("invalid");
+    }
+  };
+
+  const handleUTRChange = (value: string) => {
+    const upperValue = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    setUtrNumber(upperValue);
+    validateUTR(upperValue);
+  };
+
   const handleSubmitUTR = async () => {
     if (!utrNumber || utrNumber.length < 10) {
       toast({
         title: "Invalid UTR",
-        description: "Please enter a valid UTR number (min 10 characters)",
+        description: "Please enter a valid UTR number (10-22 characters)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (utrValidation === "invalid") {
+      toast({
+        title: "Invalid UTR Format",
+        description: "UTR should contain only letters and numbers",
         variant: "destructive",
       });
       return;
@@ -110,7 +149,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
       if (error) throw error;
 
       toast({
-        title: "Success!",
+        title: "Success! ✅",
         description: "UTR submitted successfully. Your payment will be verified within 10 minutes.",
       });
 
@@ -129,77 +168,107 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md glass-panel">
         <DialogHeader>
-          <DialogTitle className="text-xl font-gaming text-primary">
-            Pay ₹{amount} via UPI
+          <DialogTitle className="text-2xl font-gaming text-glow-cyan">
+            Pay via UPI
           </DialogTitle>
+          <DialogDescription>
+            Complete your payment and submit UTR for instant verification
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Amount Display - Prominent */}
+          <div className="p-6 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl border-2 border-primary/30 text-center space-y-2">
+            <p className="text-sm text-muted-foreground font-medium">Amount to Pay</p>
+            <p className="text-4xl font-gaming font-bold text-glow-cyan">₹{amount}</p>
+            <p className="text-xs text-destructive font-semibold">⚠️ Pay EXACTLY this amount</p>
+          </div>
+
           {/* QR Code */}
           {qrCodeUrl && (
-            <div className="flex justify-center p-4 bg-white rounded-lg">
+            <div className="flex justify-center p-4 bg-white rounded-xl shadow-lg">
               <img src={qrCodeUrl} alt="UPI QR Code" className="w-48 h-48" />
             </div>
           )}
 
           {/* UPI ID */}
           <div className="space-y-2">
-            <Label>UPI ID</Label>
+            <Label className="text-sm font-semibold">UPI ID</Label>
             <div className="flex gap-2">
-              <Input value={upiId} readOnly className="font-mono" />
+              <Input value={upiId} readOnly className="font-mono text-base bg-muted" />
               <Button
                 size="icon"
                 variant="outline"
                 onClick={() => copyToClipboard(upiId)}
+                className="hover-lift"
               >
-                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
               </Button>
             </div>
           </div>
 
-          {/* Amount Display */}
-          <div className="p-4 bg-primary/10 rounded-lg text-center">
-            <p className="text-sm text-muted-foreground mb-1">Amount to Pay</p>
-            <p className="text-3xl font-bold text-primary">₹{amount}</p>
+          {/* UTR Input with Validation */}
+          <div className="space-y-2">
+            <Label htmlFor="utr" className="text-sm font-semibold">
+              Enter UTR/Transaction ID
+            </Label>
+            <div className="relative">
+              <Input
+                id="utr"
+                value={utrNumber}
+                onChange={(e) => handleUTRChange(e.target.value)}
+                placeholder="Enter 12-digit UTR (e.g., 123456789012)"
+                maxLength={22}
+                className="font-mono text-base pr-10"
+              />
+              {utrValidation === "valid" && (
+                <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-500" />
+              )}
+              {utrValidation === "invalid" && (
+                <XCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-destructive" />
+              )}
+            </div>
+            <div className="flex items-start gap-2 text-xs">
+              <AlertCircle className="w-3 h-3 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <p className="text-muted-foreground">
+                Find the UTR/Transaction ID in your payment app after completing the transaction. 
+                It's usually 12 characters (letters and numbers).
+              </p>
+            </div>
           </div>
 
-          {/* UTR Input */}
-          <div className="space-y-2">
-            <Label htmlFor="utr">Enter UTR Number</Label>
-            <Input
-              id="utr"
-              value={utrNumber}
-              onChange={(e) => setUtrNumber(e.target.value)}
-              placeholder="Enter 12-digit UTR number"
-              maxLength={20}
-              className="font-mono"
-            />
-            <p className="text-xs text-muted-foreground">
-              Enter the UTR/Transaction ID after completing the payment
-            </p>
-          </div>
+          {/* Warning for fraud detection */}
+          <Alert className="border-amber-500/50 bg-amber-500/5">
+            <AlertCircle className="h-4 w-4 text-amber-500" />
+            <AlertDescription className="text-xs">
+              <strong>Fraud Prevention Active:</strong> Duplicate or suspicious UTRs are automatically flagged. 
+              Submit genuine payment proof only.
+            </AlertDescription>
+          </Alert>
 
           {/* Submit Button */}
           <Button
             onClick={handleSubmitUTR}
-            disabled={submitting || !utrNumber}
+            disabled={submitting || !utrNumber || utrValidation === "invalid"}
             className="w-full"
             size="lg"
+            variant="gaming"
           >
-            {submitting ? "Submitting..." : "Submit Payment Proof"}
+            {submitting ? "Verifying..." : "Submit Payment Proof"}
           </Button>
 
           {/* Instructions */}
-          <div className="text-xs text-muted-foreground space-y-2 p-3 bg-muted/20 rounded">
-            <p className="font-semibold">Instructions:</p>
-            <ol className="list-decimal list-inside space-y-1">
-              <li>Scan QR code or copy UPI ID</li>
-              <li>Pay exactly ₹{amount}</li>
+          <div className="text-xs text-muted-foreground space-y-3 p-4 bg-muted/20 rounded-lg border border-border/50">
+            <p className="font-semibold text-foreground text-sm">📋 How to Submit:</p>
+            <ol className="list-decimal list-inside space-y-2">
+              <li>Click "Copy" to copy UPI ID or scan QR code</li>
+              <li>Open any UPI app (PhonePe, GPay, Paytm, etc.)</li>
+              <li>Pay <strong>EXACTLY ₹{amount}</strong> to the UPI ID</li>
               <li>Copy the UTR/Transaction ID from your payment app</li>
-              <li>Paste it above and submit</li>
-              <li>Balance will be credited within 10 minutes after verification</li>
+              <li>Paste it above and click "Submit Payment Proof"</li>
+              <li>✅ Balance credited within <strong>10 minutes</strong> after verification</li>
             </ol>
           </div>
         </div>

@@ -463,6 +463,7 @@ export type Database = {
           is_suspicious: boolean | null
           processed_at: string | null
           processed_by: string | null
+          screenshot_url: string | null
           status: string
           user_id: string
           utr_number: string
@@ -478,6 +479,7 @@ export type Database = {
           is_suspicious?: boolean | null
           processed_at?: string | null
           processed_by?: string | null
+          screenshot_url?: string | null
           status?: string
           user_id: string
           utr_number: string
@@ -493,6 +495,7 @@ export type Database = {
           is_suspicious?: boolean | null
           processed_at?: string | null
           processed_by?: string | null
+          screenshot_url?: string | null
           status?: string
           user_id?: string
           utr_number?: string

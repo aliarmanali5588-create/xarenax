@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Copy, Check, Upload, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +22,9 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
   const [copied, setCopied] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [utrValidation, setUtrValidation] = useState<"idle" | "valid" | "invalid">("idle");
+  const [screenshot, setScreenshot] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string>("");
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -92,6 +96,40 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
     validateUTR(upperValue);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid File",
+        description: "Please upload an image file (JPG, PNG, WEBP)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File Too Large",
+        description: "Image must be less than 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setScreenshot(file);
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setScreenshotPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmitUTR = async () => {
     if (!utrNumber || utrNumber.length < 10) {
       toast({
@@ -112,9 +150,34 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
     }
 
     setSubmitting(true);
+    setUploading(true);
+    
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
+
+      let screenshotUrl = null;
+
+      // Upload screenshot if provided
+      if (screenshot) {
+        const fileExt = screenshot.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('payment-proofs')
+          .upload(fileName, screenshot);
+
+        if (uploadError) {
+          console.error("Screenshot upload error:", uploadError);
+          toast({
+            title: "Warning",
+            description: "Screenshot upload failed, but submission will continue",
+            variant: "default",
+          });
+        } else {
+          screenshotUrl = fileName;
+        }
+      }
 
       // Run fraud detection
       const { data: fraudData, error: fraudError } = await supabase.rpc(
@@ -134,7 +197,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
       // Parse fraud data safely
       const fraudResult = fraudData ? (fraudData as any) : { fraud_score: 0, fraud_flags: [], is_suspicious: false };
 
-      // Insert UTR submission with fraud detection results
+      // Insert UTR submission with fraud detection results and screenshot
       const { error } = await supabase.from("utr_submissions").insert({
         user_id: user.id,
         amount,
@@ -144,17 +207,22 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
         fraud_flags: fraudResult.fraud_flags || [],
         is_suspicious: fraudResult.is_suspicious || false,
         verification_status: "pending",
+        screenshot_url: screenshotUrl,
       });
 
       if (error) throw error;
 
       toast({
         title: "Success! ✅",
-        description: "UTR submitted successfully. Your payment will be verified within 10 minutes.",
+        description: screenshot 
+          ? "Payment proof submitted with screenshot. Verification within 10 minutes!" 
+          : "UTR submitted successfully. Your payment will be verified within 10 minutes.",
       });
 
       onOpenChange(false);
       setUtrNumber("");
+      setScreenshot(null);
+      setScreenshotPreview("");
     } catch (error: any) {
       toast({
         title: "Error",
@@ -163,6 +231,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
       });
     } finally {
       setSubmitting(false);
+      setUploading(false);
     }
   };
 
@@ -239,6 +308,57 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
             </div>
           </div>
 
+          {/* Screenshot Upload */}
+          <div className="space-y-2">
+            <Label htmlFor="screenshot" className="text-sm font-semibold">
+              Upload Payment Screenshot (Optional)
+            </Label>
+            <div className="flex flex-col gap-3">
+              <div className="flex gap-2">
+                <Input
+                  id="screenshot"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="flex-1"
+                />
+                {screenshot && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      setScreenshot(null);
+                      setScreenshotPreview("");
+                    }}
+                  >
+                    <XCircle className="h-5 w-5 text-destructive" />
+                  </Button>
+                )}
+              </div>
+              {screenshotPreview && (
+                <div className="relative w-full max-w-xs mx-auto">
+                  <img 
+                    src={screenshotPreview} 
+                    alt="Payment screenshot preview" 
+                    className="w-full h-auto rounded-lg border-2 border-primary/30"
+                  />
+                  <Badge className="absolute top-2 right-2 bg-green-500">
+                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                    Ready to Upload
+                  </Badge>
+                </div>
+              )}
+              <div className="flex items-start gap-2 text-xs">
+                <Upload className="w-3 h-3 text-primary mt-0.5 flex-shrink-0" />
+                <p className="text-muted-foreground">
+                  <strong className="text-foreground">Pro Tip:</strong> Upload your payment screenshot for 
+                  <strong className="text-primary"> instant verification</strong>. Max 5MB (JPG, PNG, WEBP)
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Warning for fraud detection */}
           <Alert className="border-amber-500/50 bg-amber-500/5">
             <AlertCircle className="h-4 w-4 text-amber-500" />
@@ -256,7 +376,19 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
             size="lg"
             variant="gaming"
           >
-            {submitting ? "Verifying..." : "Submit Payment Proof"}
+            {uploading ? (
+              <>
+                <Upload className="w-5 h-5 mr-2 animate-pulse" />
+                Uploading Screenshot...
+              </>
+            ) : submitting ? (
+              "Verifying..."
+            ) : (
+              <>
+                <CheckCircle2 className="w-5 h-5 mr-2" />
+                Submit Payment Proof
+              </>
+            )}
           </Button>
 
           {/* Instructions */}

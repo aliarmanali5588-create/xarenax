@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { colorSchemes, ParticleConfig } from "./ParticleSettings";
 
 interface Particle {
   x: number;
@@ -10,7 +11,11 @@ interface Particle {
   opacity: number;
 }
 
-const ParticlesBackground = () => {
+interface ParticlesBackgroundProps {
+  config: ParticleConfig;
+}
+
+const ParticlesBackground = ({ config }: ParticlesBackgroundProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -28,28 +33,26 @@ const ParticlesBackground = () => {
     setCanvasSize();
     window.addEventListener("resize", setCanvasSize);
 
-    // Create particles
-    const particleCount = 50;
+    // Create particles based on config
     const particles: Particle[] = [];
-    const colors = [
-      "rgba(255, 215, 0, 0.6)", // Gold
-      "rgba(239, 68, 68, 0.6)", // Red
-      "rgba(0, 255, 255, 0.6)", // Cyan
-      "rgba(255, 0, 255, 0.6)", // Magenta
-      "rgba(0, 255, 127, 0.6)", // Spring Green
-    ];
+    const colors = colorSchemes[config.colorScheme].colors;
 
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 3 + 1,
-        speedX: (Math.random() - 0.5) * 0.5,
-        speedY: (Math.random() - 0.5) * 0.5,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        opacity: Math.random() * 0.5 + 0.2,
-      });
-    }
+    const createParticles = () => {
+      particles.length = 0;
+      for (let i = 0; i < config.count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.random() * 3 + 1,
+          speedX: (Math.random() - 0.5) * 0.5 * config.speed,
+          speedY: (Math.random() - 0.5) * 0.5 * config.speed,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          opacity: Math.random() * 0.5 + 0.2,
+        });
+      }
+    };
+
+    createParticles();
 
     // Animation loop
     let animationFrameId: number;
@@ -116,7 +119,7 @@ const ParticlesBackground = () => {
       window.removeEventListener("resize", setCanvasSize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [config]);
 
   return (
     <canvas

@@ -209,10 +209,10 @@ const TournamentDetail = () => {
   const isFull = tournament.status === "full";
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20 lg:pb-0">
       <Navbar />
 
-      <div className="pt-24 pb-20 px-4 md:px-6">
+      <div className="pt-24 pb-16 px-4 md:px-6">
         <div className="container mx-auto max-w-4xl">
           {/* Header */}
           <div className="glass-panel rounded-2xl p-4 sm:p-6 md:p-8 mb-6 md:mb-8 neon-border-cyan">

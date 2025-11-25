@@ -59,10 +59,10 @@ const Tournaments = () => {
   );
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20 lg:pb-0">
       <Navbar />
 
-      <div className="pt-24 pb-20 px-4">
+      <div className="pt-24 pb-16 px-4">
         <div className="modern-container">
           {/* Header */}
           <div className="text-center mb-12">

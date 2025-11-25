@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import LoadingScreen from "@/components/LoadingScreen";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import Home from "./pages/Home";
 import Tournaments from "./pages/Tournaments";
 import TournamentDetail from "./pages/TournamentDetail";
@@ -23,6 +24,7 @@ import Terms from "./pages/legal/Terms";
 import RefundPolicy from "./pages/legal/RefundPolicy";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import InstallApp from "./pages/InstallApp";
 import AdminLayout from "./components/layout/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageTournaments from "./pages/admin/ManageTournaments";
@@ -66,6 +68,7 @@ const App = () => {
               <Route path="/legal/privacy" element={<PrivacyPolicy />} />
               <Route path="/legal/terms" element={<Terms />} />
               <Route path="/legal/refund" element={<RefundPolicy />} />
+              <Route path="/install" element={<InstallApp />} />
               {/* Admin Routes - Protected */}
               <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />
@@ -81,6 +84,7 @@ const App = () => {
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <MobileBottomNav />
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>

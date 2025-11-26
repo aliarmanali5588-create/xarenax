@@ -215,11 +215,21 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
       }
 
       // Parse fraud data safely
-      const fraudResult = fraudData ? (fraudData as any) : { fraud_score: 0, fraud_flags: [], is_suspicious: false };
-      const fraudScore = fraudResult.fraud_score || 0;
+      const fraudResult = fraudData ? (fraudData as any) : { fraud_score: 100, fraud_flags: ['unknown'], is_suspicious: true };
+      const fraudScore = fraudResult.fraud_score || 100;
+      const fraudFlags = fraudResult.fraud_flags || [];
 
-      // Auto-approve if fraud score is low (< 30)
-      const autoApprove = fraudScore < 30;
+      // STRICT AUTO-APPROVAL CONDITIONS - Only approve if ALL conditions are met:
+      // 1. Fraud score is EXACTLY 0 (no risk detected)
+      // 2. No fraud flags at all
+      // 3. Screenshot was uploaded (required)
+      // 4. Amount is reasonable (< ₹500 for auto-approval)
+      const autoApprove = 
+        fraudScore === 0 && 
+        fraudFlags.length === 0 && 
+        screenshotUrl !== null && 
+        amount < 500;
+      
       const initialStatus = autoApprove ? "approved" : "pending";
 
       // Insert UTR submission with fraud detection results and screenshot
@@ -334,7 +344,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md glass-panel max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md glass-panel max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-2xl font-gaming text-glow-cyan">
             Pay via UPI
@@ -344,7 +354,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-y-auto pr-2 -mr-2 flex-1">
           {/* Amount Display - Prominent */}
           <div className="p-6 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl border-2 border-primary/30 text-center space-y-2">
             <p className="text-sm text-muted-foreground font-medium">Amount to Pay</p>
@@ -489,9 +499,16 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
           {/* Warning for fraud detection */}
           <Alert className="border-amber-500/50 bg-amber-500/5">
             <AlertCircle className="h-4 w-4 text-amber-500" />
-            <AlertDescription className="text-xs">
-              <strong>Fraud Prevention Active:</strong> Duplicate or suspicious UTRs are automatically flagged. 
-              Submit genuine payment proof only.
+            <AlertDescription className="text-xs space-y-1">
+              <p>
+                <strong>Fraud Prevention Active:</strong> All deposits are verified for security.
+              </p>
+              <p className="text-green-600 dark:text-green-400">
+                ✅ Deposits under ₹500 with screenshot = Instant Auto-Approval
+              </p>
+              <p className="text-amber-600 dark:text-amber-400">
+                ⏳ Deposits ₹500+ require manual admin verification (5-10 mins)
+              </p>
             </AlertDescription>
           </Alert>
 

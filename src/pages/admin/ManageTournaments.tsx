@@ -86,7 +86,8 @@ const ManageTournaments = () => {
   const [loading, setLoading] = useState(false);
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [selectedResultTournamentId, setSelectedResultTournamentId] = useState("");
-  const [winnerUsername, setWinnerUsername] = useState("");
+  const [selectedResultTournament, setSelectedResultTournament] = useState<Tournament | null>(null);
+  const [winnerUsernames, setWinnerUsernames] = useState<string[]>([""]);
   const [distributingPrize, setDistributingPrize] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
@@ -228,86 +229,126 @@ const ManageTournaments = () => {
   };
 
   const handleDistributePrize = async () => {
-    if (!selectedResultTournamentId || !winnerUsername.trim()) {
-      toast.error("Please select a match and enter winner's username");
+    if (!selectedResultTournamentId || !selectedResultTournament) {
+      toast.error("Please select a match");
+      return;
+    }
+
+    // Determine number of winners based on match type
+    const getRequiredWinners = (matchType: string, gameMode: string | null, maxSlots: number) => {
+      if (gameMode === 'tdm') {
+        // TDM matches: 1v1 (2 slots) = 1 winner, 2v2 (4 slots) = 2 winners, 4v4 (8 slots) = 4 winners
+        if (maxSlots === 2) return 1; // 1v1
+        if (maxSlots === 4) return 2; // 2v2
+        if (maxSlots === 8) return 4; // 4v4
+        return 1;
+      }
+      
+      // Classic matches
+      if (matchType === 'Solo') return 1;
+      if (matchType === 'Duo') return 2;
+      if (matchType === 'Squad') return 4;
+      return 1;
+    };
+
+    const requiredWinners = getRequiredWinners(
+      selectedResultTournament.match_type, 
+      selectedResultTournament.game_mode, 
+      selectedResultTournament.max_slots
+    );
+
+    // Validate all winner fields are filled
+    const filledUsernames = winnerUsernames.filter(u => u.trim());
+    if (filledUsernames.length !== requiredWinners) {
+      toast.error(`Please enter exactly ${requiredWinners} winner username(s)`);
       return;
     }
 
     setDistributingPrize(true);
 
     try {
-      // 1. Find the winner in profiles by username
-      const { data: winnerProfile, error: profileError } = await supabase
-        .from("profiles")
-        .select("id, username")
-        .eq("username", winnerUsername.trim())
-        .maybeSingle();
+      // Calculate prize per winner
+      const prizePerWinner = selectedResultTournament.prize_pool / requiredWinners;
 
-      if (profileError) throw profileError;
-      if (!winnerProfile) {
-        toast.error(`User "${winnerUsername}" not found in the system`);
-        return;
+      // Process each winner
+      for (let i = 0; i < filledUsernames.length; i++) {
+        const username = filledUsernames[i].trim();
+
+        // 1. Find winner profile
+        const { data: winnerProfile, error: profileError } = await supabase
+          .from("profiles")
+          .select("id, username")
+          .eq("username", username)
+          .maybeSingle();
+
+        if (profileError) throw profileError;
+        if (!winnerProfile) {
+          toast.error(`User "${username}" not found`);
+          return;
+        }
+
+        // 2. Verify participation
+        const { data: participant, error: participantError } = await supabase
+          .from("participants")
+          .select("id, payment_status")
+          .eq("tournament_id", selectedResultTournamentId)
+          .eq("user_id", winnerProfile.id)
+          .maybeSingle();
+
+        if (participantError) throw participantError;
+        if (!participant) {
+          toast.error(`${username} did not participate in this match`);
+          return;
+        }
+
+        if (participant.payment_status !== "paid") {
+          toast.error(`${username} did not pay for this match`);
+          return;
+        }
+
+        // 3. Update participant rank to 1 (all team members get rank 1)
+        await supabase
+          .from("participants")
+          .update({ 
+            rank: 1,
+            prize_amount: prizePerWinner
+          })
+          .eq("id", participant.id);
+
+        // 4. Credit winner's wallet
+        const { data: currentProfile } = await supabase
+          .from("profiles")
+          .select("wallet_balance, total_winnings")
+          .eq("id", winnerProfile.id)
+          .single();
+
+        const { error: walletError } = await supabase
+          .from("profiles")
+          .update({ 
+            wallet_balance: (currentProfile?.wallet_balance || 0) + prizePerWinner,
+            total_winnings: (currentProfile?.total_winnings || 0) + prizePerWinner
+          })
+          .eq("id", winnerProfile.id);
+
+        if (walletError) throw walletError;
+
+        // 5. Record transaction
+        await supabase.from("transactions").insert({
+          user_id: winnerProfile.id,
+          amount: prizePerWinner,
+          type: "contest_win",
+          status: "success",
+          description: `Prize for winning ${selectedResultTournament.title}${requiredWinners > 1 ? ` (Team Share: ${i + 1}/${requiredWinners})` : ''}`
+        });
+
+        // 6. Notify winner
+        await supabase.from("notifications").insert({
+          user_id: winnerProfile.id,
+          title: "🏆 Victory!",
+          message: `Congratulations! You won ₹${prizePerWinner.toFixed(2)} in ${selectedResultTournament.title}. Prize credited to your wallet!`,
+          type: "match"
+        });
       }
-
-      // 2. Verify user participated in this match
-      const { data: participant, error: participantError } = await supabase
-        .from("participants")
-        .select("id, payment_status")
-        .eq("tournament_id", selectedResultTournamentId)
-        .eq("user_id", winnerProfile.id)
-        .maybeSingle();
-
-      if (participantError) throw participantError;
-      if (!participant) {
-        toast.error(`${winnerUsername} did not participate in this match`);
-        return;
-      }
-
-      if (participant.payment_status !== "paid") {
-        toast.error(`${winnerUsername} did not pay for this match`);
-        return;
-      }
-
-      // 3. Get tournament details
-      const { data: tournament, error: tournamentError } = await supabase
-        .from("tournaments")
-        .select("prize_pool, title")
-        .eq("id", selectedResultTournamentId)
-        .single();
-
-      if (tournamentError) throw tournamentError;
-
-      // 4. Update participant rank to 1
-      await supabase
-        .from("participants")
-        .update({ rank: 1 })
-        .eq("id", participant.id);
-
-      // 5. Credit winner's wallet (read current balance first)
-      const { data: currentProfile } = await supabase
-        .from("profiles")
-        .select("wallet_balance, total_winnings")
-        .eq("id", winnerProfile.id)
-        .single();
-
-      const { error: walletError } = await supabase
-        .from("profiles")
-        .update({ 
-          wallet_balance: (currentProfile?.wallet_balance || 0) + tournament.prize_pool,
-          total_winnings: (currentProfile?.total_winnings || 0) + tournament.prize_pool
-        })
-        .eq("id", winnerProfile.id);
-
-      if (walletError) throw walletError;
-
-      // 6. Record transaction
-      await supabase.from("transactions").insert({
-        user_id: winnerProfile.id,
-        amount: tournament.prize_pool,
-        type: "contest_win",
-        status: "success",
-        description: `Prize for winning ${tournament.title}`
-      });
 
       // 7. Close match
       await supabase
@@ -315,17 +356,10 @@ const ManageTournaments = () => {
         .update({ status: "completed" })
         .eq("id", selectedResultTournamentId);
 
-      // 8. Notify winner
-      await supabase.from("notifications").insert({
-        user_id: winnerProfile.id,
-        title: "🏆 Victory!",
-        message: `Congratulations! You won ₹${tournament.prize_pool} in ${tournament.title}. Prize credited to your wallet!`,
-        type: "match"
-      });
-
-      toast.success(`₹${tournament.prize_pool} distributed to ${winnerUsername}!`);
-      setWinnerUsername("");
+      toast.success(`Prize pool of ₹${selectedResultTournament.prize_pool} distributed among ${requiredWinners} winner(s)!`);
+      setWinnerUsernames([""]);
       setSelectedResultTournamentId("");
+      setSelectedResultTournament(null);
       fetchTournaments();
       fetchAllTournaments();
     } catch (error) {
@@ -654,28 +688,41 @@ const ManageTournaments = () => {
             <div className="space-y-2">
               <Label htmlFor="maxSlots" className="text-foreground">Max Slots</Label>
               {formData.gameMode === 'tdm' ? (
-                <Select 
-                  value={formData.maxSlots} 
-                  onValueChange={(val) => setFormData({ ...formData, maxSlots: val })}
-                >
-                  <SelectTrigger className="bg-background/50 border-admin-red/30 focus:border-admin-gold">
-                    <SelectValue placeholder="Select format" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="2">1v1 Duel</SelectItem>
-                    <SelectItem value="4">2v2 Duo</SelectItem>
-                    <SelectItem value="8">4v4 Squad</SelectItem>
-                  </SelectContent>
-                </Select>
+                <>
+                  <Select 
+                    value={formData.maxSlots} 
+                    onValueChange={(val) => setFormData({ ...formData, maxSlots: val })}
+                  >
+                    <SelectTrigger className="bg-background/50 border-admin-red/30 focus:border-admin-gold">
+                      <SelectValue placeholder="Select format" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2">1v1 Duel (2 players)</SelectItem>
+                      <SelectItem value="4">2v2 Duo (4 players)</SelectItem>
+                      <SelectItem value="8">4v4 Squad (8 players)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Prize will be split equally among winning team members
+                  </p>
+                </>
               ) : (
-                <Input
-                  id="maxSlots"
-                  type="number"
-                  placeholder="100"
-                  value={formData.maxSlots}
-                  onChange={(e) => setFormData({ ...formData, maxSlots: e.target.value })}
-                  className="bg-background/50 border-admin-red/30 focus:border-admin-gold"
-                />
+                <>
+                  <Input
+                    id="maxSlots"
+                    type="number"
+                    placeholder="100"
+                    value={formData.maxSlots}
+                    onChange={(e) => setFormData({ ...formData, maxSlots: e.target.value })}
+                    className="bg-background/50 border-admin-red/30 focus:border-admin-gold"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formData.matchType === 'Solo' && 'Total individual players'}
+                    {formData.matchType === 'Duo' && 'Total players (in teams of 2)'}
+                    {formData.matchType === 'Squad' && 'Total players (in teams of 4)'}
+                    {!formData.matchType && 'Select match type first'}
+                  </p>
+                </>
               )}
             </div>
 
@@ -707,6 +754,34 @@ const ManageTournaments = () => {
             <p className="text-xs text-muted-foreground mt-1">
               Revenue: ₹{((parseFloat(formData.entryFee) || 0) * (parseInt(formData.maxSlots) || 100)).toLocaleString()} - Prize: ₹{(parseFloat(formData.prizePool) || 0).toLocaleString()}
             </p>
+            
+            {/* Winner Distribution Info */}
+            {formData.matchType && formData.prizePool && (
+              <div className="mt-3 pt-3 border-t border-border/50">
+                <p className="text-xs text-muted-foreground mb-1">Prize Distribution:</p>
+                <p className="text-sm text-foreground font-medium">
+                  {formData.matchType === 'Solo' && formData.gameMode === 'classic' && (
+                    `1 Winner gets ₹${parseFloat(formData.prizePool || '0').toLocaleString()}`
+                  )}
+                  {formData.matchType === 'Duo' && formData.gameMode === 'classic' && (
+                    `2 Winners get ₹${(parseFloat(formData.prizePool || '0') / 2).toLocaleString()} each`
+                  )}
+                  {formData.matchType === 'Squad' && formData.gameMode === 'classic' && (
+                    `4 Winners get ₹${(parseFloat(formData.prizePool || '0') / 4).toLocaleString()} each`
+                  )}
+                  {formData.gameMode === 'tdm' && formData.maxSlots === '2' && (
+                    `1 Winner gets ₹${parseFloat(formData.prizePool || '0').toLocaleString()}`
+                  )}
+                  {formData.gameMode === 'tdm' && formData.maxSlots === '4' && (
+                    `2 Winners get ₹${(parseFloat(formData.prizePool || '0') / 2).toLocaleString()} each`
+                  )}
+                  {formData.gameMode === 'tdm' && formData.maxSlots === '8' && (
+                    `4 Winners get ₹${(parseFloat(formData.prizePool || '0') / 4).toLocaleString()} each`
+                  )}
+                </p>
+              </div>
+            )}
+            
             {calculateProfit() < 0 && (
               <div className="mt-3 flex items-start gap-2 text-destructive text-sm">
                 <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
@@ -737,10 +812,32 @@ const ManageTournaments = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="resultMatch">Select Completed Match</Label>
-              <Select value={selectedResultTournamentId} onValueChange={setSelectedResultTournamentId}>
+              <Select 
+                value={selectedResultTournamentId} 
+                onValueChange={(value) => {
+                  setSelectedResultTournamentId(value);
+                  const tournament = tournaments.find(t => t.id === value);
+                  setSelectedResultTournament(tournament || null);
+                  
+                  // Set number of winner input fields based on match type
+                  if (tournament) {
+                    let numWinners = 1;
+                    if (tournament.game_mode === 'tdm') {
+                      if (tournament.max_slots === 2) numWinners = 1; // 1v1
+                      else if (tournament.max_slots === 4) numWinners = 2; // 2v2
+                      else if (tournament.max_slots === 8) numWinners = 4; // 4v4
+                    } else {
+                      if (tournament.match_type === 'Solo') numWinners = 1;
+                      else if (tournament.match_type === 'Duo') numWinners = 2;
+                      else if (tournament.match_type === 'Squad') numWinners = 4;
+                    }
+                    setWinnerUsernames(Array(numWinners).fill(""));
+                  }
+                }}
+              >
                 <SelectTrigger className="bg-background/50 border-border">
                   <SelectValue placeholder="Choose match" />
                 </SelectTrigger>
@@ -753,16 +850,45 @@ const ManageTournaments = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="winner">Winner Username</Label>
-              <Input
-                id="winner"
-                placeholder="Enter winner's username"
-                value={winnerUsername}
-                onChange={(e) => setWinnerUsername(e.target.value)}
-                className="bg-background/50 border-border"
-              />
-            </div>
+            
+            {selectedResultTournament && (
+              <>
+                <div className="p-3 bg-muted/30 border border-border rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-1">Match Details</p>
+                  <p className="text-foreground font-medium">
+                    {selectedResultTournament.game_mode === 'tdm' 
+                      ? `TDM ${selectedResultTournament.max_slots === 2 ? '1v1' : selectedResultTournament.max_slots === 4 ? '2v2' : '4v4'}`
+                      : `${selectedResultTournament.match_type} - ${selectedResultTournament.map}`
+                    }
+                  </p>
+                  <p className="text-sm text-admin-gold mt-1">
+                    Prize Pool: ₹{selectedResultTournament.prize_pool}
+                    {winnerUsernames.length > 1 && (
+                      <span className="text-muted-foreground ml-2">
+                        (₹{(selectedResultTournament.prize_pool / winnerUsernames.length).toFixed(2)} per winner)
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <Label>Winner Username{winnerUsernames.length > 1 ? 's' : ''}</Label>
+                  {winnerUsernames.map((username, index) => (
+                    <Input
+                      key={index}
+                      placeholder={`Winner ${index + 1} username`}
+                      value={username}
+                      onChange={(e) => {
+                        const newUsernames = [...winnerUsernames];
+                        newUsernames[index] = e.target.value;
+                        setWinnerUsernames(newUsernames);
+                      }}
+                      className="bg-background/50 border-border"
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
           <Button 
             onClick={handleDistributePrize}

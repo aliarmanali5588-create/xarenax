@@ -142,9 +142,10 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
   };
 
   const handleSubmitUTR = async () => {
+    // Enhanced validation - more strict
     if (!utrNumber || utrNumber.length < 10) {
       toast({
-        title: "Invalid UTR",
+        title: "❌ Invalid UTR",
         description: "Please enter a valid UTR number (10-22 characters)",
         variant: "destructive",
       });
@@ -153,7 +154,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
 
     if (utrValidation === "invalid") {
       toast({
-        title: "Invalid UTR Format",
+        title: "❌ Invalid UTR Format",
         description: "UTR should contain only letters and numbers",
         variant: "destructive",
       });
@@ -162,8 +163,28 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
 
     if (!screenshot) {
       toast({
-        title: "Screenshot Required",
+        title: "❌ Screenshot Required",
         description: "Please upload your payment screenshot to continue",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check screenshot file size again (extra security)
+    if (screenshot.size > 5 * 1024 * 1024) {
+      toast({
+        title: "❌ File Too Large",
+        description: "Image must be less than 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file is actually an image
+    if (!screenshot.type.startsWith('image/')) {
+      toast({
+        title: "❌ Invalid File Type",
+        description: "Please upload a valid image file (JPG, PNG, WEBP)",
         variant: "destructive",
       });
       return;
@@ -283,10 +304,9 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
       }
 
       toast({
-        title: autoApprove ? "✅ Instantly Approved!" : "Success! ✅",
-        description: autoApprove
-          ? `Your deposit of ₹${amount} has been automatically approved and credited to your wallet!`
-          : "Payment proof submitted with screenshot. Admin will verify within 10 minutes!",
+        title: "✅ Deposit Submitted Successfully!",
+        description: `Your deposit of ₹${amount} has been received! Our team will verify and credit your wallet within 2 minutes. Please wait...`,
+        duration: 5000,
       });
 
       onOpenChange(false);
@@ -460,17 +480,17 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
           </div>
 
           {/* Warning for fraud detection */}
-          <Alert className="border-amber-500/50 bg-amber-500/5">
-            <AlertCircle className="h-4 w-4 text-amber-500" />
+          <Alert className="border-green-500/50 bg-green-500/5">
+            <AlertCircle className="h-4 w-4 text-green-500" />
             <AlertDescription className="text-xs space-y-1">
               <p>
-                <strong>Maximum Security Active:</strong> All deposits require manual admin verification.
-              </p>
-              <p className="text-amber-600 dark:text-amber-400">
-                ⏳ Admin will verify within 5-10 minutes
+                <strong>✅ Quick Verification:</strong> All deposits are verified within 2 minutes!
               </p>
               <p className="text-green-600 dark:text-green-400">
-                ✅ Your balance will be credited after verification
+                ⚡ Fast approval - Your balance will be credited quickly
+              </p>
+              <p className="text-amber-600 dark:text-amber-400">
+                🔒 Maximum security - UTR + Screenshot verification required
               </p>
             </AlertDescription>
           </Alert>

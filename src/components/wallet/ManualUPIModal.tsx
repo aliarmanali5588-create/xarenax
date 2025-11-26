@@ -207,27 +207,106 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
 
       // Parse fraud data safely
       const fraudResult = fraudData ? (fraudData as any) : { fraud_score: 0, fraud_flags: [], is_suspicious: false };
+      const fraudScore = fraudResult.fraud_score || 0;
+
+      // Auto-approve if fraud score is low (< 30)
+      const autoApprove = fraudScore < 30;
+      const initialStatus = autoApprove ? "approved" : "pending";
 
       // Insert UTR submission with fraud detection results and screenshot
-      const { error } = await supabase.from("utr_submissions").insert({
-        user_id: user.id,
-        amount,
-        utr_number: utrNumber,
-        status: "pending",
-        fraud_score: fraudResult.fraud_score || 0,
-        fraud_flags: fraudResult.fraud_flags || [],
-        is_suspicious: fraudResult.is_suspicious || false,
-        verification_status: "pending",
-        screenshot_url: screenshotUrl,
-      });
+      const { data: submission, error: insertError } = await supabase
+        .from("utr_submissions")
+        .insert({
+          user_id: user.id,
+          amount,
+          utr_number: utrNumber,
+          status: initialStatus,
+          fraud_score: fraudScore,
+          fraud_flags: fraudResult.fraud_flags || [],
+          is_suspicious: fraudResult.is_suspicious || false,
+          verification_status: autoApprove ? "verified" : "pending",
+          screenshot_url: screenshotUrl,
+          processed_at: autoApprove ? new Date().toISOString() : null,
+        })
+        .select("id")
+        .single();
 
-      if (error) throw error;
+      if (insertError) throw insertError;
+
+      // If auto-approved, credit wallet immediately
+      if (autoApprove) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("wallet_balance, total_deposited, username")
+          .eq("id", user.id)
+          .single();
+
+        if (profile) {
+          await supabase
+            .from("profiles")
+            .update({ 
+              wallet_balance: profile.wallet_balance + amount,
+              total_deposited: profile.total_deposited + amount
+            })
+            .eq("id", user.id);
+
+          // Create transaction record
+          await supabase.from("transactions").insert({
+            user_id: user.id,
+            amount,
+            type: "deposit",
+            status: "success",
+            description: `Manual UPI Deposit (Auto-Approved) - UTR: ${utrNumber}`,
+          });
+
+          // Send success notification
+          await supabase.from("notifications").insert({
+            user_id: user.id,
+            title: "💰 Deposit Auto-Approved!",
+            message: `Your deposit of ₹${amount} has been automatically verified and credited to your wallet.`,
+            type: "payment",
+          });
+
+          // Send Telegram alert
+          await supabase.functions.invoke("send-telegram-alert", {
+            body: {
+              submissionId: submission.id,
+              amount,
+              utrNumber,
+              username: profile.username,
+              fraudScore,
+              autoApproved: true,
+            },
+          });
+        }
+      } else {
+        // Get username for Telegram notification
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", user.id)
+          .single();
+
+        // Send Telegram alert for manual review
+        await supabase.functions.invoke("send-telegram-alert", {
+          body: {
+            submissionId: submission.id,
+            amount,
+            utrNumber,
+            username: profile?.username || "Unknown",
+            fraudScore,
+            autoApproved: false,
+          },
+        });
+      }
 
       toast({
-        title: "Success! ✅",
-        description: screenshot 
-          ? "Payment proof submitted with screenshot. Verification within 10 minutes!" 
-          : "UTR submitted successfully. Your payment will be verified within 10 minutes.",
+        title: autoApprove ? "✅ Instantly Approved!" : "Success! ✅",
+        description: autoApprove
+          ? `Your deposit of ₹${amount} has been automatically approved and credited to your wallet!`
+          : screenshot 
+            ? "Payment proof submitted with screenshot. Admin will verify within 10 minutes!" 
+            : "UTR submitted successfully. Admin will verify within 10 minutes.",
       });
 
       onOpenChange(false);

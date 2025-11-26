@@ -87,6 +87,19 @@ const AdminSettings = () => {
 
   const removeUpiMethod = async (index: number, id?: string) => {
     if (id) {
+      // Delete QR code from storage if exists
+      const method = upiMethods[index];
+      if (method.qr_code_url) {
+        try {
+          const fileName = method.qr_code_url.split('/').pop();
+          if (fileName) {
+            await supabase.storage.from('qr-codes').remove([fileName]);
+          }
+        } catch (error) {
+          console.error("Failed to delete QR code from storage:", error);
+        }
+      }
+
       const { error } = await supabase
         .from("upi_payment_methods")
         .delete()
@@ -108,6 +121,57 @@ const AdminSettings = () => {
     const updated = [...upiMethods];
     updated[index] = { ...updated[index], [field]: value };
     setUpiMethods(updated);
+  };
+
+  const handleQRUpload = async (index: number, file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid File",
+        description: "Please upload an image file (JPG, PNG, WEBP)",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File Too Large",
+        description: "Image must be less than 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `qr-${Date.now()}-${index}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('qr-codes')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('qr-codes')
+        .getPublicUrl(fileName);
+
+      updateUpiMethod(index, "qr_code_url", publicUrl);
+
+      toast({
+        title: "Success!",
+        description: "QR Code uploaded successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Upload Failed",
+        description: error.message || "Failed to upload QR code",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSaveSettings = async () => {
@@ -256,15 +320,35 @@ const AdminSettings = () => {
                             </div>
 
                             <div className="space-y-2">
-                              <Label htmlFor={`qr_code_${index}`}>QR Code URL</Label>
-                              <Input
-                                id={`qr_code_${index}`}
-                                type="text"
-                                value={method.qr_code_url}
-                                onChange={(e) => updateUpiMethod(index, "qr_code_url", e.target.value)}
-                                placeholder="https://your-domain.com/qr-code.png"
-                                className="bg-background/50"
-                              />
+                              <Label htmlFor={`qr_code_${index}`}>QR Code</Label>
+                              
+                              {/* QR Code Preview */}
+                              {method.qr_code_url && (
+                                <div className="flex justify-center p-4 bg-white rounded-lg mb-2">
+                                  <img 
+                                    src={method.qr_code_url} 
+                                    alt={`${method.display_name} QR`}
+                                    className="w-32 h-32 object-contain"
+                                  />
+                                </div>
+                              )}
+                              
+                              {/* File Upload Button */}
+                              <div className="flex gap-2">
+                                <Input
+                                  id={`qr_code_${index}`}
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) handleQRUpload(index, file);
+                                  }}
+                                  className="bg-background/50"
+                                />
+                              </div>
+                              <p className="text-xs text-muted-foreground">
+                                Upload QR code image (JPG, PNG, WEBP - Max 5MB)
+                              </p>
                             </div>
                           </div>
                         ))}

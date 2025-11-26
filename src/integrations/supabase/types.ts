@@ -440,6 +440,36 @@ export type Database = {
         }
         Relationships: []
       }
+      upi_payment_methods: {
+        Row: {
+          created_at: string | null
+          display_name: string
+          id: string
+          is_active: boolean | null
+          qr_code_url: string | null
+          updated_at: string | null
+          upi_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          display_name: string
+          id?: string
+          is_active?: boolean | null
+          qr_code_url?: string | null
+          updated_at?: string | null
+          upi_id: string
+        }
+        Update: {
+          created_at?: string | null
+          display_name?: string
+          id?: string
+          is_active?: boolean | null
+          qr_code_url?: string | null
+          updated_at?: string | null
+          upi_id?: string
+        }
+        Relationships: []
+      }
       user_payment_methods: {
         Row: {
           bank_account_no: string | null

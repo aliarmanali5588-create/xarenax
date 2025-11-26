@@ -35,7 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Plus, Trophy, Key, Award, AlertTriangle, Pencil, Trash2, List } from "lucide-react";
+import { Plus, Trophy, Key, Award, AlertTriangle, Pencil, Trash2, List, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { z } from "zod";
@@ -112,6 +112,10 @@ const ManageTournaments = () => {
     roomPassword: "",
   });
   const [updatingRoom, setUpdatingRoom] = useState(false);
+  const [participantsModalOpen, setParticipantsModalOpen] = useState(false);
+  const [selectedTournamentForParticipants, setSelectedTournamentForParticipants] = useState<Tournament | null>(null);
+  const [participants, setParticipants] = useState<any[]>([]);
+  const [loadingParticipants, setLoadingParticipants] = useState(false);
 
   useEffect(() => {
     fetchTournaments();
@@ -555,6 +559,65 @@ const ManageTournaments = () => {
     }
   };
 
+  const handleViewParticipants = async (tournament: Tournament) => {
+    setSelectedTournamentForParticipants(tournament);
+    setParticipantsModalOpen(true);
+    setLoadingParticipants(true);
+
+    try {
+      const { data, error } = await supabase
+        .from("participants")
+        .select(`
+          id,
+          pubg_id,
+          payment_status,
+          joined_at,
+          rank,
+          kills,
+          prize_amount,
+          user_id,
+          profiles!inner(
+            username,
+            ign
+          )
+        `)
+        .eq("tournament_id", tournament.id)
+        .order("joined_at", { ascending: true });
+
+      if (error) throw error;
+      setParticipants(data || []);
+    } catch (error) {
+      console.error("Error fetching participants:", error);
+      toast.error("Failed to load participants");
+    } finally {
+      setLoadingParticipants(false);
+    }
+  };
+
+  const getTeamAssignments = (participants: any[], matchType: string, gameMode: string | null, maxSlots: number) => {
+    // Calculate team size
+    let teamSize = 1;
+    if (gameMode === 'tdm') {
+      if (maxSlots === 4) teamSize = 2; // 2v2
+      else if (maxSlots === 8) teamSize = 4; // 4v4
+    } else {
+      if (matchType === 'Duo') teamSize = 2;
+      else if (matchType === 'Squad') teamSize = 4;
+    }
+
+    // Group participants into teams
+    const teams: any[][] = [];
+    if (teamSize === 1) {
+      return participants.map((p, i) => ({ team: i + 1, members: [p] }));
+    }
+
+    for (let i = 0; i < participants.length; i += teamSize) {
+      teams.push(participants.slice(i, i + teamSize));
+    }
+
+    return teams.map((members, i) => ({ team: i + 1, members }));
+  };
+
   return (
     <div className="space-y-6">
       {/* Create Match Form */}
@@ -957,6 +1020,16 @@ const ManageTournaments = () => {
                         <Button
                           size="sm"
                           variant="outline"
+                          onClick={() => handleViewParticipants(tournament)}
+                          className="border-primary/30 hover:bg-primary/10"
+                          title="View Participants"
+                        >
+                          <Users className="h-4 w-4 mr-1" />
+                          {tournament.current_slots}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
                           onClick={() => handleManageRoomClick(tournament)}
                           className="border-cyan-400/30 hover:bg-cyan-400/10"
                           title="Manage Room Credentials"
@@ -1242,6 +1315,164 @@ const ManageTournaments = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Participants View Modal */}
+      <Dialog open={participantsModalOpen} onOpenChange={setParticipantsModalOpen}>
+        <DialogContent className="bg-card border-primary/20 max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-gaming text-foreground flex items-center gap-3">
+              <Users className="h-6 w-6 text-primary" />
+              Tournament Participants
+            </DialogTitle>
+            {selectedTournamentForParticipants && (
+              <div className="text-sm text-muted-foreground space-y-1 pt-2">
+                <p className="font-medium text-foreground">{selectedTournamentForParticipants.title}</p>
+                <p>{selectedTournamentForParticipants.map} - {selectedTournamentForParticipants.match_type}</p>
+                <p>Registered: {selectedTournamentForParticipants.current_slots}/{selectedTournamentForParticipants.max_slots} players</p>
+              </div>
+            )}
+          </DialogHeader>
+
+          {loadingParticipants ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+            </div>
+          ) : participants.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
+              <p>No participants yet</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {/* Team-based view */}
+              {selectedTournamentForParticipants && (
+                selectedTournamentForParticipants.match_type !== 'Solo' || 
+                (selectedTournamentForParticipants.game_mode === 'tdm' && selectedTournamentForParticipants.max_slots > 2)
+              ) ? (
+                <div className="space-y-4">
+                  {getTeamAssignments(
+                    participants,
+                    selectedTournamentForParticipants.match_type,
+                    selectedTournamentForParticipants.game_mode,
+                    selectedTournamentForParticipants.max_slots
+                  ).map((team) => (
+                    <div key={team.team} className="border border-border rounded-lg p-4 bg-muted/20">
+                      <h3 className="font-gaming text-lg mb-3 text-primary">
+                        Team {team.team}
+                      </h3>
+                      <div className="space-y-2">
+                        {team.members.map((participant: any) => (
+                          <div 
+                            key={participant.id} 
+                            className="flex items-center justify-between p-3 bg-background/50 rounded border border-border/50"
+                          >
+                            <div className="space-y-1">
+                              <p className="font-medium text-foreground">
+                                {participant.profiles.username || 'Unknown'}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                IGN: {participant.profiles.ign || 'N/A'}
+                              </p>
+                              <p className="text-sm text-primary">
+                                PUBG ID: {participant.pubg_id}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                                participant.payment_status === 'paid' 
+                                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                                  : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                              }`}>
+                                {participant.payment_status === 'paid' ? '✓ Paid' : 'Pending'}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                // Solo view
+                <div className="space-y-2">
+                  {participants.map((participant, index) => (
+                    <div 
+                      key={participant.id} 
+                      className="flex items-center justify-between p-4 bg-background/50 rounded border border-border hover:border-primary/30 transition-colors"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold">
+                          {index + 1}
+                        </div>
+                        <div className="space-y-1">
+                          <p className="font-medium text-foreground">
+                            {participant.profiles.username || 'Unknown'}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            IGN: {participant.profiles.ign || 'N/A'}
+                          </p>
+                          <p className="text-sm text-primary">
+                            PUBG ID: {participant.pubg_id}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Joined: {new Date(participant.joined_at).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right space-y-2">
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                          participant.payment_status === 'paid' 
+                            ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                            : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                        }`}>
+                          {participant.payment_status === 'paid' ? '✓ Paid' : 'Pending'}
+                        </span>
+                        {participant.rank && (
+                          <p className="text-xs text-admin-gold">
+                            Rank: {participant.rank} {participant.rank === 1 && '👑'}
+                          </p>
+                        )}
+                        {participant.kills !== null && participant.kills > 0 && (
+                          <p className="text-xs text-muted-foreground">
+                            Kills: {participant.kills}
+                          </p>
+                        )}
+                        {participant.prize_amount && participant.prize_amount > 0 && (
+                          <p className="text-xs text-admin-gold font-medium">
+                            Won: ₹{participant.prize_amount}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Summary Stats */}
+              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-foreground">
+                    {participants.length}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Total Players</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-400">
+                    {participants.filter(p => p.payment_status === 'paid').length}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Paid</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-yellow-400">
+                    {participants.filter(p => p.payment_status !== 'paid').length}
+                  </p>
+                  <p className="text-xs text-muted-foreground">Pending</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -160,6 +160,15 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
       return;
     }
 
+    if (!screenshot) {
+      toast({
+        title: "Screenshot Required",
+        description: "Please upload your payment screenshot to continue",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSubmitting(true);
     setUploading(true);
     
@@ -304,9 +313,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
         title: autoApprove ? "✅ Instantly Approved!" : "Success! ✅",
         description: autoApprove
           ? `Your deposit of ₹${amount} has been automatically approved and credited to your wallet!`
-          : screenshot 
-            ? "Payment proof submitted with screenshot. Admin will verify within 10 minutes!" 
-            : "UTR submitted successfully. Admin will verify within 10 minutes.",
+          : "Payment proof submitted with screenshot. Admin will verify within 10 minutes!",
       });
 
       onOpenChange(false);
@@ -327,7 +334,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md glass-panel">
+      <DialogContent className="sm:max-w-md glass-panel max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-gaming text-glow-cyan">
             Pay via UPI
@@ -430,8 +437,8 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
 
           {/* Screenshot Upload */}
           <div className="space-y-2">
-            <Label htmlFor="screenshot" className="text-sm font-semibold">
-              Upload Payment Screenshot (Optional)
+            <Label htmlFor="screenshot" className="text-sm font-semibold text-destructive">
+              Upload Payment Screenshot (Required) *
             </Label>
             <div className="flex flex-col gap-3">
               <div className="flex gap-2">
@@ -470,10 +477,10 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
                 </div>
               )}
               <div className="flex items-start gap-2 text-xs">
-                <Upload className="w-3 h-3 text-primary mt-0.5 flex-shrink-0" />
+                <Upload className="w-3 h-3 text-destructive mt-0.5 flex-shrink-0" />
                 <p className="text-muted-foreground">
-                  <strong className="text-foreground">Pro Tip:</strong> Upload your payment screenshot for 
-                  <strong className="text-primary"> instant verification</strong>. Max 5MB (JPG, PNG, WEBP)
+                  <strong className="text-destructive">Required:</strong> Upload your payment screenshot for 
+                  verification. Max 5MB (JPG, PNG, WEBP)
                 </p>
               </div>
             </div>
@@ -491,7 +498,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
           {/* Submit Button */}
           <Button
             onClick={handleSubmitUTR}
-            disabled={submitting || !utrNumber || utrValidation === "invalid"}
+            disabled={submitting || !utrNumber || utrValidation === "invalid" || !screenshot}
             className="w-full"
             size="lg"
             variant="gaming"

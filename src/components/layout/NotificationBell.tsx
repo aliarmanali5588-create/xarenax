@@ -157,10 +157,6 @@ const NotificationBell = () => {
           <h3 className="font-heading font-semibold text-sm">Notifications</h3>
         </div>
 
-        <div className="px-2 py-2 mb-2">
-          <PushNotificationToggle />
-        </div>
-
         {loading ? (
           <div className="text-center py-8 text-muted-foreground text-sm">
             Loading notifications...

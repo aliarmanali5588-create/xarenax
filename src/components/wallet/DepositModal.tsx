@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { IndianRupee, Smartphone } from "lucide-react";
+import { IndianRupee, Smartphone, History } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ManualUPIModal } from "./ManualUPIModal";
+import { DepositHistoryModal } from "./DepositHistoryModal";
 
 interface DepositModalProps {
   open: boolean;
@@ -21,6 +22,7 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
   const [amount, setAmount] = useState("");
   const [showUPIModal, setShowUPIModal] = useState(false);
   const [selectedAmount, setSelectedAmount] = useState(0);
+  const [showHistory, setShowHistory] = useState(false);
 
   const MIN_DEPOSIT = 50;
   const MAX_DEPOSIT = 5000;
@@ -43,12 +45,28 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="glass-panel border-border/50 max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-gaming text-glow-cyan">
-              Add Money to Wallet
-            </DialogTitle>
-            <DialogDescription>
-              Enter the amount you want to add to your wallet
-            </DialogDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle className="text-2xl font-gaming text-glow-cyan">
+                  Add Money to Wallet
+                </DialogTitle>
+                <DialogDescription>
+                  Enter the amount you want to add to your wallet
+                </DialogDescription>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setShowHistory(true);
+                  onOpenChange(false);
+                }}
+                className="flex items-center gap-2"
+              >
+                <History className="w-4 h-4" />
+                History
+              </Button>
+            </div>
           </DialogHeader>
 
         <div className="space-y-6 py-4">
@@ -126,6 +144,11 @@ const DepositModal = ({ open, onOpenChange }: DepositModalProps) => {
           }
         }}
         amount={selectedAmount}
+      />
+
+      <DepositHistoryModal
+        open={showHistory}
+        onOpenChange={setShowHistory}
       />
     </>
   );

@@ -15,9 +15,16 @@ interface ManualUPIModalProps {
   amount: number;
 }
 
+interface UPIMethod {
+  id: string;
+  upi_id: string;
+  qr_code_url: string;
+  display_name: string;
+}
+
 export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalProps) => {
-  const [upiId, setUpiId] = useState("");
-  const [qrCodeUrl, setQrCodeUrl] = useState("");
+  const [upiMethods, setUpiMethods] = useState<UPIMethod[]>([]);
+  const [selectedUpi, setSelectedUpi] = useState<UPIMethod | null>(null);
   const [utrNumber, setUtrNumber] = useState("");
   const [copied, setCopied] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -36,23 +43,27 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
   const fetchPaymentDetails = async () => {
     try {
       const { data, error } = await supabase
-        .from("platform_settings")
-        .select("setting_key, setting_value")
-        .in("setting_key", ["upi_id", "qr_code_url"]);
+        .from("upi_payment_methods")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: true });
 
       if (error) throw error;
 
-      data?.forEach((setting) => {
-        if (setting.setting_key === "upi_id") {
-          setUpiId(setting.setting_value);
-        } else if (setting.setting_key === "qr_code_url") {
-          setQrCodeUrl(setting.setting_value);
-        }
-      });
+      if (data && data.length > 0) {
+        setUpiMethods(data);
+        setSelectedUpi(data[0]); // Select first UPI by default
+      } else {
+        toast({
+          title: "No UPI Available",
+          description: "No UPI payment methods are currently available",
+          variant: "destructive",
+        });
+      }
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to load payment details",
+        description: "Failed to load UPI details",
         variant: "destructive",
       });
     }
@@ -63,7 +74,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
     setCopied(true);
     toast({
       title: "Copied!",
-      description: "UPI ID copied to clipboard",
+      description: selectedUpi ? `${selectedUpi.display_name} copied to clipboard` : "UPI ID copied",
     });
     setTimeout(() => setCopied(false), 2000);
   };
@@ -255,28 +266,58 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
             <p className="text-xs text-destructive font-semibold">⚠️ Pay EXACTLY this amount</p>
           </div>
 
+          {/* UPI Selection - Multiple Options */}
+          {upiMethods.length > 1 && (
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Select UPI Method</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {upiMethods.map((method) => (
+                  <Button
+                    key={method.id}
+                    type="button"
+                    variant={selectedUpi?.id === method.id ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedUpi(method)}
+                    className="w-full"
+                  >
+                    {method.display_name}
+                  </Button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                💡 Choose any UPI if one is down
+              </p>
+            </div>
+          )}
+
           {/* QR Code */}
-          {qrCodeUrl && (
+          {selectedUpi?.qr_code_url && (
             <div className="flex justify-center p-4 bg-white rounded-xl shadow-lg">
-              <img src={qrCodeUrl} alt="UPI QR Code" className="w-48 h-48" />
+              <img 
+                src={selectedUpi.qr_code_url} 
+                alt={`${selectedUpi.display_name} QR Code`} 
+                className="w-48 h-48" 
+              />
             </div>
           )}
 
           {/* UPI ID */}
-          <div className="space-y-2">
-            <Label className="text-sm font-semibold">UPI ID</Label>
-            <div className="flex gap-2">
-              <Input value={upiId} readOnly className="font-mono text-base bg-muted" />
-              <Button
-                size="icon"
-                variant="outline"
-                onClick={() => copyToClipboard(upiId)}
-                className="hover-lift"
-              >
-                {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-              </Button>
+          {selectedUpi && (
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">{selectedUpi.display_name}</Label>
+              <div className="flex gap-2">
+                <Input value={selectedUpi.upi_id} readOnly className="font-mono text-base bg-muted" />
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={() => copyToClipboard(selectedUpi.upi_id)}
+                  className="hover-lift"
+                >
+                  {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* UTR Input with Validation */}
           <div className="space-y-2">

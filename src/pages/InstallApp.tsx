@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/layout/Navbar";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const InstallApp = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Check if already installed
@@ -122,7 +124,9 @@ const InstallApp = () => {
                 <p className="text-sm text-muted-foreground">
                   {isInstallable 
                     ? "✅ Your device supports instant installation" 
-                    : "📱 Open this page in your mobile browser to install"}
+                    : isMobile 
+                      ? "📱 Ready to install - Tap the button above or follow the guide below"
+                      : "📱 Open this page on your mobile browser to install"}
                 </p>
                 <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">

@@ -279,38 +279,7 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
             message: `Your deposit of ₹${amount} has been automatically verified and credited to your wallet.`,
             type: "payment",
           });
-
-          // Send Telegram alert
-          await supabase.functions.invoke("send-telegram-alert", {
-            body: {
-              submissionId: submission.id,
-              amount,
-              utrNumber,
-              username: profile.username,
-              fraudScore,
-              autoApproved: true,
-            },
-          });
         }
-      } else {
-        // Get username for Telegram notification
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("username")
-          .eq("id", user.id)
-          .single();
-
-        // Send Telegram alert for manual review
-        await supabase.functions.invoke("send-telegram-alert", {
-          body: {
-            submissionId: submission.id,
-            amount,
-            utrNumber,
-            username: profile?.username || "Unknown",
-            fraudScore,
-            autoApproved: false,
-          },
-        });
       }
 
       toast({

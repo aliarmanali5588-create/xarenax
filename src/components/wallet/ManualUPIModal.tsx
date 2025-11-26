@@ -219,16 +219,10 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
       const fraudScore = fraudResult.fraud_score || 100;
       const fraudFlags = fraudResult.fraud_flags || [];
 
-      // STRICT AUTO-APPROVAL CONDITIONS - Only approve if ALL conditions are met:
-      // 1. Fraud score is EXACTLY 0 (no risk detected)
-      // 2. No fraud flags at all
-      // 3. Screenshot was uploaded (required)
-      // 4. Amount is reasonable (< ₹500 for auto-approval)
-      const autoApprove = 
-        fraudScore === 0 && 
-        fraudFlags.length === 0 && 
-        screenshotUrl !== null && 
-        amount < 500;
+      // ⛔ AUTO-APPROVAL DISABLED FOR MAXIMUM SECURITY ⛔
+      // All deposits MUST be manually verified by admin
+      // This prevents ANY fraudulent deposits from being auto-credited
+      const autoApprove = false;
       
       const initialStatus = autoApprove ? "approved" : "pending";
 
@@ -501,13 +495,13 @@ export const ManualUPIModal = ({ open, onOpenChange, amount }: ManualUPIModalPro
             <AlertCircle className="h-4 w-4 text-amber-500" />
             <AlertDescription className="text-xs space-y-1">
               <p>
-                <strong>Fraud Prevention Active:</strong> All deposits are verified for security.
-              </p>
-              <p className="text-green-600 dark:text-green-400">
-                ✅ Deposits under ₹500 with screenshot = Instant Auto-Approval
+                <strong>Maximum Security Active:</strong> All deposits require manual admin verification.
               </p>
               <p className="text-amber-600 dark:text-amber-400">
-                ⏳ Deposits ₹500+ require manual admin verification (5-10 mins)
+                ⏳ Admin will verify within 5-10 minutes
+              </p>
+              <p className="text-green-600 dark:text-green-400">
+                ✅ Your balance will be credited after verification
               </p>
             </AlertDescription>
           </Alert>

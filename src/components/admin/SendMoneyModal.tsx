@@ -36,7 +36,7 @@ interface SendMoneyModalProps {
 
 const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProps) => {
   const [amount, setAmount] = useState("");
-  const [type, setType] = useState<"winning" | "refund" | "bonus">("winning");
+  const [type, setType] = useState<"winning" | "refund" | "bonus" | "penalty">("winning");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -46,6 +46,12 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
     const amountNum = parseFloat(amount);
     if (isNaN(amountNum) || amountNum <= 0) {
       toast.error("Please enter a valid amount");
+      return;
+    }
+
+    // Check if penalty amount exceeds wallet balance
+    if (type === "penalty" && amountNum > user.walletBalance) {
+      toast.error(`Cannot deduct ₹${amountNum}. User only has ₹${user.walletBalance} in wallet.`);
       return;
     }
 
@@ -66,9 +72,12 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
 
       if (fetchError) throw fetchError;
 
+      // Calculate new balance (add for credit types, subtract for penalty)
+      const balanceChange = type === "penalty" ? -amountNum : amountNum;
+      
       // Update user's wallet balance and total_winnings if it's a winning
       const updateData: any = {
-        wallet_balance: (currentProfile.wallet_balance || 0) + amountNum,
+        wallet_balance: Math.max(0, (currentProfile.wallet_balance || 0) + balanceChange),
       };
 
       if (type === "winning") {
@@ -100,20 +109,32 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
         ? `Congratulations! You received ₹${amountNum} as tournament winnings. ${description.trim()}`
         : type === "refund"
         ? `Your refund of ₹${amountNum} has been processed. ${description.trim()}`
-        : `You received a bonus of ₹${amountNum}! ${description.trim()}`;
+        : type === "bonus"
+        ? `You received a bonus of ₹${amountNum}! ${description.trim()}`
+        : `₹${amountNum} has been deducted from your wallet. Reason: ${description.trim()}`;
 
       const { error: notificationError } = await supabase
         .from("notifications")
         .insert({
           user_id: user.id,
-          title: type === "winning" ? "🏆 Tournament Winning!" : type === "refund" ? "💰 Refund Processed" : "🎁 Bonus Received",
+          title: type === "winning" 
+            ? "🏆 Tournament Winning!" 
+            : type === "refund" 
+            ? "💰 Refund Processed" 
+            : type === "bonus"
+            ? "🎁 Bonus Received"
+            : "⚠️ Wallet Deduction",
           message: notificationMessage,
-          type: "payment",
+          type: type === "penalty" ? "system" : "payment",
         });
 
       if (notificationError) console.error("Notification error:", notificationError);
 
-      toast.success(`₹${amountNum} sent to ${user.username} successfully!`);
+      toast.success(
+        type === "penalty" 
+          ? `₹${amountNum} deducted from ${user.username}'s wallet`
+          : `₹${amountNum} sent to ${user.username} successfully!`
+      );
       
       // Reset form
       setAmount("");
@@ -123,8 +144,8 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
       onSuccess();
       onClose();
     } catch (error: any) {
-      console.error("Error sending money:", error);
-      toast.error(error.message || "Failed to send money");
+      console.error("Error processing transaction:", error);
+      toast.error(error.message || "Failed to process transaction");
     } finally {
       setLoading(false);
     }
@@ -201,6 +222,9 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
                 <SelectItem value="bonus" className="text-yellow-400 font-semibold">
                   🎁 Bonus
                 </SelectItem>
+                <SelectItem value="penalty" className="text-red-400 font-semibold">
+                  ⚠️ Penalty / Fraud Deduction
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -222,11 +246,27 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
 
           {/* Preview of New Balance */}
           {amount && !isNaN(parseFloat(amount)) && parseFloat(amount) > 0 && (
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-              <div className="text-sm text-muted-foreground mb-1">New Balance After Transaction</div>
-              <div className="text-2xl font-gaming font-bold text-green-400">
-                ₹{(user.walletBalance + parseFloat(amount)).toLocaleString()}
+            <div className={`border rounded-lg p-4 ${
+              type === "penalty" 
+                ? "bg-red-500/10 border-red-500/30" 
+                : "bg-green-500/10 border-green-500/30"
+            }`}>
+              <div className="text-sm text-muted-foreground mb-1">
+                {type === "penalty" ? "New Balance After Deduction" : "New Balance After Transaction"}
               </div>
+              <div className={`text-2xl font-gaming font-bold ${
+                type === "penalty" ? "text-red-400" : "text-green-400"
+              }`}>
+                ₹{(type === "penalty" 
+                  ? Math.max(0, user.walletBalance - parseFloat(amount))
+                  : user.walletBalance + parseFloat(amount)
+                ).toLocaleString()}
+              </div>
+              {type === "penalty" && parseFloat(amount) > user.walletBalance && (
+                <div className="text-xs text-red-400 mt-2">
+                  ⚠️ Amount exceeds current balance
+                </div>
+              )}
             </div>
           )}
         </form>
@@ -244,15 +284,19 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
           <Button
             type="submit"
             onClick={handleSubmit}
-            disabled={loading}
-            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-gaming"
+            disabled={loading || (type === "penalty" && parseFloat(amount) > user.walletBalance)}
+            className={
+              type === "penalty"
+                ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-gaming"
+                : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-gaming"
+            }
           >
             {loading ? (
-              "Sending..."
+              "Processing..."
             ) : (
               <>
                 <Send className="w-4 h-4 mr-2" />
-                Send ₹{amount || "0"}
+                {type === "penalty" ? `Deduct ₹${amount || "0"}` : `Send ₹${amount || "0"}`}
               </>
             )}
           </Button>

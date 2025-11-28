@@ -12,8 +12,18 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Users, Ban, CheckCircle, Search, AlertTriangle, DollarSign } from "lucide-react";
+import { Users, Ban, CheckCircle, Search, AlertTriangle, DollarSign, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import StatCardSkeleton from "@/components/admin/StatCardSkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import SendMoneyModal from "@/components/admin/SendMoneyModal";
@@ -39,6 +49,8 @@ const AdminUsers = () => {
   const [showDuplicatesOnly, setShowDuplicatesOnly] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showSendMoneyModal, setShowSendMoneyModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -152,6 +164,35 @@ const AdminUsers = () => {
 
   const handleSendMoneySuccess = () => {
     fetchUsers(); // Refresh user data after sending money
+  };
+
+  const handleDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    try {
+      // Delete user from auth.users (cascades to profiles and other tables)
+      const { error } = await supabase.auth.admin.deleteUser(userToDelete.id);
+
+      if (error) {
+        toast.error("Failed to delete user");
+        console.error(error);
+        return;
+      }
+
+      // Remove user from local state
+      setUsers(users.filter((u) => u.id !== userToDelete.id));
+      toast.success(`User ${userToDelete.username} has been permanently deleted`);
+      setShowDeleteDialog(false);
+      setUserToDelete(null);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast.error("An error occurred while deleting user");
+    }
+  };
+
+  const confirmDeleteUser = (user: User) => {
+    setUserToDelete(user);
+    setShowDeleteDialog(true);
   };
 
   const filteredUsers = users.filter((user) => {
@@ -387,6 +428,15 @@ const AdminUsers = () => {
                           </>
                         )}
                       </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => confirmDeleteUser(user)}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Delete
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -405,6 +455,24 @@ const AdminUsers = () => {
           onSuccess={handleSendMoneySuccess}
         />
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete user <span className="font-bold text-red-500">{userToDelete?.username}</span> and all their data from the database. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setUserToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteUser} className="bg-red-600 hover:bg-red-700">
+              Delete Permanently
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

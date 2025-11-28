@@ -170,13 +170,27 @@ const AdminUsers = () => {
     if (!userToDelete) return;
 
     try {
-      // Delete user from auth.users (cascades to profiles and other tables)
-      const { error } = await supabase.auth.admin.deleteUser(userToDelete.id);
-
-      if (error) {
-        toast.error("Failed to delete user");
-        console.error(error);
+      // Call edge function to delete user (requires service role)
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("Not authenticated");
         return;
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-user`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: userToDelete.id }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete user');
       }
 
       // Remove user from local state
@@ -184,9 +198,9 @@ const AdminUsers = () => {
       toast.success(`User ${userToDelete.username} has been permanently deleted`);
       setShowDeleteDialog(false);
       setUserToDelete(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting user:", error);
-      toast.error("An error occurred while deleting user");
+      toast.error(error.message || "An error occurred while deleting user");
     }
   };
 

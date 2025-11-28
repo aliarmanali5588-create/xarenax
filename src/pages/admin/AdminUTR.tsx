@@ -97,16 +97,19 @@ const AdminUTR = () => {
     if (!submission.screenshot_url) return;
 
     try {
-      const { data } = supabase.storage
+      // Create signed URL for private bucket
+      const { data, error } = await supabase.storage
         .from('payment-proofs')
-        .getPublicUrl(submission.screenshot_url);
+        .createSignedUrl(submission.screenshot_url, 3600); // 1 hour expiry
 
-      setScreenshotUrl(data.publicUrl);
+      if (error) throw error;
+
+      setScreenshotUrl(data.signedUrl);
       setShowScreenshot(true);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to load screenshot",
+        description: error.message || "Failed to load screenshot",
         variant: "destructive",
       });
     }

@@ -594,6 +594,51 @@ const ManageTournaments = () => {
     }
   };
 
+  // Real-time subscription for participants
+  useEffect(() => {
+    if (!participantsModalOpen || !selectedTournamentForParticipants) return;
+
+    const channel = supabase
+      .channel(`participants-${selectedTournamentForParticipants.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'participants',
+          filter: `tournament_id=eq.${selectedTournamentForParticipants.id}`
+        },
+        async () => {
+          // Refetch participants when changes occur
+          const { data } = await supabase
+            .from("participants")
+            .select(`
+              id,
+              pubg_id,
+              payment_status,
+              joined_at,
+              rank,
+              kills,
+              prize_amount,
+              user_id,
+              profiles!inner(
+                username,
+                ign
+              )
+            `)
+            .eq("tournament_id", selectedTournamentForParticipants.id)
+            .order("joined_at", { ascending: true });
+
+          if (data) setParticipants(data);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [participantsModalOpen, selectedTournamentForParticipants]);
+
   const getTeamAssignments = (participants: any[], matchType: string, gameMode: string | null, maxSlots: number) => {
     // Calculate team size
     let teamSize = 1;

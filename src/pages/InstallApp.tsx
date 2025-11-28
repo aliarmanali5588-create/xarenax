@@ -16,6 +16,7 @@ const InstallApp = () => {
     // Check if already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
+      return;
     }
 
     const handler = (e: Event) => {
@@ -26,14 +27,33 @@ const InstallApp = () => {
 
     window.addEventListener('beforeinstallprompt', handler);
 
+    // Fallback: If on mobile and event hasn't fired within 1 second, assume installable
+    const fallbackTimer = setTimeout(() => {
+      if (!deferredPrompt && isMobile && !isInstalled) {
+        setIsInstallable(true);
+      }
+    }, 1000);
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handler);
+      clearTimeout(fallbackTimer);
     };
-  }, []);
+  }, [isMobile, deferredPrompt, isInstalled]);
 
   const handleInstall = async () => {
     if (!deferredPrompt) {
-      toast.info("Open this page in your mobile browser to install the app");
+      // If on mobile, scroll to install guide instead of just showing toast
+      if (isMobile) {
+        const guideElement = document.querySelector('[data-install-guide]');
+        if (guideElement) {
+          guideElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          toast.info("Follow the guide below to install ArenaX");
+        } else {
+          toast.info("Use your browser's menu to install the app");
+        }
+      } else {
+        toast.info("Open this page in your mobile browser to install the app");
+      }
       return;
     }
 
@@ -159,7 +179,7 @@ const InstallApp = () => {
           </div>
 
           {/* How to Install Guide */}
-          <Card className="glass-card border-primary/20 mb-8">
+          <Card className="glass-card border-primary/20 mb-8" data-install-guide>
             <CardContent className="p-8">
               <h3 className="font-gaming font-bold text-3xl mb-6 text-center text-gradient">
                 📱 How to Install ArenaX

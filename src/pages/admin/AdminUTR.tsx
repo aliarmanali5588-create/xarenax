@@ -617,13 +617,28 @@ const AdminUTR = () => {
 
       {/* Screenshot Preview Dialog */}
       <Dialog open={showScreenshot} onOpenChange={setShowScreenshot}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-4xl max-h-[90vh]">
           <DialogHeader>
             <DialogTitle>Payment Screenshot</DialogTitle>
           </DialogHeader>
-          <div className="flex justify-center">
-            <img src={screenshotUrl} alt="Payment proof" className="max-w-full h-auto rounded-lg" />
+          <div className="flex justify-center overflow-auto">
+            <img 
+              src={screenshotUrl} 
+              alt="Payment proof" 
+              className="max-w-full h-auto rounded-lg cursor-zoom-in hover:scale-105 transition-transform" 
+              onClick={(e) => {
+                const img = e.currentTarget;
+                if (img.style.transform === 'scale(2)') {
+                  img.style.transform = 'scale(1)';
+                  img.style.cursor = 'zoom-in';
+                } else {
+                  img.style.transform = 'scale(2)';
+                  img.style.cursor = 'zoom-out';
+                }
+              }}
+            />
           </div>
+          <p className="text-xs text-muted-foreground text-center">Click image to zoom in/out</p>
         </DialogContent>
       </Dialog>
 

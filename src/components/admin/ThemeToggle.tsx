@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 
-type Theme = "dark" | "ocean" | "gaming" | "sunset";
+type Theme = "dark" | "rgb-neon" | "gaming" | "sunset";
 
 const ThemeToggle = () => {
   const [currentTheme, setCurrentTheme] = useState<Theme>("dark");
@@ -22,7 +22,7 @@ const ThemeToggle = () => {
 
   const applyTheme = (theme: Theme) => {
     // Remove all theme classes
-    document.documentElement.classList.remove("admin-ocean", "admin-gaming", "admin-sunset");
+    document.documentElement.classList.remove("admin-rgb-neon", "admin-gaming", "admin-sunset");
     
     // Apply new theme class (except for dark which is default)
     if (theme !== "dark") {
@@ -38,7 +38,7 @@ const ThemeToggle = () => {
 
   const themes = [
     { value: "dark", label: "🌙 Dark", description: "Default dark theme" },
-    { value: "ocean", label: "🌊 Ocean", description: "Soft blue professional" },
+    { value: "rgb-neon", label: "🌈 RGB Neon", description: "Multi-color glow effects" },
     { value: "gaming", label: "🎮 Gaming", description: "Neon cyberpunk vibes" },
     { value: "sunset", label: "🌅 Sunset", description: "Warm purple & orange" },
   ];

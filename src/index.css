@@ -69,50 +69,50 @@
     --chart-5: 270 50% 40%;
   }
 
-  /* Ocean Theme - Soft Blue Professional */
-  .admin-ocean {
-    /* Deep Ocean Background */
-    --background: 210 50% 12%;
-    --foreground: 0 0% 98%;
+  /* RGB Neon Theme - Multi-Color Glow */
+  .admin-rgb-neon {
+    /* Deep Black Background */
+    --background: 0 0% 5%;
+    --foreground: 0 0% 100%;
 
-    /* Ocean Card */
-    --card: 210 40% 16%;
+    /* Dark Card with RGB Border */
+    --card: 0 0% 8%;
     --card-foreground: 0 0% 98%;
 
-    /* Cyan Primary */
-    --primary: 190 80% 50%;
-    --primary-foreground: 0 0% 100%;
+    /* Neon Cyan Primary */
+    --primary: 180 100% 50%;
+    --primary-foreground: 0 0% 0%;
 
-    /* Deep Blue Secondary */
-    --secondary: 220 70% 55%;
+    /* Neon Magenta Secondary */
+    --secondary: 300 100% 50%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Ocean Muted */
-    --muted: 210 40% 20%;
-    --muted-foreground: 210 20% 70%;
+    /* Very Dark Muted */
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 75%;
 
-    /* Teal Accent */
-    --accent: 175 70% 45%;
-    --accent-foreground: 0 0% 100%;
+    /* Neon Yellow Accent */
+    --accent: 60 100% 50%;
+    --accent-foreground: 0 0% 0%;
 
-    /* Ocean Borders */
-    --border: 210 40% 24%;
-    --input: 210 40% 18%;
-    --ring: 190 80% 50%;
+    /* RGB Borders */
+    --border: 0 0% 15%;
+    --input: 0 0% 10%;
+    --ring: 180 100% 50%;
 
-    /* Admin Ocean Colors */
-    --admin-primary: 190 80% 50%;
-    --admin-secondary: 220 70% 55%;
-    --admin-accent: 175 70% 45%;
-    --admin-primary-foreground: 0 0% 100%;
+    /* Admin RGB Colors */
+    --admin-primary: 180 100% 50%;
+    --admin-secondary: 300 100% 50%;
+    --admin-accent: 60 100% 50%;
+    --admin-primary-foreground: 0 0% 0%;
     --admin-secondary-foreground: 0 0% 100%;
 
-    /* Chart Colors - Ocean Theme */
-    --chart-1: 190 80% 50%;
-    --chart-2: 220 70% 55%;
-    --chart-3: 175 70% 45%;
-    --chart-4: 200 75% 50%;
-    --chart-5: 210 65% 50%;
+    /* Chart Colors - RGB Theme */
+    --chart-1: 180 100% 50%;
+    --chart-2: 300 100% 50%;
+    --chart-3: 60 100% 50%;
+    --chart-4: 120 100% 50%;
+    --chart-5: 0 100% 50%;
   }
 
   /* Gaming Theme - Neon Cyberpunk */
@@ -351,8 +351,7 @@
     animation: slideIn 0.6s ease-out;
   }
 
-  /* Admin Panel Subtle Effects */
-  /* Clean Admin Effects */
+  /* Admin Panel Effects */
   .admin-card {
     @apply bg-card/40 backdrop-blur-sm border-border/40 rounded-xl transition-all duration-300;
   }
@@ -368,6 +367,43 @@
 
   .admin-text-gradient {
     @apply bg-gradient-to-r from-admin-primary via-admin-accent to-admin-secondary bg-clip-text text-transparent;
+  }
+
+  /* RGB Neon Hover Effects */
+  .admin-rgb-neon .admin-card:hover {
+    animation: rgb-border 3s linear infinite;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), 0 0 30px rgba(255, 0, 255, 0.2);
+  }
+
+  .admin-rgb-neon .admin-glow:hover {
+    animation: rgb-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes rgb-border {
+    0% { border-color: hsl(180, 100%, 50%); }
+    33% { border-color: hsl(300, 100%, 50%); }
+    66% { border-color: hsl(60, 100%, 50%); }
+    100% { border-color: hsl(180, 100%, 50%); }
+  }
+
+  @keyframes rgb-glow {
+    0% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.4), 0 0 30px rgba(0, 255, 255, 0.2); }
+    33% { box-shadow: 0 0 20px rgba(255, 0, 255, 0.4), 0 0 30px rgba(255, 0, 255, 0.2); }
+    66% { box-shadow: 0 0 20px rgba(255, 255, 0, 0.4), 0 0 30px rgba(255, 255, 0, 0.2); }
+    100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.4), 0 0 30px rgba(0, 255, 255, 0.2); }
+  }
+
+  /* RGB Button Hover */
+  .admin-rgb-neon button:hover,
+  .admin-rgb-neon a:hover {
+    animation: rgb-text 3s linear infinite;
+  }
+
+  @keyframes rgb-text {
+    0% { color: hsl(180, 100%, 60%); }
+    33% { color: hsl(300, 100%, 60%); }
+    66% { color: hsl(60, 100%, 60%); }
+    100% { color: hsl(180, 100%, 60%); }
   }
 }
 

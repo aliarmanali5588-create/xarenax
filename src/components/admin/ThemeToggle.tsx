@@ -1,51 +1,77 @@
-import { Moon, Sun } from "lucide-react";
+import { Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 
+type Theme = "dark" | "light" | "gaming" | "minimal";
+
 const ThemeToggle = () => {
-  const [isDark, setIsDark] = useState(true);
+  const [currentTheme, setCurrentTheme] = useState<Theme>("dark");
 
   useEffect(() => {
     // Load theme from localStorage
-    const savedTheme = localStorage.getItem("admin-theme");
-    if (savedTheme === "light") {
-      setIsDark(false);
-      document.documentElement.classList.add("admin-light");
-    }
+    const savedTheme = (localStorage.getItem("admin-theme") || "dark") as Theme;
+    setCurrentTheme(savedTheme);
+    applyTheme(savedTheme);
   }, []);
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-    if (isDark) {
-      document.documentElement.classList.add("admin-light");
-      localStorage.setItem("admin-theme", "light");
-    } else {
-      document.documentElement.classList.remove("admin-light");
-      localStorage.setItem("admin-theme", "dark");
+  const applyTheme = (theme: Theme) => {
+    // Remove all theme classes
+    document.documentElement.classList.remove("admin-light", "admin-gaming", "admin-minimal");
+    
+    // Apply new theme class (except for dark which is default)
+    if (theme !== "dark") {
+      document.documentElement.classList.add(`admin-${theme}`);
     }
   };
 
+  const changeTheme = (theme: Theme) => {
+    setCurrentTheme(theme);
+    localStorage.setItem("admin-theme", theme);
+    applyTheme(theme);
+  };
+
+  const themes = [
+    { value: "dark", label: "🌙 Dark", description: "Default dark theme" },
+    { value: "light", label: "☀️ Light", description: "Clean light mode" },
+    { value: "gaming", label: "🎮 Gaming", description: "Neon cyberpunk vibes" },
+    { value: "minimal", label: "✨ Minimal", description: "Professional clean" },
+  ];
+
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={toggleTheme}
-      className="relative group"
-    >
-      <div className="relative w-5 h-5">
-        <Sun
-          className={`absolute inset-0 h-5 w-5 transition-all duration-300 ${
-            isDark ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
-          }`}
-        />
-        <Moon
-          className={`absolute inset-0 h-5 w-5 transition-all duration-300 ${
-            isDark ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
-          }`}
-        />
-      </div>
-      <span className="sr-only">Toggle theme</span>
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative group"
+        >
+          <Palette className="h-5 w-5" />
+          <span className="sr-only">Change theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        {themes.map((theme) => (
+          <DropdownMenuItem
+            key={theme.value}
+            onClick={() => changeTheme(theme.value as Theme)}
+            className={`cursor-pointer ${
+              currentTheme === theme.value ? "bg-admin-primary/10 text-admin-primary" : ""
+            }`}
+          >
+            <div className="flex flex-col gap-1">
+              <span className="font-medium">{theme.label}</span>
+              <span className="text-xs text-muted-foreground">{theme.description}</span>
+            </div>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

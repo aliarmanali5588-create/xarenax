@@ -111,6 +111,98 @@
     --chart-4: 199 89% 48%;
     --chart-5: 142 76% 36%;
   }
+
+  /* Gaming Theme - Neon Cyberpunk */
+  .admin-gaming {
+    /* Dark Gaming Background */
+    --background: 280 40% 8%;
+    --foreground: 0 0% 100%;
+
+    /* Gaming Glass Card */
+    --card: 280 30% 12%;
+    --card-foreground: 0 0% 98%;
+
+    /* Neon Green Primary */
+    --primary: 142 100% 50%;
+    --primary-foreground: 280 40% 8%;
+
+    /* Neon Magenta Secondary */
+    --secondary: 320 100% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Dark Muted */
+    --muted: 280 30% 18%;
+    --muted-foreground: 0 0% 70%;
+
+    /* Electric Purple Accent */
+    --accent: 270 100% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 280 40% 25%;
+    --input: 280 40% 15%;
+    --ring: 142 100% 50%;
+
+    /* Admin Gaming Colors */
+    --admin-primary: 142 100% 50%;
+    --admin-secondary: 320 100% 60%;
+    --admin-accent: 270 100% 65%;
+    --admin-primary-foreground: 0 0% 100%;
+    --admin-secondary-foreground: 0 0% 100%;
+
+    /* Chart Colors - Gaming Theme */
+    --chart-1: 142 100% 50%;
+    --chart-2: 320 100% 60%;
+    --chart-3: 45 100% 55%;
+    --chart-4: 270 100% 65%;
+    --chart-5: 200 100% 55%;
+  }
+
+  /* Minimal Theme - Clean Professional */
+  .admin-minimal {
+    /* Clean Light Background */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
+
+    /* Minimal Card */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    /* Soft Blue Primary */
+    --primary: 210 70% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Soft Gray Secondary */
+    --secondary: 210 15% 50%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Minimal Muted */
+    --muted: 210 20% 94%;
+    --muted-foreground: 0 0% 45%;
+
+    /* Soft Teal Accent */
+    --accent: 180 60% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Minimal Borders */
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 210 70% 45%;
+
+    /* Admin Minimal Colors */
+    --admin-primary: 210 70% 45%;
+    --admin-secondary: 180 60% 45%;
+    --admin-accent: 210 15% 50%;
+    --admin-primary-foreground: 0 0% 100%;
+    --admin-secondary-foreground: 0 0% 100%;
+
+    /* Chart Colors - Minimal Theme */
+    --chart-1: 210 70% 45%;
+    --chart-2: 180 60% 45%;
+    --chart-3: 45 70% 50%;
+    --chart-4: 270 60% 50%;
+    --chart-5: 142 60% 40%;
+  }
 }
 
 @layer base {

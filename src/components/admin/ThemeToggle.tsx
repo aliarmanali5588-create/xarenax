@@ -7,18 +7,31 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 type Theme = "dark" | "rgb-neon" | "gaming" | "sunset";
 
 const ThemeToggle = () => {
   const [currentTheme, setCurrentTheme] = useState<Theme>("dark");
+  const location = useLocation();
 
   useEffect(() => {
     // Load theme from localStorage
     const savedTheme = (localStorage.getItem("admin-theme") || "dark") as Theme;
     setCurrentTheme(savedTheme);
-    applyTheme(savedTheme);
-  }, []);
+    
+    // Only apply theme if we're on admin route
+    if (location.pathname.startsWith('/admin')) {
+      applyTheme(savedTheme);
+    }
+  }, [location.pathname]);
+
+  // Remove theme classes when leaving admin panel
+  useEffect(() => {
+    if (!location.pathname.startsWith('/admin')) {
+      document.documentElement.classList.remove("admin-rgb-neon", "admin-gaming", "admin-sunset");
+    }
+  }, [location.pathname]);
 
   const applyTheme = (theme: Theme) => {
     // Remove all theme classes

@@ -52,10 +52,11 @@ export default {
           foreground: "hsl(var(--success-foreground))",
         },
         admin: {
-          red: "hsl(var(--admin-red))",
-          gold: "hsl(var(--admin-gold))",
-          "red-foreground": "hsl(var(--admin-red-foreground))",
-          "gold-foreground": "hsl(var(--admin-gold-foreground))",
+          primary: "hsl(var(--admin-primary))",
+          secondary: "hsl(var(--admin-secondary))",
+          accent: "hsl(var(--admin-accent))",
+          "primary-foreground": "hsl(var(--admin-primary-foreground))",
+          "secondary-foreground": "hsl(var(--admin-secondary-foreground))",
         },
       },
       fontFamily: {

@@ -47,11 +47,12 @@
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
 
-    /* Admin Panel Colors - Red/Gold Accents */
-    --admin-red: 0 84% 60%;
-    --admin-gold: 45 93% 58%;
-    --admin-red-foreground: 0 0% 100%;
-    --admin-gold-foreground: 0 0% 0%;
+    /* Admin Panel Colors - Soft Cyan/Purple Accents */
+    --admin-primary: 188 70% 45%;
+    --admin-secondary: 270 60% 50%;
+    --admin-accent: 45 80% 55%;
+    --admin-primary-foreground: 0 0% 100%;
+    --admin-secondary-foreground: 0 0% 100%;
 
     /* Neon Glow Effects */
     --glow-cyan: 188 100% 50%;
@@ -99,8 +100,9 @@
     --input: 214 32% 91%;
 
     /* Admin Colors - Light Mode */
-    --admin-red: 330 81% 60%;
-    --admin-gold: 45 93% 47%;
+    --admin-primary: 188 60% 40%;
+    --admin-secondary: 270 50% 45%;
+    --admin-accent: 45 75% 50%;
 
     /* Chart Colors - Light Theme */
     --chart-1: 271 91% 65%;
@@ -255,42 +257,22 @@
   }
 
   /* Admin Panel Subtle Effects */
-  .admin-card-subtle {
-    @apply relative overflow-hidden transition-all duration-300;
+  /* Clean Admin Effects */
+  .admin-card {
+    @apply bg-card/40 backdrop-blur-sm border-border/40 rounded-xl transition-all duration-300;
   }
 
-  .admin-card-subtle::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.03), rgba(239, 68, 68, 0.03));
-    border-radius: inherit;
-    opacity: 0;
-    transition: opacity 0.4s ease;
+  .admin-card:hover {
+    @apply bg-card/50;
+    border-color: hsl(var(--admin-primary) / 0.4);
   }
 
-  .admin-card-subtle:hover::before {
-    opacity: 1;
+  .admin-glow:hover {
+    box-shadow: 0 2px 16px hsl(var(--admin-primary) / 0.15);
   }
 
-  .admin-glow-subtle {
-    transition: all 0.3s ease;
-  }
-
-  .admin-glow-subtle:hover {
-    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.15);
-  }
-
-  .admin-border-subtle {
-    border: 1px solid rgba(255, 215, 0, 0.2);
-    transition: border-color 0.3s ease;
-  }
-
-  .admin-border-subtle:hover {
-    border-color: rgba(255, 215, 0, 0.4);
+  .admin-text-gradient {
+    @apply bg-gradient-to-r from-admin-primary via-admin-accent to-admin-secondary bg-clip-text text-transparent;
   }
 }
 

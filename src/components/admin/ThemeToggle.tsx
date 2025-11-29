@@ -30,7 +30,7 @@ const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="relative group admin-rgb-glow"
+      className="relative group"
     >
       <div className="relative w-5 h-5">
         <Sun
@@ -44,7 +44,6 @@ const ThemeToggle = () => {
           }`}
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-r from-admin-gold/0 via-admin-gold/20 to-admin-gold/0 opacity-0 group-hover:opacity-100 transition-opacity rounded" />
       <span className="sr-only">Toggle theme</span>
     </Button>
   );

@@ -262,15 +262,15 @@ const AdminDashboard = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-gaming font-bold bg-gradient-to-r from-admin-gold via-admin-red to-admin-gold bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-foreground">
             Financial Analytics
           </h1>
           <p className="text-muted-foreground text-sm mt-1">Real-time platform metrics and insights</p>
         </div>
         <div className="flex items-center gap-3">
-          <Calendar className="h-5 w-5 text-admin-gold" />
+          <Calendar className="h-5 w-5 text-admin-primary" />
           <Select value={dateFilter} onValueChange={setDateFilter}>
-            <SelectTrigger className="w-[180px] bg-card/50 border-admin-red/20">
+            <SelectTrigger className="w-[180px] bg-card/30 border-border/50">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Select period" />
             </SelectTrigger>
@@ -294,25 +294,24 @@ const AdminDashboard = () => {
           {statsCards.map((stat) => (
             <Card
               key={stat.title}
-              className="relative overflow-hidden bg-card/50 backdrop-blur-xl border border-border/50 hover:border-admin-gold/30 transition-all duration-300 group"
+              className="admin-card hover:admin-glow"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-admin-gold/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0 relative z-10">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                 <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   {stat.title}
                 </CardTitle>
-                <div className="h-10 w-10 rounded-full bg-admin-gold/10 flex items-center justify-center group-hover:bg-admin-gold/20 transition-all">
-                  <stat.icon className="h-5 w-5 text-admin-gold group-hover:scale-110 transition-transform" />
+                <div className="h-10 w-10 rounded-full bg-admin-primary/10 flex items-center justify-center">
+                  <stat.icon className="h-5 w-5 text-admin-primary" />
                 </div>
               </CardHeader>
-              <CardContent className="space-y-1 relative z-10">
+              <CardContent className="space-y-1">
                 <div className="text-2xl font-bold text-foreground">
                   {stat.value}
                 </div>
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-muted-foreground">{stat.change}</p>
                   {stat.trend && (
-                    <span className={`text-xs font-semibold ${stat.trendUp ? 'text-green-400' : 'text-red-400'}`}>
+                    <span className={`text-xs font-semibold ${stat.trendUp ? 'text-success' : 'text-destructive'}`}>
                       {stat.trend}
                     </span>
                   )}
@@ -325,11 +324,11 @@ const AdminDashboard = () => {
 
       {/* Weekly Chart - Trading Style */}
       {!loading && (
-        <Card className="bg-card/50 backdrop-blur-xl border border-border/50">
+        <Card className="admin-card">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-xl font-gaming bg-gradient-to-r from-admin-gold via-admin-red to-admin-gold bg-clip-text text-transparent">
+                <CardTitle className="text-xl font-bold text-foreground">
                   Weekly Performance
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -403,9 +402,9 @@ const AdminDashboard = () => {
       {loading ? (
         <ActivityTableSkeleton />
       ) : (
-        <Card className="bg-card/50 backdrop-blur-xl border border-border/50">
+        <Card className="admin-card">
           <CardHeader>
-            <CardTitle className="text-xl font-gaming bg-gradient-to-r from-admin-gold via-yellow-400 to-admin-red bg-clip-text text-transparent">
+            <CardTitle className="text-xl font-bold text-foreground">
               Live Activity Feed
             </CardTitle>
             <p className="text-sm text-muted-foreground">Real-time platform events</p>
@@ -414,19 +413,19 @@ const AdminDashboard = () => {
             <Table>
               <TableHeader>
                 <TableRow className="border-border/50 hover:bg-transparent">
-                  <TableHead className="text-admin-gold font-semibold uppercase text-xs">Type</TableHead>
-                  <TableHead className="text-admin-gold font-semibold uppercase text-xs">User</TableHead>
-                  <TableHead className="text-admin-gold font-semibold uppercase text-xs">Time</TableHead>
-                  <TableHead className="text-admin-gold font-semibold uppercase text-xs text-right">Status</TableHead>
+                  <TableHead className="text-admin-primary font-semibold uppercase text-xs">Type</TableHead>
+                  <TableHead className="text-admin-primary font-semibold uppercase text-xs">User</TableHead>
+                  <TableHead className="text-admin-primary font-semibold uppercase text-xs">Time</TableHead>
+                  <TableHead className="text-admin-primary font-semibold uppercase text-xs text-right">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {recentActivity.map((activity, idx) => (
-                  <TableRow key={idx} className="border-border/30 hover:bg-muted/30 transition-colors">
-                    <TableCell className="font-semibold text-foreground">
+                  <TableRow key={idx} className="border-border/30 hover:bg-muted/20 transition-colors">
+                    <TableCell className="font-medium text-foreground">
                       {activity.type}
                     </TableCell>
-                    <TableCell className="text-cyan-400 font-medium">
+                    <TableCell className="text-admin-primary font-medium">
                       {activity.user}
                     </TableCell>
                     <TableCell className="text-muted-foreground text-sm">
@@ -434,9 +433,9 @@ const AdminDashboard = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                           activity.status === "success"
-                            ? "bg-green-500/20 text-green-400 border border-green-500/30"
+                            ? "bg-success/20 text-success border border-success/30"
                             : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
                         }`}
                       >

@@ -275,6 +275,16 @@ const Auth = () => {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignup} className="space-y-4">
+                  {/* Warning Message */}
+                  <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                    <p className="text-sm text-destructive font-medium text-center">
+                      ⚠️ सही Email डालें, वरना Password Reset नहीं होगा!
+                    </p>
+                    <p className="text-xs text-destructive/80 text-center mt-1">
+                      Enter correct email, otherwise password reset won't work
+                    </p>
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="signup-username">Username</Label>
                     <div className="relative">

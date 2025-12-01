@@ -28,6 +28,7 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import InstallApp from "./pages/InstallApp";
 import NotificationPreferences from "./pages/NotificationPreferences";
+import TeamFireSpec from "./pages/TeamFireSpec";
 import AdminLayout from "./components/layout/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageTournaments from "./pages/admin/ManageTournaments";
@@ -77,6 +78,7 @@ const App = () => {
               <Route path="/install" element={<InstallApp />} />
               <Route path="/install-app" element={<InstallApp />} />
               <Route path="/notification-preferences" element={<ProtectedRoute><NotificationPreferences /></ProtectedRoute>} />
+              <Route path="/teamfire-spec" element={<TeamFireSpec />} />
               {/* Admin Routes - Protected */}
               <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />

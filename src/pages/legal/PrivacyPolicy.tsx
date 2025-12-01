@@ -144,7 +144,7 @@ const PrivacyPolicy = () => {
                       helparenax@zohomail.in
                     </a>
                   </p>
-                  <p className="text-foreground">Address: Jaipur, Rajasthan, India</p>
+                  <p className="text-foreground">Address: India</p>
                 </div>
               </section>
             </div>

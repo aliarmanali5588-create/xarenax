@@ -110,20 +110,20 @@ const Tournaments = () => {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-4 md:gap-6 mb-12 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12 max-w-4xl mx-auto">
             {stats.map((stat, index) => (
               <div
                 key={stat.label}
-                className="glass-card p-4 md:p-6 text-center hover:scale-105 transition-all duration-300"
+                className="glass-card p-6 text-center hover:scale-105 transition-all duration-300"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/30 flex items-center justify-center">
-                  <stat.icon className="w-6 h-6 md:w-8 md:h-8 text-primary drop-shadow-[0_0_10px_currentColor]" />
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/30 flex items-center justify-center">
+                  <stat.icon className="w-8 h-8 text-primary drop-shadow-[0_0_10px_currentColor]" />
                 </div>
-                <div className="text-2xl md:text-4xl font-gaming font-bold mb-1 md:mb-2 text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                <div className="text-4xl font-gaming font-bold mb-2 text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                   {stat.value}
                 </div>
-                <div className="text-xs md:text-sm text-muted-foreground font-medium">{stat.label}</div>
+                <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
               </div>
             ))}
           </div>

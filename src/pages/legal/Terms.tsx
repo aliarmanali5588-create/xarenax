@@ -214,7 +214,7 @@ const Terms = () => {
                   <p className="text-foreground">
                     Email: <a href="mailto:helparenax@zohomail.in" className="text-primary hover:text-primary/80 transition-colors">helparenax@zohomail.in</a>
                   </p>
-                  <p className="text-foreground">Address: Jaipur, Rajasthan, India</p>
+                  <p className="text-foreground">Address: India</p>
                 </div>
               </section>
             </div>

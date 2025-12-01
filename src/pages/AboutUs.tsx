@@ -146,7 +146,7 @@ const AboutUs = () => {
                 </div>
                 <div>
                   <p className="font-semibold">Location</p>
-                  <p className="text-muted-foreground">Jaipur, Rajasthan, India</p>
+                  <p className="text-muted-foreground">India</p>
                 </div>
               </div>
             </div>

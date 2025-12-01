@@ -2,6 +2,7 @@ import { Mail, Send } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -65,15 +66,27 @@ const ContactUs = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4">
-        <div className="container mx-auto max-w-5xl">
+      {/* Hero Section */}
+      <section className="relative pt-28 pb-16 px-4 overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute top-10 right-10 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
+        
+        <div className="container mx-auto max-w-5xl relative z-10">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-5xl font-gaming font-bold mb-4 text-glow-cyan">
-              Contact Us
+            <Badge className="mb-6 px-5 py-2.5 bg-primary/15 text-primary border-primary/40 shadow-[0_0_20px_rgba(0,255,255,0.2)]">
+              24/7 Support Available
+            </Badge>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-gaming font-bold mb-8 leading-tight">
+              <span className="text-gradient bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                Contact Us
+              </span>
             </h1>
-            <p className="text-xl text-muted-foreground">
-              We're here to help! Reach out to our support team
+            
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+              We're here to help! Reach out to our <span className="text-primary font-bold">support team</span>
             </p>
           </div>
 
@@ -108,11 +121,15 @@ const ContactUs = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="glass-panel rounded-2xl p-8">
-            <h2 className="text-3xl font-gaming font-bold mb-6 text-center text-glow-cyan">
-              Send Us a Message
+          <div className="glass-card p-6 md:p-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none" />
+            
+            <h2 className="text-2xl md:text-3xl font-gaming font-bold mb-6 text-center relative z-10">
+              <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Send Us a Message
+              </span>
             </h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="name" className="text-foreground mb-2 block">
@@ -199,7 +216,7 @@ const ContactUs = () => {
           </div>
 
           {/* Business Hours */}
-          <div className="glass-panel rounded-xl p-6 mt-8">
+          <div className="glass-card p-6 mt-8">
             <h3 className="font-heading font-bold text-lg mb-4 text-center">
               Support Hours
             </h3>
@@ -218,7 +235,7 @@ const ContactUs = () => {
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
       <MegaFooter />
     </div>

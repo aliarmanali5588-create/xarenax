@@ -106,34 +106,50 @@ const Affiliate = () => {
     <div className="min-h-screen pb-20 lg:pb-0">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4">
-        <div className="container mx-auto">
+      {/* Hero Section */}
+      <section className="relative pt-28 pb-16 px-4 overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 via-background to-primary/10" />
+        <div className="absolute top-10 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '1s' }} />
+        
+        <div className="container mx-auto relative z-10">
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-block mb-6">
-              <span className="px-4 py-2 rounded-full glass-panel text-sm font-medium text-secondary neon-border-orange">
-                Earn While You Game
+            <Badge className="mb-6 px-5 py-2.5 bg-secondary/15 text-secondary border-secondary/40 shadow-[0_0_20px_rgba(251,146,60,0.2)] text-sm md:text-base">
+              <Share2 className="w-4 h-4 mr-2" />
+              Earn While You Game
+            </Badge>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-gaming font-bold mb-8 leading-tight">
+              <span className="text-gradient bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-pulse">
+                Affiliate Dashboard
               </span>
-            </div>
-            <h1 className="text-3xl md:text-6xl font-gaming font-bold mb-4">
-              <span className="text-glow-cyan">Affiliate</span>{" "}
-              <span className="text-glow-orange">Dashboard</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Invite friends to ArenaX and earn rewards for every signup and win. Turn your network into passive income!
+            
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+              Invite friends to ArenaX and earn <span className="text-secondary font-bold">rewards for every signup and win</span>
             </p>
           </div>
 
           {/* Referral Card */}
-          <div className="mb-12 max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto">
             <ReferralCard />
           </div>
+        </div>
+      </section>
 
-          {/* Stats Dashboard - Mobile First */}
+      {/* Main Content Section */}
+      <section className="pb-20 px-4">
+        <div className="container mx-auto">
+
+          {/* Stats Dashboard - Enhanced */}
           {user && (
             <div className="mb-12">
-              <h2 className="text-2xl md:text-3xl font-gaming font-bold mb-6 text-glow-cyan">
-                Your Performance
+              <h2 className="text-2xl md:text-4xl font-gaming font-bold mb-6">
+                <span className="text-gradient bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  Your Performance
+                </span>
               </h2>
               
               {loading ? (
@@ -147,9 +163,9 @@ const Affiliate = () => {
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
                   {/* Total Signups */}
-                  <Card className="glass-panel p-3 hover:neon-border-cyan transition-all">
+                  <Card className="glass-card p-4 md:p-6 hover-lift relative overflow-hidden group">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
                         <Users className="w-4 h-4 text-cyan-500" />
@@ -350,7 +366,7 @@ const Affiliate = () => {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <MegaFooter />
     </div>

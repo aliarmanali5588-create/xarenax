@@ -125,72 +125,95 @@ const Leaderboard = () => {
     <div className="min-h-screen pb-20 lg:pb-0">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4">
-        <div className="container mx-auto max-w-7xl">
+      {/* Hero Section */}
+      <section className="relative pt-28 pb-16 px-4 overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-admin-gold/10" />
+        <div className="absolute top-10 right-10 w-96 h-96 bg-admin-gold/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '1s' }} />
+        
+        <div className="container mx-auto max-w-7xl relative z-10">
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Trophy className="w-12 h-12 text-admin-gold animate-pulse" />
-              <h1 className="text-3xl md:text-6xl font-gaming font-bold text-glow-cyan">
-                Leaderboard
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <Trophy className="w-12 h-12 md:w-16 md:h-16 text-admin-gold animate-pulse drop-shadow-[0_0_20px_rgba(255,215,0,0.6)]" />
+              <h1 className="text-4xl md:text-7xl lg:text-8xl font-gaming font-bold">
+                <span className="text-gradient bg-gradient-to-r from-admin-gold via-primary to-admin-gold bg-clip-text text-transparent">
+                  Leaderboard
+                </span>
               </h1>
-              <Trophy className="w-12 h-12 text-admin-gold animate-pulse" />
+              <Trophy className="w-12 h-12 md:w-16 md:h-16 text-admin-gold animate-pulse drop-shadow-[0_0_20px_rgba(255,215,0,0.6)]" />
             </div>
-            <p className="text-lg md:text-xl text-muted-foreground">
-              Top Players of ArenaX
+            <p className="text-lg md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+              Compete with the <span className="text-admin-gold font-bold">best players</span> and climb your way to the top
             </p>
           </div>
 
           {/* Time Period Filters */}
-          <div className="flex justify-center gap-3 mb-12">
+          <div className="flex justify-center gap-3 md:gap-4 mb-12">
             <Button
               variant={period === "weekly" ? "gaming" : "outline"}
               onClick={() => setPeriod("weekly")}
-              className="font-heading"
+              className="font-heading text-sm md:text-base px-6 md:px-8 h-12 md:h-14"
             >
               This Week
             </Button>
             <Button
               variant={period === "monthly" ? "gaming" : "outline"}
               onClick={() => setPeriod("monthly")}
-              className="font-heading"
+              className="font-heading text-sm md:text-base px-6 md:px-8 h-12 md:h-14"
             >
               This Month
             </Button>
             <Button
               variant={period === "alltime" ? "gaming" : "outline"}
               onClick={() => setPeriod("alltime")}
-              className="font-heading"
+              className="font-heading text-sm md:text-base px-6 md:px-8 h-12 md:h-14"
             >
               All Time
             </Button>
           </div>
+        </div>
+      </section>
 
-          {/* Stats Cards - Compact Mobile Design */}
-          <div className="grid grid-cols-3 md:grid-cols-3 gap-2 md:gap-6 mb-12">
-            <div className="glass-panel rounded-lg md:rounded-xl p-3 md:p-6 border-primary/30">
-              <div className="hidden md:flex items-center gap-3 mb-2">
-                <TrendingUp className="w-6 h-6 text-primary" />
-                <h3 className="font-heading font-bold text-foreground">Active Players</h3>
+      {/* Main Content Section */}
+      <section className="pb-20 px-4">
+        <div className="container mx-auto max-w-7xl">
+
+          {/* Stats Cards - Enhanced Design */}
+          <div className="grid grid-cols-3 gap-3 md:gap-6 mb-12">
+            <div className="glass-card p-3 md:p-6 hover-lift relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="hidden md:flex items-center gap-3 mb-2">
+                  <TrendingUp className="w-6 h-6 text-primary" />
+                  <h3 className="font-heading font-bold text-foreground">Active Players</h3>
+                </div>
+                <p className="text-xs md:hidden text-muted-foreground mb-1">Players</p>
+                <p className="text-lg md:text-4xl font-gaming font-bold text-primary drop-shadow-[0_0_10px_currentColor]">12.8K</p>
               </div>
-              <p className="text-xs md:hidden text-muted-foreground mb-1">Players</p>
-              <p className="text-lg md:text-3xl font-gaming font-bold text-primary">12.8K</p>
             </div>
-            <div className="glass-panel rounded-lg md:rounded-xl p-3 md:p-6 border-secondary/30">
-              <div className="hidden md:flex items-center gap-3 mb-2">
-                <Zap className="w-6 h-6 text-secondary" />
-                <h3 className="font-heading font-bold text-foreground">Matches Today</h3>
+            <div className="glass-card p-3 md:p-6 hover-lift relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="hidden md:flex items-center gap-3 mb-2">
+                  <Zap className="w-6 h-6 text-secondary" />
+                  <h3 className="font-heading font-bold text-foreground">Matches Today</h3>
+                </div>
+                <p className="text-xs md:hidden text-muted-foreground mb-1">Matches</p>
+                <p className="text-lg md:text-4xl font-gaming font-bold text-secondary drop-shadow-[0_0_10px_currentColor]">342</p>
               </div>
-              <p className="text-xs md:hidden text-muted-foreground mb-1">Matches</p>
-              <p className="text-lg md:text-3xl font-gaming font-bold text-secondary">342</p>
             </div>
-            <div className="glass-panel rounded-lg md:rounded-xl p-3 md:p-6 border-admin-gold/30">
-              <div className="hidden md:flex items-center gap-3 mb-2">
-                <Target className="w-6 h-6 text-admin-gold" />
-                <h3 className="font-heading font-bold text-foreground">Total Prizes</h3>
+            <div className="glass-card p-3 md:p-6 hover-lift relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-admin-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative z-10">
+                <div className="hidden md:flex items-center gap-3 mb-2">
+                  <Target className="w-6 h-6 text-admin-gold" />
+                  <h3 className="font-heading font-bold text-foreground">Total Prizes</h3>
+                </div>
+                <p className="text-xs md:hidden text-muted-foreground mb-1">Prizes</p>
+                <p className="text-lg md:text-4xl font-gaming font-bold text-admin-gold drop-shadow-[0_0_10px_currentColor]">₹18.7L</p>
               </div>
-              <p className="text-xs md:hidden text-muted-foreground mb-1">Prizes</p>
-              <p className="text-lg md:text-3xl font-gaming font-bold text-admin-gold">₹18.7L</p>
             </div>
           </div>
 
@@ -198,9 +221,15 @@ const Leaderboard = () => {
           {loading ? (
             <LeaderboardPodiumSkeleton />
           ) : (
-            <div className="glass-panel rounded-2xl p-4 md:p-8 mb-12 neon-border-cyan">
-              <h2 className="text-xl md:text-2xl font-gaming font-bold text-center mb-6 md:mb-8 text-admin-gold">
-                🏆 Top Champions 🏆
+            <div className="glass-card p-4 md:p-8 mb-12 relative overflow-hidden">
+              {/* Podium Background Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-admin-gold/5 via-transparent to-primary/5 pointer-events-none" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-admin-gold/5 rounded-full blur-3xl" />
+              
+              <h2 className="text-xl md:text-3xl font-gaming font-bold text-center mb-6 md:mb-8 relative z-10">
+                <span className="text-gradient bg-gradient-to-r from-admin-gold via-primary to-admin-gold bg-clip-text text-transparent">
+                  🏆 Top Champions 🏆
+                </span>
               </h2>
               <div className="flex items-end justify-center gap-2 md:gap-8">
                 {/* 2nd Place - Silver */}
@@ -414,7 +443,7 @@ const Leaderboard = () => {
             </>
           )}
         </div>
-      </div>
+      </section>
 
       <MegaFooter />
     </div>

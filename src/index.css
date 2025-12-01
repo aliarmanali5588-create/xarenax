@@ -73,22 +73,45 @@
     --chart-5: 270 70% 50%;
   }
 
-  /* RGB Neon Theme - Multi-Color Glow */
-  .admin-rgb-neon {
-    /* Deep Black Background */
-    --background: 0 0% 5%;
-    --foreground: 0 0% 100%;
-
-    /* Dark Card with RGB Border */
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 98%;
-
-    /* Neon Cyan Primary */
+  /* Admin Cyberpunk Theme */
+  .admin-cyber {
     --primary: 180 100% 50%;
-    --primary-foreground: 0 0% 0%;
+    --secondary: 280 100% 65%;
+    --accent: 320 100% 60%;
+    
+    /* Chart Colors */
+    --chart-1: 180 100% 50%;
+    --chart-2: 280 100% 65%;
+    --chart-3: 320 100% 60%;
+    --chart-4: 140 100% 55%;
+    --chart-5: 45 100% 55%;
+  }
 
-    /* Neon Magenta Secondary */
-    --secondary: 300 100% 50%;
+  /* Admin Pure Dark Theme */
+  .admin-dark {
+    --primary: 210 70% 55%;
+    --secondary: 260 60% 55%;
+    --accent: 280 65% 60%;
+    --background: 0 0% 5%;
+    --card: 0 0% 8%;
+    --muted: 0 0% 12%;
+    
+    /* Chart Colors */
+    --chart-1: 210 70% 55%;
+    --chart-2: 260 60% 55%;
+    --chart-3: 280 65% 60%;
+    --chart-4: 180 60% 50%;
+    --chart-5: 45 70% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground overflow-x-hidden;
     --secondary-foreground: 0 0% 100%;
 
     /* Very Dark Muted */

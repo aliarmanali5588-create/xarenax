@@ -9,36 +9,31 @@ import {
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-type Theme = "dark" | "rgb-neon" | "gaming" | "sunset";
+type Theme = "default" | "cyber" | "dark";
 
 const ThemeToggle = () => {
-  const [currentTheme, setCurrentTheme] = useState<Theme>("dark");
+  const [currentTheme, setCurrentTheme] = useState<Theme>("default");
   const location = useLocation();
 
   useEffect(() => {
-    // Load theme from localStorage
-    const savedTheme = (localStorage.getItem("admin-theme") || "dark") as Theme;
+    const savedTheme = (localStorage.getItem("admin-theme") || "default") as Theme;
     setCurrentTheme(savedTheme);
     
-    // Only apply theme if we're on admin route
     if (location.pathname.startsWith('/admin')) {
       applyTheme(savedTheme);
     }
   }, [location.pathname]);
 
-  // Remove theme classes when leaving admin panel
   useEffect(() => {
     if (!location.pathname.startsWith('/admin')) {
-      document.documentElement.classList.remove("admin-rgb-neon", "admin-gaming", "admin-sunset");
+      document.documentElement.classList.remove("admin-cyber", "admin-dark");
     }
   }, [location.pathname]);
 
   const applyTheme = (theme: Theme) => {
-    // Remove all theme classes
-    document.documentElement.classList.remove("admin-rgb-neon", "admin-gaming", "admin-sunset");
+    document.documentElement.classList.remove("admin-cyber", "admin-dark");
     
-    // Apply new theme class (except for dark which is default)
-    if (theme !== "dark") {
+    if (theme !== "default") {
       document.documentElement.classList.add(`admin-${theme}`);
     }
   };
@@ -50,10 +45,9 @@ const ThemeToggle = () => {
   };
 
   const themes = [
-    { value: "dark", label: "🌙 Dark", description: "Default dark theme" },
-    { value: "rgb-neon", label: "🌈 RGB Neon", description: "Multi-color glow effects" },
-    { value: "gaming", label: "🎮 Gaming", description: "Neon cyberpunk vibes" },
-    { value: "sunset", label: "🌅 Sunset", description: "Warm purple & orange" },
+    { value: "default", label: "✨ Gaming", description: "Clean gaming aesthetic" },
+    { value: "cyber", label: "🌐 Cyberpunk", description: "Neon cyan & purple" },
+    { value: "dark", label: "🌙 Midnight", description: "Pure dark mode" },
   ];
 
   return (
@@ -74,7 +68,7 @@ const ThemeToggle = () => {
             key={theme.value}
             onClick={() => changeTheme(theme.value as Theme)}
             className={`cursor-pointer ${
-              currentTheme === theme.value ? "bg-admin-primary/10 text-admin-primary" : ""
+              currentTheme === theme.value ? "bg-primary/10 text-primary" : ""
             }`}
           >
             <div className="flex flex-col gap-1">

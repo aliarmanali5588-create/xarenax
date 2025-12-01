@@ -26,16 +26,13 @@ const ThemeToggle = () => {
 
   useEffect(() => {
     if (!location.pathname.startsWith('/admin')) {
-      document.documentElement.classList.remove("admin-cyber", "admin-dark");
+      document.documentElement.classList.remove("admin-default", "admin-cyber", "admin-dark");
     }
   }, [location.pathname]);
 
   const applyTheme = (theme: Theme) => {
-    document.documentElement.classList.remove("admin-cyber", "admin-dark");
-    
-    if (theme !== "default") {
-      document.documentElement.classList.add(`admin-${theme}`);
-    }
+    document.documentElement.classList.remove("admin-default", "admin-cyber", "admin-dark");
+    document.documentElement.classList.add(`admin-${theme}`);
   };
 
   const changeTheme = (theme: Theme) => {
@@ -45,8 +42,8 @@ const ThemeToggle = () => {
   };
 
   const themes = [
-    { value: "default", label: "✨ Gaming", description: "Clean gaming aesthetic" },
-    { value: "cyber", label: "🌐 Cyberpunk", description: "Neon cyan & purple" },
+    { value: "default", label: "💎 Premium", description: "Blue, cyan & gold" },
+    { value: "cyber", label: "🌐 Cyberpunk", description: "Neon purple & cyan" },
     { value: "dark", label: "🌙 Midnight", description: "Pure dark mode" },
   ];
 

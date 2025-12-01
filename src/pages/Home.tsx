@@ -177,7 +177,9 @@ const Home = () => {
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
             
             <div className="relative z-10">
-              <Trophy className="w-20 h-20 mx-auto mb-8 text-primary drop-shadow-[0_0_30px_rgba(0,255,255,0.6)] animate-pulse" />
+              <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 border border-primary/30 flex items-center justify-center hover:scale-110 transition-all duration-300">
+                <Trophy className="w-8 h-8 text-primary drop-shadow-[0_0_10px_currentColor]" />
+              </div>
               <h2 className="text-3xl md:text-6xl font-gaming font-bold mb-8">
                 Ready to Start <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Winning</span>?
               </h2>

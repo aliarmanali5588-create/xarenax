@@ -5,6 +5,7 @@ import MegaFooter from "@/components/layout/MegaFooter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import confetti from "canvas-confetti";
 import {
   Table,
   TableBody,
@@ -78,9 +79,41 @@ const Leaderboard = () => {
     setLoading(true);
     const timer = setTimeout(() => {
       setLoading(false);
+      // Trigger confetti for top 3 after loading
+      setTimeout(() => {
+        triggerCelebration();
+      }, 300);
     }, 800);
     return () => clearTimeout(timer);
   }, [period]);
+
+  const triggerCelebration = () => {
+    // Gold confetti for 1st place
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { x: 0.5, y: 0.6 },
+      colors: ['#FFD700', '#FFA500', '#FF6347']
+    });
+
+    // Side confetti bursts
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0.2, y: 0.7 },
+        colors: ['#00F0FF', '#0080FF', '#FFFFFF']
+      });
+      confetti({
+        particleCount: 50,
+        angle: 120,
+        spread: 55,
+        origin: { x: 0.8, y: 0.7 },
+        colors: ['#FF6B9D', '#C084FC', '#FFFFFF']
+      });
+    }, 200);
+  };
 
   const players = getLeaderboardData(period);
   const topThree = players.slice(0, 3);

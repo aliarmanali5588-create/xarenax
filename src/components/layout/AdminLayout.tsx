@@ -17,36 +17,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import ParticlesBackground from "@/components/admin/ParticlesBackground";
 import ThemeToggle from "@/components/admin/ThemeToggle";
-import ParticleSettings, { ParticleConfig } from "@/components/admin/ParticleSettings";
 
 const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut, isAdmin, loading } = useAuth();
-  
-  // Particle settings state
-  const [particleConfig, setParticleConfig] = useState<ParticleConfig>(() => {
-    const saved = localStorage.getItem("admin-particle-config");
-    return saved
-      ? JSON.parse(saved)
-      : { count: 30, speed: 0.5, colorScheme: "gold-red", enabled: true, particleSize: 2.5, connectionDistance: 120 };
-  });
-
-  // Performance tracking state
-  const [fps, setFps] = useState<number>(0);
-  const [particleCount, setParticleCount] = useState<number>(0);
-
-  const handleFpsUpdate = (newFps: number, count: number) => {
-    setFps(newFps);
-    setParticleCount(count);
-  };
-
-  // Save particle config to localStorage
-  useEffect(() => {
-    localStorage.setItem("admin-particle-config", JSON.stringify(particleConfig));
-  }, [particleConfig]);
 
   // CRITICAL SECURITY: Protect admin routes
   useEffect(() => {
@@ -59,8 +35,8 @@ const AdminLayout = () => {
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-admin-primary border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -86,28 +62,26 @@ const AdminLayout = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="min-h-screen bg-background flex relative">
-      {/* Animated Particles Background */}
-      <ParticlesBackground config={particleConfig} onFpsUpdate={handleFpsUpdate} />
-      
-      {/* Particle Settings Panel */}
-      <ParticleSettings 
-        config={particleConfig} 
-        onChange={setParticleConfig}
-        fps={fps}
-        particleCount={particleCount}
-      />
+    <div className="min-h-screen bg-background flex relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-secondary/5 pointer-events-none" />
+      <div className="absolute top-20 right-20 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse pointer-events-none" />
+      <div className="absolute bottom-20 left-20 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[140px] animate-pulse pointer-events-none" style={{ animationDelay: '1s' }} />
       
       {/* Sidebar */}
-      <aside className="w-64 bg-card/30 backdrop-blur-xl border-r border-border/30 flex flex-col relative z-10">
+      <aside className="w-64 glass-card border-r border-border/50 flex flex-col relative z-10 shadow-xl">
         
         {/* Admin Brand */}
-        <div className="p-6 border-b border-border/30 relative">
+        <div className="p-6 border-b border-border/30">
           <div className="flex items-center gap-3">
-            <Shield className="h-8 w-8 text-admin-primary" />
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+              <Shield className="h-6 w-6 text-background" />
+            </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">
-                Admin Panel
+              <h1 className="text-xl font-gaming font-bold">
+                <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Admin Panel
+                </span>
               </h1>
               <p className="text-xs text-muted-foreground">Command Center</p>
             </div>
@@ -115,33 +89,33 @@ const AdminLayout = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1 relative">
+        <nav className="flex-1 p-4 space-y-1">
           {menuItems.map((item) => (
             <Link key={item.path} to={item.path}>
               <Button
                 variant="ghost"
-                className={`w-full justify-start gap-3 transition-all ${
+                className={`w-full justify-start gap-3 transition-all hover-lift ${
                   isActive(item.path)
-                    ? "bg-admin-primary/10 text-admin-primary border-l-2 border-admin-primary"
-                    : "text-foreground hover:bg-muted/50"
+                    ? "bg-primary/20 text-primary border-l-2 border-primary shadow-[0_0_15px_rgba(0,240,255,0.3)]"
+                    : "text-foreground hover:bg-primary/10"
                 }`}
               >
                 <item.icon className="h-5 w-5" />
-                <span>{item.label}</span>
+                <span className="font-heading">{item.label}</span>
               </Button>
             </Link>
           ))}
         </nav>
 
         {/* Logout */}
-        <div className="p-4 border-t border-border/30 relative">
+        <div className="p-4 border-t border-border/30">
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 text-destructive hover:bg-destructive/10"
+            className="w-full justify-start gap-3 text-destructive hover:bg-destructive/10 hover-lift"
             onClick={signOut}
           >
             <LogOut className="h-5 w-5" />
-            <span>Exit Admin</span>
+            <span className="font-heading">Exit Admin</span>
           </Button>
         </div>
       </aside>
@@ -149,11 +123,13 @@ const AdminLayout = () => {
       {/* Main Content */}
       <main className="flex-1 overflow-auto relative z-10">
         {/* Header */}
-        <header className="bg-card/20 backdrop-blur-xl border-b border-border/30 p-6">
+        <header className="glass-card border-b border-border/50 p-6 shadow-lg sticky top-0 z-20">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-foreground">
-                Command Center
+              <h2 className="text-2xl md:text-3xl font-gaming font-bold">
+                <span className="text-gradient bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                  Command Center
+                </span>
               </h2>
               <p className="text-sm text-muted-foreground">
                 Manage your tournament platform
@@ -161,9 +137,9 @@ const AdminLayout = () => {
             </div>
             <div className="flex items-center gap-3">
               <ThemeToggle />
-              <div className="px-4 py-2 bg-card/50 border border-border/50 rounded-lg">
+              <div className="glass-card px-4 py-2 border border-primary/30 shadow-[0_0_15px_rgba(0,240,255,0.2)]">
                 <p className="text-xs text-muted-foreground">Role</p>
-                <p className="text-sm font-bold text-admin-primary">
+                <p className="text-sm font-gaming font-bold text-primary">
                   SUPER ADMIN
                 </p>
               </div>

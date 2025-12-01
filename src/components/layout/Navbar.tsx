@@ -21,18 +21,22 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-border/30">
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-border/40 shadow-[0_4px_24px_0_rgba(0,0,0,0.3)]">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
-            <img 
-              src="/logo.png" 
-              alt="ArenaX" 
-              className="h-10 w-10 object-contain transition-all duration-300 group-hover:scale-110" 
-            />
-            <span className="text-2xl font-gaming font-bold text-glow-cyan">
-              Arena<span className="text-secondary">X</span>
+        <div className="flex items-center justify-between h-16 md:h-18">
+          {/* Logo - Enhanced */}
+          <Link to="/" className="flex items-center space-x-2.5 group">
+            <div className="relative">
+              <img 
+                src="/logo.png" 
+                alt="ArenaX" 
+                className="h-11 w-11 object-contain transition-all duration-300 group-hover:scale-110 drop-shadow-[0_0_10px_rgba(0,255,255,0.5)]" 
+              />
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            </div>
+            <span className="text-2xl md:text-3xl font-gaming font-bold">
+              <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(0,255,255,0.3)]">Arena</span>
+              <span className="text-secondary drop-shadow-[0_0_10px_rgba(251,146,60,0.3)]">X</span>
             </span>
           </Link>
 
@@ -59,13 +63,13 @@ const Navbar = () => {
             {user && (
               <div className="hidden lg:flex items-center gap-2">
                 <NotificationBell />
-                <Button variant="ghost" size="icon" asChild>
+                <Button variant="ghost" size="icon" asChild className="hover:bg-primary/10 hover:text-primary transition-colors">
                   <Link to="/wallet">
                     <Wallet className="w-5 h-5" />
                   </Link>
                 </Button>
                 <UserMenu />
-                <Button variant="neon" size="sm" asChild>
+                <Button variant="neon" size="sm" asChild className="shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]">
                   <Link to="/tournaments">Join Now</Link>
                 </Button>
               </div>

@@ -145,95 +145,100 @@ const Wallet = () => {
           </div>
 
           {/* Balance Card */}
-          <div className="glass-panel rounded-2xl p-6 sm:p-8 mb-6 md:mb-8 neon-border-cyan neon-glow-cyan">
-            <div className="text-center mb-6">
-              <div className="text-xs sm:text-sm text-muted-foreground mb-2 md:mb-3">Wallet Balance (Withdrawable)</div>
-              {loading ? (
-                <div className="flex items-center justify-center h-16">
-                  <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <div className="glass-card rounded-2xl p-6 sm:p-8 mb-6 md:mb-8 relative overflow-hidden shadow-[0_0_40px_rgba(0,255,255,0.15)]">
+            {/* Background Glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
+            
+            <div className="relative z-10">
+              <div className="text-center mb-6">
+                <div className="text-xs sm:text-sm text-muted-foreground mb-2 md:mb-3 font-medium">Wallet Balance (Withdrawable)</div>
+                {loading ? (
+                  <div className="flex items-center justify-center h-20">
+                    <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center text-5xl sm:text-6xl md:text-7xl font-gaming font-bold text-primary drop-shadow-[0_0_20px_rgba(0,255,255,0.6)]">
+                    <IndianRupee className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14" />
+                    {currentBalance}
+                  </div>
+                )}
+              </div>
+
+              {/* Bonus Balance Display */}
+              {bonusBalance > 0 && (
+                <div className="mb-6 p-4 rounded-lg bg-secondary/10 border border-secondary/30">
+                  <div className="text-center">
+                    <div className="text-xs text-muted-foreground mb-1">Bonus Balance (Entry Fees Only)</div>
+                    <div className="flex items-center justify-center text-2xl font-gaming font-bold text-secondary text-glow-orange">
+                      <IndianRupee className="w-5 h-5" />
+                      {bonusBalance}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Cannot be withdrawn • Use for tournament entries
+                    </p>
+                  </div>
                 </div>
-              ) : (
-                <div className="flex items-center justify-center text-4xl sm:text-5xl md:text-6xl font-gaming font-bold text-primary text-glow-cyan">
-                  <IndianRupee className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />
-                  {currentBalance}
+              )}
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+                <Button 
+                  variant="gaming" 
+                  size="lg" 
+                  className="w-full h-14 hover:scale-105 transition-transform text-sm sm:text-base font-bold shadow-[0_0_30px_rgba(0,255,255,0.3)] hover:shadow-[0_0_40px_rgba(0,255,255,0.5)]"
+                  onClick={() => setDepositModalOpen(true)}
+                >
+                  <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  Add Money
+                </Button>
+                <Button 
+                  variant="neonOrange" 
+                  size="lg" 
+                  className="w-full h-14 hover:scale-105 transition-transform text-sm sm:text-base font-bold shadow-[0_0_30px_rgba(251,146,60,0.3)] hover:shadow-[0_0_40px_rgba(251,146,60,0.5)]"
+                  onClick={() => setWithdrawalModalOpen(true)}
+                >
+                  <ArrowDownToLine className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  Withdraw
+                </Button>
+              </div>
+
+              {/* Payment History Button */}
+              <div className="mt-3">
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="w-full h-12 hover:scale-105 transition-transform text-sm sm:text-base"
+                  onClick={() => setPaymentHistoryOpen(true)}
+                >
+                  <History className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  View Payment History
+                </Button>
+              </div>
+
+              {/* Test Money Button - Super Admin Only */}
+              {user?.email === 'ashadislam333@gmail.com' && (
+                <div className="mt-4 pt-4 border-t border-border/30">
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full border-admin-gold/50 text-admin-gold hover:bg-admin-gold/10 hover:scale-105 transition-all"
+                    onClick={handleAddTestMoney}
+                    disabled={addingTestMoney}
+                  >
+                    {addingTestMoney ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-admin-gold border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Adding...
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                        Add Test Money (₹500)
+                      </>
+                    )}
+                  </Button>
                 </div>
               )}
             </div>
-
-            {/* Bonus Balance Display */}
-            {bonusBalance > 0 && (
-              <div className="mb-6 p-4 rounded-lg bg-secondary/10 border border-secondary/30">
-                <div className="text-center">
-                  <div className="text-xs text-muted-foreground mb-1">Bonus Balance (Entry Fees Only)</div>
-                  <div className="flex items-center justify-center text-2xl font-gaming font-bold text-secondary text-glow-orange">
-                    <IndianRupee className="w-5 h-5" />
-                    {bonusBalance}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Cannot be withdrawn • Use for tournament entries
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-              <Button 
-                variant="gaming" 
-                size="lg" 
-                className="w-full h-12 hover:scale-105 transition-transform text-sm sm:text-base"
-                onClick={() => setDepositModalOpen(true)}
-              >
-                <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Add Money
-              </Button>
-              <Button 
-                variant="neonOrange" 
-                size="lg" 
-                className="w-full h-12 hover:scale-105 transition-transform text-sm sm:text-base"
-                onClick={() => setWithdrawalModalOpen(true)}
-              >
-                <ArrowDownToLine className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                Withdraw
-              </Button>
-            </div>
-
-            {/* Payment History Button */}
-            <div className="mt-3">
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="w-full h-12 hover:scale-105 transition-transform text-sm sm:text-base"
-                onClick={() => setPaymentHistoryOpen(true)}
-              >
-                <History className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                View Payment History
-              </Button>
-            </div>
-
-            {/* Test Money Button - Super Admin Only */}
-            {user?.email === 'ashadislam333@gmail.com' && (
-              <div className="mt-4 pt-4 border-t border-border/30">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full border-admin-gold/50 text-admin-gold hover:bg-admin-gold/10 hover:scale-105 transition-all"
-                  onClick={handleAddTestMoney}
-                  disabled={addingTestMoney}
-                >
-                  {addingTestMoney ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-admin-gold border-t-transparent rounded-full animate-spin mr-2"></div>
-                      Adding...
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                      Add Test Money (₹500)
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
           </div>
 
           {/* Quick Stats */}

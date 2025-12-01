@@ -8,43 +8,43 @@
 
 @layer base {
   :root {
-    /* Deep Space Background */
-    --background: 213 100% 4%;
+    /* Deep Space Background - Enhanced */
+    --background: 220 95% 3%;
     --foreground: 0 0% 100%;
 
-    /* Glass Card System */
-    --card: 213 50% 8%;
+    /* Glass Card System - Premium */
+    --card: 220 70% 6%;
     --card-foreground: 0 0% 98%;
 
-    /* Neon Cyan Primary */
-    --primary: 188 100% 50%;
-    --primary-foreground: 213 100% 4%;
+    /* Electric Cyan Primary - Brighter */
+    --primary: 185 100% 55%;
+    --primary-foreground: 220 95% 3%;
 
-    /* Flame Orange Secondary */
-    --secondary: 33 100% 50%;
-    --secondary-foreground: 213 100% 4%;
+    /* Blazing Orange Secondary - More Vibrant */
+    --secondary: 30 100% 55%;
+    --secondary-foreground: 220 95% 3%;
 
     /* Muted/Subtle Elements */
-    --muted: 213 40% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 220 50% 12%;
+    --muted-foreground: 0 0% 68%;
 
-    /* Purple Accent for Depth */
-    --accent: 270 50% 40%;
+    /* Electric Purple Accent */
+    --accent: 270 70% 50%;
     --accent-foreground: 0 0% 100%;
 
     /* Destructive/Warning */
-    --destructive: 0 85% 60%;
+    --destructive: 0 85% 62%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders & Inputs */
-    --border: 213 30% 20%;
-    --input: 213 40% 12%;
-    --ring: 188 100% 50%;
+    /* Borders & Inputs - More Defined */
+    --border: 220 40% 18%;
+    --input: 220 50% 10%;
+    --ring: 185 100% 55%;
 
     --radius: 0.75rem;
 
     /* Success Green for Wins */
-    --success: 142 76% 36%;
+    --success: 145 80% 42%;
     --success-foreground: 0 0% 100%;
 
     /* Admin Panel Colors - Soft Cyan/Purple Accents */
@@ -54,19 +54,23 @@
     --admin-primary-foreground: 0 0% 100%;
     --admin-secondary-foreground: 0 0% 100%;
 
-    /* Neon Glow Effects */
-    --glow-cyan: 188 100% 50%;
-    --glow-orange: 33 100% 50%;
+    /* Neon Glow Effects - Brighter */
+    --glow-cyan: 185 100% 55%;
+    --glow-orange: 30 100% 55%;
 
-    --popover: 213 50% 8%;
+    /* Premium Gold for Trust Elements */
+    --gold: 45 100% 60%;
+    --gold-foreground: 0 0% 0%;
+
+    --popover: 220 70% 6%;
     --popover-foreground: 0 0% 98%;
 
     /* Chart Colors - Trading Dashboard */
-    --chart-1: 142 76% 36%;
-    --chart-2: 0 84% 60%;
+    --chart-1: 145 80% 42%;
+    --chart-2: 0 84% 62%;
     --chart-3: 45 93% 58%;
-    --chart-4: 188 100% 50%;
-    --chart-5: 270 50% 40%;
+    --chart-4: 185 100% 55%;
+    --chart-5: 270 70% 50%;
   }
 
   /* RGB Neon Theme - Multi-Color Glow */

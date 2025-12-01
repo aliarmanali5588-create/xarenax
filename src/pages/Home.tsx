@@ -189,11 +189,11 @@ const Home = () => {
               <Button 
                 size="lg" 
                 asChild 
-                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white px-12 py-7 text-lg font-bold shadow-[0_0_40px_rgba(0,255,255,0.4)] hover:shadow-[0_0_60px_rgba(0,255,255,0.6)] hover:scale-105 transition-all duration-300"
+                className="bg-gradient-to-r from-primary via-primary/90 to-secondary hover:from-primary/90 hover:to-secondary/90 text-background px-10 py-6 text-lg font-bold rounded-2xl shadow-[0_8px_40px_rgba(0,255,255,0.4)] hover:shadow-[0_12px_60px_rgba(0,255,255,0.6)] hover:scale-105 transition-all duration-300"
               >
-                <Link to="/tournaments">
+                <Link to="/tournaments" className="flex items-center gap-2">
                   Get Started Now
-                  <ArrowRight className="ml-3 w-6 h-6" />
+                  <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
               

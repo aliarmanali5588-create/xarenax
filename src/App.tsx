@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import LoadingScreen from "@/components/LoadingScreen";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import ScrollToTop from "@/components/ScrollToTop";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import FloatingInstallButton from "@/components/layout/FloatingInstallButton";
 import Home from "./pages/Home";
@@ -53,6 +54,7 @@ const App = () => {
         {showLoading && <LoadingScreen onLoadingComplete={() => setShowLoading(false)} />}
         <BrowserRouter>
           <AuthProvider>
+            <ScrollToTop />
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/auth" element={<Auth />} />

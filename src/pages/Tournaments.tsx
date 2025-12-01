@@ -72,9 +72,9 @@ const Tournaments = () => {
       {/* Hero Section */}
       <section className="relative pt-28 pb-16 px-4 overflow-hidden">
         {/* Background Effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
-        <div className="absolute top-10 right-10 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
+        <div className="absolute top-10 right-10 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '1s' }} />
         
         <div className="modern-container relative z-10">
           {/* Header */}

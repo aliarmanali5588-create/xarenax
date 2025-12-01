@@ -20,9 +20,7 @@ const loginSchema = z.object({
 const signupSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[0-9]/, "Password must contain at least 1 number")
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least 1 special character"),
+    .min(8, "Password must be at least 8 characters"),
   username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
   ign: z.string().min(3, "IGN must be at least 3 characters").max(30, "IGN must be less than 30 characters"),
   bgmiId: z.string().min(5, "BGMI ID must be at least 5 characters").max(20, "BGMI ID must be less than 20 characters"),

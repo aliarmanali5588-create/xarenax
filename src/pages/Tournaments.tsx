@@ -66,23 +66,23 @@ const Tournaments = () => {
         <div className="modern-container">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-6xl font-gaming font-bold mb-4">
-              Live Tournaments
+            <h1 className="text-4xl md:text-7xl font-gaming font-bold mb-6 drop-shadow-[0_0_30px_rgba(0,255,255,0.5)]">
+              <span className="text-gradient bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">Live Tournaments</span>
             </h1>
-            <p className="text-xl text-muted-foreground">
-              Choose your battle and start competing
+            <p className="text-xl md:text-2xl text-muted-foreground">
+              Choose your battle and start competing for real cash prizes
             </p>
           </div>
 
-          {/* Search Bar */}
+          {/* Search Bar - Enhanced */}
           <div className="max-w-2xl mx-auto mb-12">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <div className="relative group">
+              <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input
                 placeholder="Search tournaments by name, map, or mode..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-14 text-base bg-card border-border/50 focus:border-primary"
+                className="pl-14 h-16 text-lg bg-card/50 border-2 border-border/50 focus:border-primary rounded-2xl shadow-[0_4px_24px_0_rgba(0,0,0,0.3)] focus:shadow-[0_8px_32px_0_rgba(0,255,255,0.2)] transition-all duration-300"
               />
             </div>
           </div>
@@ -95,7 +95,7 @@ const Tournaments = () => {
               ))}
             </div>
           ) : filteredTournaments.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {filteredTournaments.map((tournament) => (
                 <TournamentCard
                   key={tournament.id}
@@ -113,12 +113,12 @@ const Tournaments = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-20 glass-card">
-              <Filter className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <p className="text-2xl font-gaming text-muted-foreground mb-2">
+            <div className="text-center py-24 glass-card">
+              <Filter className="w-20 h-20 mx-auto mb-6 text-primary/50" />
+              <p className="text-3xl font-gaming text-foreground mb-3">
                 {searchQuery ? "No tournaments found" : "No live tournaments"}
               </p>
-              <p className="text-foreground/70">
+              <p className="text-lg text-muted-foreground">
                 {searchQuery ? "Try adjusting your search" : "Check back soon for new matches"}
               </p>
             </div>

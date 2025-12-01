@@ -73,11 +73,68 @@
     --chart-5: 270 70% 50%;
   }
 
-  /* Admin Cyberpunk Theme */
+  /* Admin Premium Theme (Default) - Professional Blue/Cyan with Gold Accents */
+  .admin-default {
+    /* Deep Navy Background for Professional Feel */
+    --background: 220 40% 8%;
+    --foreground: 0 0% 98%;
+
+    /* Premium Glass Cards */
+    --card: 220 35% 12%;
+    --card-foreground: 0 0% 98%;
+
+    /* Bright Cyan Primary - Trust & Technology */
+    --primary: 190 95% 55%;
+    --primary-foreground: 220 40% 8%;
+
+    /* Gold Secondary - Premium & Success */
+    --secondary: 45 95% 55%;
+    --secondary-foreground: 220 40% 8%;
+
+    /* Muted Elements */
+    --muted: 220 30% 18%;
+    --muted-foreground: 0 0% 70%;
+
+    /* Electric Blue Accent */
+    --accent: 210 90% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 220 30% 22%;
+    --input: 220 30% 15%;
+    --ring: 190 95% 55%;
+
+    /* Chart Colors - Premium Palette */
+    --chart-1: 190 95% 55%;
+    --chart-2: 45 95% 55%;
+    --chart-3: 280 70% 60%;
+    --chart-4: 145 75% 50%;
+    --chart-5: 25 90% 55%;
+  }
+
+  /* Admin Cyberpunk Theme - Neon Purple/Cyan */
   .admin-cyber {
+    --background: 280 35% 10%;
+    --foreground: 0 0% 98%;
+    
+    --card: 280 30% 14%;
+    --card-foreground: 0 0% 98%;
+    
     --primary: 180 100% 50%;
+    --primary-foreground: 280 35% 10%;
+    
     --secondary: 280 100% 65%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --muted: 280 25% 18%;
+    --muted-foreground: 0 0% 70%;
+    
     --accent: 320 100% 60%;
+    --accent-foreground: 0 0% 100%;
+    
+    --border: 280 30% 22%;
+    --input: 280 30% 15%;
+    --ring: 180 100% 50%;
     
     /* Chart Colors */
     --chart-1: 180 100% 50%;
@@ -87,14 +144,29 @@
     --chart-5: 45 100% 55%;
   }
 
-  /* Admin Pure Dark Theme */
+  /* Admin Pure Dark Theme - Minimalist Black */
   .admin-dark {
-    --primary: 210 70% 55%;
-    --secondary: 260 60% 55%;
-    --accent: 280 65% 60%;
     --background: 0 0% 5%;
+    --foreground: 0 0% 98%;
+    
     --card: 0 0% 8%;
+    --card-foreground: 0 0% 98%;
+    
+    --primary: 210 70% 55%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 260 60% 55%;
+    --secondary-foreground: 0 0% 100%;
+    
     --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 70%;
+    
+    --accent: 280 65% 60%;
+    --accent-foreground: 0 0% 100%;
+    
+    --border: 0 0% 15%;
+    --input: 0 0% 10%;
+    --ring: 210 70% 55%;
     
     /* Chart Colors */
     --chart-1: 210 70% 55%;

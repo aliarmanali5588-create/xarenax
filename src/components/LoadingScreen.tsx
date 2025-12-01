@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import navbarLogo from "@/assets/navbar-logo.png";
 
 interface LoadingScreenProps {
   onLoadingComplete?: () => void;
@@ -25,15 +26,12 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
         <div className="text-center space-y-6">
           <div className="relative">
             <img 
-              src="/logo.png" 
+              src={navbarLogo} 
               alt="ArenaX" 
-              className="h-24 w-24 mx-auto object-contain animate-pulse"
+              className="h-24 w-auto mx-auto object-contain animate-pulse"
             />
             <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse"></div>
           </div>
-          <h1 className="text-3xl font-gaming font-bold text-glow-cyan">
-            Arena<span className="text-secondary">X</span>
-          </h1>
         </div>
       </div>
     );
@@ -51,25 +49,15 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
         {/* Logo with Glow Effect */}
         <div className="relative inline-block">
           <img 
-            src="/logo.png" 
+            src={navbarLogo} 
             alt="ArenaX" 
-            className="h-24 w-24 mx-auto object-contain animate-pulse"
+            className="h-32 w-auto mx-auto object-contain animate-pulse"
           />
-          <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full animate-pulse"></div>
+          <div className="absolute inset-0 bg-primary/30 blur-3xl animate-pulse"></div>
         </div>
 
-        {/* Brand Name */}
-        <h1 className="text-4xl md:text-5xl font-gaming font-bold text-glow-cyan animate-fade-in">
-          Arena<span className="text-secondary">X</span>
-        </h1>
-
-        {/* Tagline */}
-        <p className="text-muted-foreground text-sm md:text-base animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          India's #1 PUBG Tournament Platform
-        </p>
-
         {/* Loading Indicator */}
-        <div className="flex items-center justify-center gap-2 pt-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        <div className="flex items-center justify-center gap-2 pt-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
           <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.15s' }}></div>
           <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.3s' }}></div>

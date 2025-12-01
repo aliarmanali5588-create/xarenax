@@ -14,11 +14,8 @@ const FloatingInstallButton = () => {
       setIsInstalled(true);
     }
 
-    // Check if user has dismissed the button
-    const isDismissed = localStorage.getItem('installButtonDismissed');
-    if (isDismissed === 'true') {
-      setIsVisible(false);
-    }
+    // Always show the button - removed localStorage check
+    setIsVisible(true);
   }, []);
 
   const handleDismiss = (e: React.MouseEvent) => {

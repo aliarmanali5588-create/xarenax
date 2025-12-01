@@ -45,18 +45,18 @@ const FloatingInstallButton = () => {
           <X className="w-3 h-3" />
         </button>
 
-        {/* Main button - clean and professional */}
+        {/* Main button - colored gradient */}
         <Button
           asChild
           size="sm"
-          className="h-12 px-4 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl border border-primary/20"
+          className="h-12 px-4 bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-200 rounded-xl border border-primary/30"
         >
-          <Link to="/install-app" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+          <Link to="/install-app" className="flex items-center gap-2.5 text-background">
+            <div className="w-8 h-8 bg-background/20 rounded-lg flex items-center justify-center">
               <Download className="w-4 h-4" />
             </div>
             <div className="text-left">
-              <div className="text-[10px] font-medium opacity-80 leading-tight">Get App</div>
+              <div className="text-[10px] font-bold opacity-90 leading-tight">Get App</div>
               <div className="text-xs font-bold leading-tight">Install</div>
             </div>
           </Link>

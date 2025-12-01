@@ -192,25 +192,28 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      {/* Background Effects */}
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
+      {/* Enhanced Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[150px]"></div>
       </div>
 
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center neon-glow-cyan">
-              <Trophy className="w-10 h-10 text-background" />
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-primary via-accent to-secondary rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(0,240,255,0.5)] hover:shadow-[0_0_40px_rgba(0,240,255,0.7)] transition-shadow">
+              <Trophy className="w-10 h-10 md:w-12 md:h-12 text-background drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
             </div>
           </div>
-          <h1 className="text-3xl font-gaming font-bold text-glow-cyan mb-2">
-            Arena<span className="text-secondary">X</span>
+          <h1 className="text-3xl md:text-4xl font-gaming font-bold mb-2">
+            <span className="text-gradient bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+              ArenaX
+            </span>
           </h1>
-          <p className="text-muted-foreground">Join the Ultimate PUBG Tournament Platform</p>
+          <p className="text-muted-foreground text-sm md:text-base">Join the Ultimate PUBG Tournament Platform</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -221,10 +224,14 @@ const Auth = () => {
 
           {/* Login Tab */}
           <TabsContent value="login">
-            <Card className="glass-panel border-border/50">
+            <Card className="glass-card border-border/50 shadow-[0_0_30px_rgba(0,0,0,0.3)]">
               <CardHeader>
-                <CardTitle className="text-2xl font-gaming text-primary">Welcome Back</CardTitle>
-                <CardDescription>Enter your credentials to access your account</CardDescription>
+                <CardTitle className="text-2xl md:text-3xl font-gaming">
+                  <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    Welcome Back
+                  </span>
+                </CardTitle>
+                <CardDescription className="text-sm md:text-base">Enter your credentials to access your account</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleLogin} className="space-y-4">
@@ -268,10 +275,14 @@ const Auth = () => {
 
           {/* Signup Tab */}
           <TabsContent value="signup">
-            <Card className="glass-panel border-border/50">
+            <Card className="glass-card border-border/50 shadow-[0_0_30px_rgba(0,0,0,0.3)]">
               <CardHeader>
-                <CardTitle className="text-2xl font-gaming text-primary">Create Account</CardTitle>
-                <CardDescription>Sign up to start your gaming journey</CardDescription>
+                <CardTitle className="text-2xl md:text-3xl font-gaming">
+                  <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    Create Account
+                  </span>
+                </CardTitle>
+                <CardDescription className="text-sm md:text-base">Sign up to start your gaming journey</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignup} className="space-y-4">

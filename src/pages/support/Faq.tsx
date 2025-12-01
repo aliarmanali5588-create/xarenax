@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { MessageCircle } from "lucide-react";
 
@@ -128,38 +129,56 @@ const Faq = () => {
     <div className="min-h-screen">
       <Navbar />
 
-      <div className="pt-24 pb-16 px-4">
-        <div className="container mx-auto max-w-4xl">
+      {/* Hero Section */}
+      <section className="relative pt-28 pb-16 px-4 overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <div className="absolute top-10 left-10 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+        
+        <div className="container mx-auto max-w-4xl relative z-10">
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-5xl font-gaming font-bold mb-4 text-glow-cyan">
-              Frequently Asked Questions
+            <Badge className="mb-6 px-5 py-2.5 bg-primary/15 text-primary border-primary/40 shadow-[0_0_20px_rgba(0,255,255,0.2)]">
+              Get Quick Answers
+            </Badge>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-gaming font-bold mb-8 leading-tight">
+              <span className="text-gradient bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                FAQ
+              </span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-6">
-              Find answers to common questions about ArenaX
+            
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              Find answers to <span className="text-primary font-bold">common questions</span> about ArenaX
             </p>
-            <Button variant="neonOrange" asChild>
+            
+            <Button variant="gaming" size="lg" asChild className="shadow-[0_0_30px_rgba(0,240,255,0.4)] hover:shadow-[0_0_40px_rgba(0,240,255,0.6)]">
               <Link to="/support/contact">
-                <MessageCircle className="w-4 h-4 mr-2" />
+                <MessageCircle className="w-5 h-5 mr-2" />
                 Still Need Help? Contact Us
               </Link>
             </Button>
           </div>
 
           {/* FAQ Accordion */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             {faqCategories.map((category, categoryIndex) => (
-              <div key={categoryIndex} className="glass-panel rounded-xl p-6">
-                <h2 className="text-2xl font-heading font-bold mb-4 text-primary">
-                  {category.category}
+              <div key={categoryIndex} className="glass-card p-6 md:p-8 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                
+                <h2 className="text-xl md:text-2xl font-heading font-bold mb-4 relative z-10">
+                  <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                    {category.category}
+                  </span>
                 </h2>
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion type="single" collapsible className="w-full relative z-10">
                   {category.questions.map((faq, index) => (
-                    <AccordionItem key={index} value={`item-${categoryIndex}-${index}`}>
-                      <AccordionTrigger className="text-left font-medium hover:text-primary">
+                    <AccordionItem key={index} value={`item-${categoryIndex}-${index}`} className="border-border/30">
+                      <AccordionTrigger className="text-left font-medium hover:text-primary transition-colors py-4">
                         {faq.question}
                       </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground leading-relaxed">
+                      <AccordionContent className="text-muted-foreground leading-relaxed pb-4">
                         {faq.answer}
                       </AccordionContent>
                     </AccordionItem>
@@ -169,7 +188,7 @@ const Faq = () => {
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
       <MegaFooter />
     </div>

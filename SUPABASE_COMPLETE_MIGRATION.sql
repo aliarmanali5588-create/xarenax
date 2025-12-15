@@ -19,7 +19,7 @@ CREATE TABLE public.profiles (
     full_name TEXT,
     avatar_url TEXT,
     ign TEXT,
-    bgmi_id TEXT,
+    bgmi_id TEXT CHECK (bgmi_id ~ '^\d+$'), -- Only numeric values allowed
     wallet_balance NUMERIC NOT NULL DEFAULT 0,
     bonus_balance NUMERIC NOT NULL DEFAULT 0,
     total_deposited NUMERIC NOT NULL DEFAULT 0,

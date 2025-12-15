@@ -23,7 +23,7 @@ const signupSchema = z.object({
     .min(8, "Password must be at least 8 characters"),
   username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
   ign: z.string().min(3, "IGN must be at least 3 characters").max(30, "IGN must be less than 30 characters"),
-  bgmiId: z.string().min(5, "BGMI ID must be at least 5 characters").max(20, "BGMI ID must be less than 20 characters"),
+  bgmiId: z.string().min(5, "BGMI ID must be at least 5 digits").max(20, "BGMI ID must be less than 20 digits").regex(/^\d+$/, "BGMI ID must contain only numbers"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -331,9 +331,15 @@ const Auth = () => {
                       <Input
                         id="signup-bgmi-id"
                         type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         placeholder="543216789"
                         value={signupForm.bgmiId}
-                        onChange={(e) => setSignupForm({ ...signupForm, bgmiId: e.target.value })}
+                        onChange={(e) => {
+                          // Only allow numbers
+                          const value = e.target.value.replace(/\D/g, '');
+                          setSignupForm({ ...signupForm, bgmiId: value });
+                        }}
                         className="pl-10"
                         required
                       />

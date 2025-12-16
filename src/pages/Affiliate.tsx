@@ -81,7 +81,7 @@ const Affiliate = () => {
     {
       step: 2,
       title: "Friend Joins",
-      description: "When your friend signs up using your referral code and creates their account on ArenaX.",
+      description: "When your friend signs up using your referral code and creates their account on TeamFire.",
       reward: "₹10 Instant",
       icon: UserPlus,
     },
@@ -128,7 +128,7 @@ const Affiliate = () => {
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-              Invite friends to ArenaX and earn <span className="text-secondary font-bold">rewards for every signup and win</span>
+              Invite friends to TeamFire and earn <span className="text-secondary font-bold">rewards for every signup and win</span>
             </p>
           </div>
 

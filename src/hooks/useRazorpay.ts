@@ -66,7 +66,7 @@ export const useRazorpay = () => {
       key: razorpayKey,
       amount: amount * 100, // Amount in paise
       currency: "INR",
-      name: "ArenaX",
+      name: "TeamFire",
       description: "Add money to wallet",
       image: "/favicon.ico",
       handler: async function (response: any) {

@@ -22,15 +22,20 @@ import ThemeToggle from "@/components/admin/ThemeToggle";
 const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { signOut, isAdmin, loading } = useAuth();
+  // CHANGE 1: 'user' add kiya taaki email check kar sakein
+  const { signOut, isAdmin, loading, user } = useAuth();
 
   // CRITICAL SECURITY: Protect admin routes
   useEffect(() => {
-    if (!loading && !isAdmin) {
+    // CHANGE 2: Owner Logic (VIP Bypass)
+    const isOwner = user?.email === 'selfashad@gmail.com' || user?.email === 'ashadislam333@gmail.com';
+    
+    // Agar Admin nahi hai AUR Owner bhi nahi hai tabhi bahar nikalna
+    if (!loading && !isAdmin && !isOwner) {
       toast.error("Unauthorized Access");
       navigate("/");
     }
-  }, [isAdmin, loading, navigate]);
+  }, [isAdmin, loading, navigate, user]);
 
   // Show loading state while checking authentication
   if (loading) {
@@ -41,8 +46,11 @@ const AdminLayout = () => {
     );
   }
 
-  // Return null if not admin (prevents any rendering)
-  if (!isAdmin) {
+  // CHANGE 3: Render blocking logic fix
+  const isOwner = user?.email === 'selfashad@gmail.com' || user?.email === 'ashadislam333@gmail.com';
+  
+  // Return null if not admin AND not owner (prevents any rendering)
+  if (!isAdmin && !isOwner) {
     return null;
   }
 

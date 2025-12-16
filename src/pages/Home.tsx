@@ -144,7 +144,7 @@ const Home = () => {
               Why 50,000+ Players Trust Us
             </Badge>
             <h2 className="text-3xl md:text-6xl font-gaming font-bold mb-6">
-              Why Choose <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ArenaX</span>?
+              Why Choose <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">TeamFire</span>?
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               India's most trusted and secure skill-based gaming platform

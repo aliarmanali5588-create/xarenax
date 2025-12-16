@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "logo.png", "robots.txt"],
       manifest: {
-        name: "ArenaX - PUBG Tournament Platform",
-        short_name: "ArenaX",
+        name: "TeamFire - PUBG Tournament Platform",
+        short_name: "TeamFire",
         description: "Join daily PUBG/BGMI tournaments and win real cash prizes",
         theme_color: "#00f0ff",
         background_color: "#050b14",

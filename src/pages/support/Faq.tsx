@@ -24,12 +24,12 @@ const Faq = () => {
         {
           question: "What is the minimum age to play?",
           answer:
-            "You must be at least 18 years old to participate in tournaments on ArenaX. This is to comply with legal requirements for skill-based gaming in India.",
+            "You must be at least 18 years old to participate in tournaments on TeamFire. This is to comply with legal requirements for skill-based gaming in India.",
         },
         {
-          question: "Is ArenaX legal in India?",
+          question: "Is TeamFire legal in India?",
           answer:
-            "Yes, absolutely! ArenaX is a skill-based gaming platform, which is completely legal across India (except Assam, Odisha, Sikkim, Nagaland, Telangana, Andhra Pradesh where state laws restrict such games). We comply with all applicable laws and regulations.",
+            "Yes, absolutely! TeamFire is a skill-based gaming platform, which is completely legal across India (except Assam, Odisha, Sikkim, Nagaland, Telangana, Andhra Pradesh where state laws restrict such games). We comply with all applicable laws and regulations.",
         },
       ],
     },
@@ -107,7 +107,7 @@ const Faq = () => {
       category: "Fair Play & Security",
       questions: [
         {
-          question: "How does ArenaX ensure fair play?",
+          question: "How does TeamFire ensure fair play?",
           answer:
             "We have a strict anti-cheating policy. All matches are monitored, and we use automated systems to detect hacking, teaming, or other unfair practices. Violators are permanently banned.",
         },
@@ -150,7 +150,7 @@ const Faq = () => {
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              Find answers to <span className="text-primary font-bold">common questions</span> about ArenaX
+              Find answers to <span className="text-primary font-bold">common questions</span> about TeamFire
             </p>
             
             <Button variant="gaming" size="lg" asChild className="shadow-[0_0_30px_rgba(0,240,255,0.4)] hover:shadow-[0_0_40px_rgba(0,240,255,0.6)]">

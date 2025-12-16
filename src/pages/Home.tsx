@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
+import AnnouncementBar from "@/components/layout/AnnouncementBar";
 
 const Home = () => {
   const stats = [
@@ -42,6 +43,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen pb-20 lg:pb-0">
+      <AnnouncementBar />
       <Navbar />
 
       {/* Hero Section - Premium Gaming Aesthetic */}

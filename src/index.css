@@ -514,6 +514,21 @@
     66% { color: hsl(60, 100%, 60%); }
     100% { color: hsl(180, 100%, 60%); }
   }
+
+  /* Gradient animation for announcement bar */
+  @keyframes gradient-x {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-gradient-x {
+    background-size: 200% 200%;
+    animation: gradient-x 3s ease infinite;
+  }
 }
 
 @layer base {

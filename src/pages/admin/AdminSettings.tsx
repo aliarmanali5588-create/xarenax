@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Settings, Save, Plus, Trash2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Settings, Save, Plus, Trash2, Megaphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -21,6 +22,12 @@ const AdminSettings = () => {
   const [upiMethods, setUpiMethods] = useState<UPIMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  
+  // Announcement settings
+  const [announcementEnabled, setAnnouncementEnabled] = useState(false);
+  const [announcementText, setAnnouncementText] = useState("");
+  const [announcementInfluencer, setAnnouncementInfluencer] = useState("");
+  
   const { toast } = useToast();
 
   useEffect(() => {
@@ -29,11 +36,17 @@ const AdminSettings = () => {
 
   const fetchSettings = async () => {
     try {
-      // Fetch Razorpay settings
+      // Fetch all platform settings
       const { data: settingsData, error: settingsError } = await supabase
         .from("platform_settings")
         .select("setting_key, setting_value")
-        .in("setting_key", ["razorpay_key_id", "razorpay_key_secret"]);
+        .in("setting_key", [
+          "razorpay_key_id", 
+          "razorpay_key_secret",
+          "announcement_enabled",
+          "announcement_text",
+          "announcement_influencer"
+        ]);
 
       if (settingsError) throw settingsError;
 
@@ -42,6 +55,12 @@ const AdminSettings = () => {
           setRazorpayKeyId(setting.setting_value);
         } else if (setting.setting_key === "razorpay_key_secret") {
           setRazorpayKeySecret(setting.setting_value);
+        } else if (setting.setting_key === "announcement_enabled") {
+          setAnnouncementEnabled(setting.setting_value === "true");
+        } else if (setting.setting_key === "announcement_text") {
+          setAnnouncementText(setting.setting_value);
+        } else if (setting.setting_key === "announcement_influencer") {
+          setAnnouncementInfluencer(setting.setting_value);
         }
       });
 
@@ -238,9 +257,26 @@ const AdminSettings = () => {
         }
       }
 
+      // Save Announcement settings
+      const announcementSettings = [
+        { setting_key: "announcement_enabled", setting_value: announcementEnabled.toString(), description: "Enable/disable the announcement bar on home page" },
+        { setting_key: "announcement_text", setting_value: announcementText, description: "The text to display in the announcement bar" },
+        { setting_key: "announcement_influencer", setting_value: announcementInfluencer, description: "Influencer/YouTuber name to highlight in the announcement" },
+      ];
+
+      for (const setting of announcementSettings) {
+        const { error } = await supabase
+          .from("platform_settings")
+          .upsert(
+            { ...setting, updated_at: new Date().toISOString() },
+            { onConflict: "setting_key" }
+          );
+        if (error) throw error;
+      }
+
       toast({
         title: "Success!",
-        description: "Payment settings updated successfully.",
+        description: "Settings updated successfully.",
       });
       
       fetchSettings(); // Refresh data
@@ -352,6 +388,75 @@ const AdminSettings = () => {
                             </div>
                           </div>
                         ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Announcement Bar Settings */}
+                  <div className="space-y-4 p-4 border border-primary/20 rounded-lg bg-primary/5">
+                    <div className="flex items-center gap-3">
+                      <Megaphone className="h-5 w-5 text-primary" />
+                      <h3 className="text-lg font-gaming text-primary">Announcement Bar (Home Page)</h3>
+                    </div>
+                    
+                    <p className="text-sm text-muted-foreground">
+                      Show a promotional banner on the home page to highlight influencers, YouTubers, or special offers. Great for building trust!
+                    </p>
+
+                    <div className="flex items-center gap-3 p-3 bg-background/30 rounded-lg">
+                      <Switch
+                        id="announcement_enabled"
+                        checked={announcementEnabled}
+                        onCheckedChange={setAnnouncementEnabled}
+                      />
+                      <Label htmlFor="announcement_enabled" className="font-medium">
+                        Enable Announcement Bar
+                      </Label>
+                    </div>
+
+                    {announcementEnabled && (
+                      <div className="space-y-4 animate-in slide-in-from-top-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="announcement_influencer">
+                            Influencer/YouTuber Name (Optional)
+                          </Label>
+                          <Input
+                            id="announcement_influencer"
+                            type="text"
+                            value={announcementInfluencer}
+                            onChange={(e) => setAnnouncementInfluencer(e.target.value)}
+                            placeholder="e.g., Dynamo Gaming, Scout, Jonathan"
+                            className="bg-background/50"
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            If provided, shows: "[Name] recommends TeamFire!"
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="announcement_text">
+                            Custom Text (Used if no influencer name)
+                          </Label>
+                          <Input
+                            id="announcement_text"
+                            type="text"
+                            value={announcementText}
+                            onChange={(e) => setAnnouncementText(e.target.value)}
+                            placeholder="Welcome to TeamFire! Join tournaments and win real money!"
+                            className="bg-background/50"
+                          />
+                        </div>
+
+                        {/* Preview */}
+                        <div className="mt-4 p-3 bg-gradient-to-r from-secondary via-primary to-secondary rounded-lg">
+                          <p className="text-center text-white text-sm font-medium">
+                            Preview: {announcementInfluencer ? (
+                              <span>⭐ <span className="text-yellow-300 font-bold">{announcementInfluencer}</span> recommends TeamFire! ✨</span>
+                            ) : (
+                              announcementText || "Your announcement text here..."
+                            )}
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>

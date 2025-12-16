@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Mail, MapPin } from "lucide-react";
 import TelegramIcon from "../icons/TelegramIcon";
-import teamfireLogo from "@/assets/teamfire-logo.png";
+import trophyIcon from "@/assets/trophy-icon.png";
 
 const MegaFooter = () => {
   const footerSections = [
@@ -40,16 +40,12 @@ const MegaFooter = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-3 mb-6 group">
+            <Link to="/" className="flex items-center mb-6 group">
               <img 
-                src={teamfireLogo} 
+                src={trophyIcon} 
                 alt="TeamFire" 
-                className="h-14 w-14 rounded-xl transition-transform group-hover:scale-110 drop-shadow-[0_0_10px_rgba(255,140,0,0.5)]"
+                className="h-16 w-16 rounded-xl transition-transform group-hover:scale-110"
               />
-              <span className="text-2xl font-gaming font-bold">
-                <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Team</span>
-                <span className="text-secondary">Fire</span>
-              </span>
             </Link>
             <p className="text-muted-foreground mb-6 leading-relaxed">
               India's most trusted PUBG/BGMI tournament platform. Join thousands of players competing for real prizes.

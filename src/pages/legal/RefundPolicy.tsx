@@ -16,7 +16,7 @@ const RefundPolicy = () => {
               Last Updated: November 24, 2025
             </p>
             <p className="text-sm text-primary font-semibold mb-8">
-              TeamFire - 100% Skill-Based Gaming Platform (NOT Gambling)
+              ArenaX - 100% Skill-Based Gaming Platform (NOT Gambling)
             </p>
 
             <div className="prose prose-invert max-w-none space-y-8">
@@ -25,7 +25,7 @@ const RefundPolicy = () => {
                   1. Overview
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  At TeamFire, we strive to provide a fair and transparent refund policy. This policy outlines the circumstances under which refunds are issued and the process for requesting a refund.
+                  At ArenaX, we strive to provide a fair and transparent refund policy. This policy outlines the circumstances under which refunds are issued and the process for requesting a refund.
                 </p>
               </section>
 
@@ -75,10 +75,10 @@ const RefundPolicy = () => {
                 </div>
 
                 <h3 className="text-xl font-heading font-semibold mb-3">
-                  3.2 Tournament Cancelled by TeamFire
+                  3.2 Tournament Cancelled by ArenaX
                 </h3>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  If a tournament is cancelled by TeamFire for any reason (technical issues, insufficient participants, etc.), all participants will receive a <strong className="text-success">100% automatic refund</strong> to their wallet within 1 hour.
+                  If a tournament is cancelled by ArenaX for any reason (technical issues, insufficient participants, etc.), all participants will receive a <strong className="text-success">100% automatic refund</strong> to their wallet within 1 hour.
                 </p>
 
                 <h3 className="text-xl font-heading font-semibold mb-3">
@@ -120,7 +120,7 @@ const RefundPolicy = () => {
                     <strong>Processing Time:</strong> <span className="text-success">Instant to 1 hour</span>
                   </p>
                   <p className="text-muted-foreground text-sm mt-2">
-                    Most refunds to your TeamFire wallet are processed immediately. In rare cases, it may take up to 1 hour.
+                    Most refunds to your ArenaX wallet are processed immediately. In rare cases, it may take up to 1 hour.
                   </p>
                 </div>
 
@@ -156,7 +156,7 @@ const RefundPolicy = () => {
                   <div className="glass-panel rounded-lg p-4">
                     <p className="font-heading font-semibold mb-2">Step 2: Provide Details</p>
                     <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1">
-                      <li>Your TeamFire username/email</li>
+                      <li>Your ArenaX username/email</li>
                       <li>Transaction ID or tournament ID</li>
                       <li>Reason for refund request</li>
                       <li>Supporting evidence (screenshots if applicable)</li>
@@ -198,7 +198,7 @@ const RefundPolicy = () => {
                   8.1 Server Outages
                 </h3>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  If TeamFire servers are down during a tournament and the match cannot be completed, all entry fees will be automatically refunded.
+                  If ArenaX servers are down during a tournament and the match cannot be completed, all entry fees will be automatically refunded.
                 </p>
 
                 <h3 className="text-xl font-heading font-semibold mb-3">

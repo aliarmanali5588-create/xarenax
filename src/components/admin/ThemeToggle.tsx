@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-type Theme = "default" | "cyber" | "dark";
+type Theme = "default" | "cyber" | "dark" | "elite" | "valorant";
 
 const ThemeToggle = () => {
   const [currentTheme, setCurrentTheme] = useState<Theme>("default");
@@ -26,12 +26,12 @@ const ThemeToggle = () => {
 
   useEffect(() => {
     if (!location.pathname.startsWith('/admin')) {
-      document.documentElement.classList.remove("admin-default", "admin-cyber", "admin-dark");
+      document.documentElement.classList.remove("admin-default", "admin-cyber", "admin-dark", "admin-elite", "admin-valorant");
     }
   }, [location.pathname]);
 
   const applyTheme = (theme: Theme) => {
-    document.documentElement.classList.remove("admin-default", "admin-cyber", "admin-dark");
+    document.documentElement.classList.remove("admin-default", "admin-cyber", "admin-dark", "admin-elite", "admin-valorant");
     document.documentElement.classList.add(`admin-${theme}`);
   };
 
@@ -45,6 +45,8 @@ const ThemeToggle = () => {
     { value: "default", label: "💎 Premium", description: "Blue, cyan & gold" },
     { value: "cyber", label: "🌐 Cyberpunk", description: "Neon purple & cyan" },
     { value: "dark", label: "🌙 Midnight", description: "Pure dark mode" },
+    { value: "elite", label: "👑 Elite", description: "Emerald & gold luxury" },
+    { value: "valorant", label: "🎯 Valorant", description: "Red & black esports" },
   ];
 
   return (

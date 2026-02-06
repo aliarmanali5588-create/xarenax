@@ -175,6 +175,92 @@
     --chart-4: 180 60% 50%;
     --chart-5: 45 70% 50%;
   }
+
+  /* Admin Elite Theme - Emerald & Gold Luxury ($500M Gaming Platform) */
+  .admin-elite {
+    /* Rich Dark Background */
+    --background: 160 30% 6%;
+    --foreground: 45 20% 95%;
+    
+    /* Luxury Glass Cards */
+    --card: 160 25% 10%;
+    --card-foreground: 45 20% 95%;
+    
+    /* Emerald Primary - Wealth & Success */
+    --primary: 155 75% 45%;
+    --primary-foreground: 160 30% 6%;
+    
+    /* Pure Gold Secondary - Luxury */
+    --secondary: 45 95% 55%;
+    --secondary-foreground: 160 30% 6%;
+    
+    /* Muted Elements */
+    --muted: 160 20% 14%;
+    --muted-foreground: 160 10% 65%;
+    
+    /* Emerald Accent */
+    --accent: 165 80% 40%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Borders & Inputs */
+    --border: 160 25% 18%;
+    --input: 160 25% 12%;
+    --ring: 155 75% 45%;
+    
+    /* Success & Destructive */
+    --success: 155 75% 45%;
+    --destructive: 0 75% 55%;
+    
+    /* Chart Colors - Elite Palette */
+    --chart-1: 155 75% 45%;
+    --chart-2: 45 95% 55%;
+    --chart-3: 165 80% 40%;
+    --chart-4: 35 85% 50%;
+    --chart-5: 140 65% 50%;
+  }
+
+  /* Admin Valorant Theme - Red & Black Esports (Riot Games Inspired) */
+  .admin-valorant {
+    /* Deep Black Background */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    
+    /* Dark Steel Cards */
+    --card: 0 5% 9%;
+    --card-foreground: 0 0% 98%;
+    
+    /* Valorant Red Primary */
+    --primary: 355 90% 55%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Cyan Accent Secondary */
+    --secondary: 185 85% 50%;
+    --secondary-foreground: 0 0% 5%;
+    
+    /* Muted Elements */
+    --muted: 0 5% 14%;
+    --muted-foreground: 0 0% 65%;
+    
+    /* Bright Red Accent */
+    --accent: 0 100% 60%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Borders & Inputs */
+    --border: 0 5% 18%;
+    --input: 0 5% 12%;
+    --ring: 355 90% 55%;
+    
+    /* Success & Destructive */
+    --success: 145 70% 45%;
+    --destructive: 355 90% 55%;
+    
+    /* Chart Colors - Valorant Palette */
+    --chart-1: 355 90% 55%;
+    --chart-2: 185 85% 50%;
+    --chart-3: 0 100% 60%;
+    --chart-4: 45 90% 55%;
+    --chart-5: 270 70% 55%;
+  }
 }
 
 @layer base {

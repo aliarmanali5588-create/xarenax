@@ -25,8 +25,8 @@ const FloatingInstallButton = () => {
     localStorage.setItem('installButtonDismissed', 'true');
   };
 
-  // Don't show on install page or if already installed
-  if (location.pathname === '/install-app' || isInstalled || !isVisible) {
+  // Don't show on install page, admin panel, or if already installed
+  if (location.pathname === '/install-app' || location.pathname.startsWith('/admin') || isInstalled || !isVisible) {
     return null;
   }
 

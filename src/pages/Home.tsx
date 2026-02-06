@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Trophy, Users, IndianRupee, Shield, Zap, Clock, ArrowRight, Star, Check, Lock, TrendingUp } from "lucide-react";
+import heroBanner from "@/assets/hero-banner.jpg";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/layout/Navbar";
@@ -47,14 +48,18 @@ const Home = () => {
       <Navbar />
 
       {/* Hero Section - Premium Gaming Aesthetic */}
-      <section className="relative pt-28 pb-24 px-4 overflow-hidden">
-        {/* Advanced Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
-        <div className="absolute top-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-10 left-10 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[160px]" />
+      <section className="relative pt-28 pb-24 px-4 overflow-hidden min-h-[90vh] flex items-center">
+        {/* Hero Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${heroBanner})` }}
+        />
+        {/* Dark Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/70 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/60 via-transparent to-background/60" />
+        {/* Accent Glows */}
+        <div className="absolute top-20 right-10 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-secondary/15 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '1s' }} />
         
         <div className="modern-container relative z-10">
           <div className="text-center max-w-5xl mx-auto">

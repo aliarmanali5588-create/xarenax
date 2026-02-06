@@ -672,6 +672,13 @@ export type Database = {
       }
       is_referral_valid: { Args: { code: string }; Returns: boolean }
       is_super_admin: { Args: { user_email: string }; Returns: boolean }
+      lookup_referral_code: {
+        Args: { code: string }
+        Returns: {
+          id: string
+          referral_code: string
+        }[]
+      }
       process_new_referral: {
         Args: { code_used: string; new_user_id: string }
         Returns: undefined

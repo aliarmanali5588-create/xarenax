@@ -66,12 +66,12 @@ const Home = () => {
             {/* Trust Badge */}
             <Badge className="mb-6 px-5 py-2.5 text-sm bg-success/15 text-success border-success/40 hover:bg-success/20 shadow-[0_0_20px_rgba(34,197,94,0.2)]">
               <Shield className="w-4 h-4 mr-2" />
-              India's Most Trusted PUBG Tournament Platform
+              India's Most Trusted BGMI Tournament Platform
             </Badge>
 
             {/* Main Heading - Enhanced Typography */}
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-gaming font-bold mb-8 leading-tight">
-              Dominate <span className="text-gradient bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent animate-pulse">PUBG Tournaments</span>
+              Dominate <span className="text-gradient bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent animate-pulse">BGMI Tournaments</span>
               <br />
               <span className="text-foreground drop-shadow-[0_0_30px_rgba(0,255,255,0.5)]">Win Real Cash</span>
             </h1>
@@ -151,7 +151,7 @@ const Home = () => {
               Why 50,000+ Players Trust Us
             </Badge>
             <h2 className="text-3xl md:text-6xl font-gaming font-bold mb-6">
-              Why Choose <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">ArenaX</span>?
+              Why Choose <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">TeamFire</span>?
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               India's most trusted and secure skill-based gaming platform

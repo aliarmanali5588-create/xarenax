@@ -48,7 +48,7 @@ const MegaFooter = () => {
               />
             </Link>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              India's most trusted PUBG/BGMI tournament platform. Join thousands of players competing for real prizes.
+              India's most trusted BGMI tournament platform. Join thousands of players competing for real prizes.
             </p>
             
             {/* Contact Info */}
@@ -113,7 +113,7 @@ const MegaFooter = () => {
         <div className="pt-8 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <div className="text-muted-foreground">
             <p className="mb-1">
-              © {new Date().getFullYear()} <span className="text-primary font-bold">ArenaX</span>. All rights reserved.
+              © {new Date().getFullYear()} <span className="text-primary font-bold">TeamFire</span>. All rights reserved.
             </p>
             <p className="text-sm">
               Play responsibly • 18+ Only • Skill-based gaming platform

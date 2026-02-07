@@ -16,7 +16,7 @@ const PrivacyPolicy = () => {
               Last Updated: November 24, 2025
             </p>
             <p className="text-sm text-primary font-semibold mb-8">
-              ArenaX - 100% Skill-Based Gaming Platform (NOT Gambling)
+              TeamFire - 100% Skill-Based Gaming Platform (NOT Gambling)
             </p>
 
             <div className="prose prose-invert max-w-none space-y-8">
@@ -25,10 +25,10 @@ const PrivacyPolicy = () => {
                   1. Introduction
                 </h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  ArenaX ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our PUBG/BGMI tournament platform.
+                  TeamFire ("we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our BGMI tournament platform.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  By accessing or using ArenaX, you agree to the terms of this Privacy Policy. If you do not agree with the terms, please do not access or use our services.
+                  By accessing or using TeamFire, you agree to the terms of this Privacy Policy. If you do not agree with the terms, please do not access or use our services.
                 </p>
               </section>
 
@@ -42,7 +42,7 @@ const PrivacyPolicy = () => {
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground leading-relaxed mb-4">
                   <li>Name, email address, phone number</li>
                   <li>Date of birth (to verify age requirement)</li>
-                  <li>PUBG/BGMI player ID</li>
+                  <li>BGMI player ID</li>
                   <li>Bank account details for withdrawals (encrypted)</li>
                   <li>Payment information (processed securely via third-party gateways)</li>
                 </ul>

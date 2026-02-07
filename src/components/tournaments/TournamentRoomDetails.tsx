@@ -203,7 +203,7 @@ const TournamentRoomDetails = () => {
 
             <div className="bg-primary/10 border border-primary/30 rounded-lg p-3">
               <p className="text-xs text-muted-foreground">
-                <strong>Note:</strong> Join the PUBG/BGMI room with these credentials before the tournament starts. Screenshot these details for your reference.
+                <strong>Note:</strong> Join the BGMI room with these credentials before the tournament starts. Screenshot these details for your reference.
               </p>
             </div>
           </CardContent>

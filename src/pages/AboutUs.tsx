@@ -35,10 +35,10 @@ const AboutUs = () => {
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-3xl md:text-6xl font-gaming font-bold mb-4">
-              About ArenaX
+              About TeamFire
             </h1>
             <p className="text-xl text-muted-foreground">
-              India's Premier Skill-Based PUBG/BGMI Tournament Platform
+              India's Premier Skill-Based BGMI Tournament Platform
             </p>
           </div>
 
@@ -49,13 +49,13 @@ const AboutUs = () => {
             </h2>
             <div className="space-y-4 text-foreground/80 leading-relaxed text-lg">
               <p>
-                ArenaX is a <strong className="text-primary">100% skill-based competitive gaming platform</strong> that connects PUBG and BGMI players across India. We are <strong>NOT a game of chance or gambling platform</strong>. Every tournament outcome is determined purely by player skill, strategy, and gameplay performance.
+                TeamFire is a <strong className="text-primary">100% skill-based competitive gaming platform</strong> that connects BGMI players across India. We are <strong>NOT a game of chance or gambling platform</strong>. Every tournament outcome is determined purely by player skill, strategy, and gameplay performance.
               </p>
               <p>
                 Our platform enables gamers to showcase their abilities, compete in organized tournaments, and earn rewards based entirely on their gaming skills. We strictly comply with Indian laws and operate as a legitimate skill-gaming platform under applicable regulations.
               </p>
               <p>
-                Founded with a mission to professionalize esports in India, ArenaX provides a secure, transparent, and fair environment where talent meets opportunity.
+                Founded with a mission to professionalize esports in India, TeamFire provides a secure, transparent, and fair environment where talent meets opportunity.
               </p>
             </div>
           </div>
@@ -116,7 +116,7 @@ const AboutUs = () => {
               Legal & Compliance
             </h2>
               <p className="text-foreground/80 leading-relaxed text-lg mb-4">
-                ArenaX operates as a <strong className="text-primary">skill-based gaming platform</strong>, which is legal in India. We are <strong>not a gambling platform</strong>. All competitions are based purely on player skill and game performance.
+                TeamFire operates as a <strong className="text-primary">skill-based gaming platform</strong>, which is legal in India. We are <strong>not a gambling platform</strong>. All competitions are based purely on player skill and game performance.
             </p>
             <p className="text-foreground/80 leading-relaxed text-lg">
               Our platform complies with all applicable Indian gaming laws and regulations. We ensure fair play, secure transactions, and responsible gaming practices.

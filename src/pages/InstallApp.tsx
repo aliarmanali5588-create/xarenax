@@ -107,7 +107,7 @@ const InstallApp = () => {
               Install TeamFire App
             </h1>
             <p className="text-muted-foreground text-xl max-w-2xl mx-auto mb-8">
-              India's most trusted PUBG/BGMI tournament platform. Join thousands of players competing for real prizes.
+              India's most trusted BGMI tournament platform. Join thousands of players competing for real prizes.
             </p>
           </div>
 

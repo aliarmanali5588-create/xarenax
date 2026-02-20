@@ -60,11 +60,11 @@ const ReferralCard = () => {
   };
 
   const handleShare = () => {
-    const shareText = `🎮 Join me on TeamFire - India's #1 BGMI Tournament Platform!\n\n💰 Win Real Cash\n🏆 Daily Tournaments\n⚡ Instant Withdrawals\n\nSign up with my code: ${referralCode}\n${referralLink}`;
+    const shareText = `🎮 Join me on NeroXP - India's #1 BGMI Tournament Platform!\n\n💰 Win Real Cash\n🏆 Daily Tournaments\n⚡ Instant Withdrawals\n\nSign up with my code: ${referralCode}\n${referralLink}`;
     
     if (navigator.share) {
       navigator.share({
-        title: "Join TeamFire",
+        title: "Join NeroXP",
         text: shareText,
       }).catch(() => {
         // Fallback to copy if share fails

@@ -27,7 +27,7 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
           <div className="relative">
             <img 
               src={navbarLogo} 
-              alt="TeamFire" 
+              alt="NeroXP" 
               className="h-24 w-auto mx-auto object-contain animate-pulse"
             />
             <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse"></div>
@@ -50,7 +50,7 @@ const LoadingScreen = ({ onLoadingComplete }: LoadingScreenProps) => {
         <div className="relative inline-block">
           <img 
             src={navbarLogo} 
-            alt="TeamFire" 
+            alt="NeroXP" 
             className="h-32 w-auto mx-auto object-contain animate-pulse"
           />
           <div className="absolute inset-0 bg-primary/30 blur-3xl animate-pulse"></div>

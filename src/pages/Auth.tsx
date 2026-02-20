@@ -208,10 +208,10 @@ const Auth = () => {
           </div>
           <h1 className="text-3xl md:text-4xl font-gaming font-bold mb-2">
             <span className="text-gradient bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              TeamFire
+              NeroXP
             </span>
           </h1>
-          <p className="text-muted-foreground text-sm md:text-base">Join the Ultimate PUBG Tournament Platform</p>
+          <p className="text-muted-foreground text-sm md:text-base">Join the Ultimate BGMI Tournament Platform</p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

@@ -35,8 +35,8 @@ const HowItWorks = () => {
 
   const faqs = [
     {
-      question: "Is TeamFire legal in India?",
-      answer: "Yes! TeamFire is a 100% skill-based gaming platform, which is completely legal in India.",
+      question: "Is NeroXP legal in India?",
+      answer: "Yes! NeroXP is a 100% skill-based gaming platform, which is completely legal in India.",
     },
     {
       question: "How do I receive room codes?",

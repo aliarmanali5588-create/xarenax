@@ -392,7 +392,7 @@ const AdminSettings = () => {
                             className="bg-background/50"
                           />
                           <p className="text-xs text-muted-foreground">
-                            If provided, shows: "[Name] recommends NeroXP!"
+                            If provided, shows: "[Name] recommends TeamFire!"
                           </p>
                         </div>
 
@@ -405,7 +405,7 @@ const AdminSettings = () => {
                             type="text"
                             value={announcementText}
                             onChange={(e) => setAnnouncementText(e.target.value)}
-                            placeholder="Welcome to NeroXP! Join tournaments and win real money!"
+                            placeholder="Welcome to TeamFire! Join tournaments and win real money!"
                             className="bg-background/50"
                           />
                         </div>
@@ -414,7 +414,7 @@ const AdminSettings = () => {
                         <div className="mt-4 p-3 bg-gradient-to-r from-secondary via-primary to-secondary rounded-lg">
                           <p className="text-center text-white text-sm font-medium">
                             Preview: {announcementInfluencer ? (
-                              <span>⭐ <span className="text-yellow-300 font-bold">{announcementInfluencer}</span> recommends NeroXP! ✨</span>
+                              <span>⭐ <span className="text-yellow-300 font-bold">{announcementInfluencer}</span> recommends TeamFire! ✨</span>
                             ) : (
                               announcementText || "Your announcement text here..."
                             )}

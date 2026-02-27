@@ -16,7 +16,7 @@ const Terms = () => {
               Last Updated: November 24, 2025
             </p>
             <p className="text-sm text-primary font-semibold mb-8">
-              NeroXP - 100% Skill-Based Gaming Platform (NOT Gambling)
+              TeamFire - 100% Skill-Based Gaming Platform (NOT Gambling)
             </p>
 
             <div className="prose prose-invert max-w-none space-y-8">
@@ -25,14 +25,14 @@ const Terms = () => {
                   1. Acceptance of Terms
                 </h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  By accessing and using NeroXP ("Platform"), you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our platform.
+                  By accessing and using TeamFire ("Platform"), you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our platform.
                 </p>
                 <div className="glass-panel rounded-lg p-4 border-2 border-primary/30">
                   <p className="text-foreground font-semibold mb-2">
                     ⚖️ Important: Skill-Based Gaming Platform
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    NeroXP is a <strong className="text-foreground">100% skill-based competitive gaming platform</strong>. We are NOT a gambling, betting, or game of chance platform. All tournament outcomes are determined purely by player skill, strategy, and in-game performance metrics (kills, rank, survival time). We comply with all applicable Indian laws governing skill-based gaming.
+                    TeamFire is a <strong className="text-foreground">100% skill-based competitive gaming platform</strong>. We are NOT a gambling, betting, or game of chance platform. All tournament outcomes are determined purely by player skill, strategy, and in-game performance metrics (kills, rank, survival time). We comply with all applicable Indian laws governing skill-based gaming.
                   </p>
                 </div>
               </section>
@@ -137,7 +137,7 @@ const Terms = () => {
                 </h2>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground leading-relaxed">
                   <li>Tournament entries can be cancelled up to 30 minutes before start time</li>
-                  <li>If a tournament is cancelled by NeroXP, full refunds are issued</li>
+                  <li>If a tournament is cancelled by TeamFire, full refunds are issued</li>
                   <li>Partial refunds are not available for disconnections or personal issues</li>
                   <li>Refund processing time: Within 1 hour to wallet</li>
                 </ul>
@@ -150,7 +150,7 @@ const Terms = () => {
                 <div className="glass-panel rounded-lg p-6 mb-4 border-l-4 border-destructive">
                   <p className="font-heading font-bold mb-2">Zero Tolerance Policy</p>
                   <p className="text-muted-foreground leading-relaxed">
-                    NeroXP has a strict zero-tolerance policy for cheating, hacking, or any form of unfair play.
+                    TeamFire has a strict zero-tolerance policy for cheating, hacking, or any form of unfair play.
                   </p>
                 </div>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground leading-relaxed">
@@ -165,7 +165,7 @@ const Terms = () => {
                   8. Limitation of Liability
                 </h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  NeroXP is not responsible for:
+                  TeamFire is not responsible for:
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground leading-relaxed">
                   <li>Internet connection issues or device malfunctions</li>
@@ -181,7 +181,7 @@ const Terms = () => {
                   9. Intellectual Property
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  All content on NeroXP, including logos, graphics, text, and software, is owned by NeroXP or its licensors. You may not copy, reproduce, distribute, or create derivative works without written permission.
+                  All content on TeamFire, including logos, graphics, text, and software, is owned by TeamFire or its licensors. You may not copy, reproduce, distribute, or create derivative works without written permission.
                 </p>
               </section>
 

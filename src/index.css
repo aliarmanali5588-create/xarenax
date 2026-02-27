@@ -4,42 +4,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* NeroXP Design System - Trusted Cyberpunk Gaming Aesthetic */
+/* TeamFire Design System - Fire/Flame Gaming Aesthetic */
 
 @layer base {
   :root {
-    /* Deep Space Background - Enhanced */
-    --background: 220 95% 3%;
+    /* Dark Charcoal Background */
+    --background: 15 20% 4%;
     --foreground: 0 0% 100%;
 
-    /* Glass Card System - Premium */
-    --card: 220 70% 6%;
+    /* Dark Fire Card */
+    --card: 15 30% 7%;
     --card-foreground: 0 0% 98%;
 
-    /* Electric Cyan Primary - Brighter */
-    --primary: 185 100% 55%;
-    --primary-foreground: 220 95% 3%;
+    /* Blazing Orange Primary */
+    --primary: 25 100% 50%;
+    --primary-foreground: 0 0% 0%;
 
-    /* Blazing Orange Secondary - More Vibrant */
-    --secondary: 30 100% 55%;
-    --secondary-foreground: 220 95% 3%;
+    /* Deep Red Secondary */
+    --secondary: 0 85% 50%;
+    --secondary-foreground: 0 0% 100%;
 
     /* Muted/Subtle Elements */
-    --muted: 220 50% 12%;
+    --muted: 15 20% 12%;
     --muted-foreground: 0 0% 68%;
 
-    /* Electric Purple Accent */
-    --accent: 270 70% 50%;
-    --accent-foreground: 0 0% 100%;
+    /* Golden Yellow Accent */
+    --accent: 45 100% 55%;
+    --accent-foreground: 0 0% 0%;
 
     /* Destructive/Warning */
     --destructive: 0 85% 62%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders & Inputs - More Defined */
-    --border: 220 40% 18%;
-    --input: 220 50% 10%;
-    --ring: 185 100% 55%;
+    /* Borders & Inputs */
+    --border: 15 20% 18%;
+    --input: 15 25% 10%;
+    --ring: 25 100% 50%;
 
     --radius: 0.75rem;
 
@@ -47,104 +47,95 @@
     --success: 145 80% 42%;
     --success-foreground: 0 0% 100%;
 
-    /* Admin Panel Colors - Soft Cyan/Purple Accents */
-    --admin-primary: 188 70% 45%;
-    --admin-secondary: 270 60% 50%;
-    --admin-accent: 45 80% 55%;
-    --admin-primary-foreground: 0 0% 100%;
+    /* Admin Panel Colors - Fire Accents */
+    --admin-primary: 25 100% 50%;
+    --admin-secondary: 0 85% 50%;
+    --admin-accent: 45 100% 55%;
+    --admin-primary-foreground: 0 0% 0%;
     --admin-secondary-foreground: 0 0% 100%;
 
-    /* Neon Glow Effects - Brighter */
-    --glow-cyan: 185 100% 55%;
-    --glow-orange: 30 100% 55%;
+    /* Neon Glow Effects - Fire */
+    --glow-cyan: 25 100% 55%;
+    --glow-orange: 0 85% 50%;
 
     /* Premium Gold for Trust Elements */
     --gold: 45 100% 60%;
     --gold-foreground: 0 0% 0%;
 
-    --popover: 220 70% 6%;
+    --popover: 15 30% 7%;
     --popover-foreground: 0 0% 98%;
 
-    /* Chart Colors - Trading Dashboard */
-    --chart-1: 145 80% 42%;
-    --chart-2: 0 84% 62%;
-    --chart-3: 45 93% 58%;
-    --chart-4: 185 100% 55%;
-    --chart-5: 270 70% 50%;
+    /* Chart Colors */
+    --chart-1: 25 100% 50%;
+    --chart-2: 0 85% 50%;
+    --chart-3: 45 100% 55%;
+    --chart-4: 15 90% 60%;
+    --chart-5: 350 80% 55%;
   }
 
-  /* Admin Premium Theme (Default) - Professional Blue/Cyan with Gold Accents */
+  /* Admin Premium Theme (Default) */
   .admin-default {
-    /* Deep Navy Background for Professional Feel */
-    --background: 220 40% 8%;
+    --background: 15 25% 6%;
     --foreground: 0 0% 98%;
 
-    /* Premium Glass Cards */
-    --card: 220 35% 12%;
+    --card: 15 20% 10%;
     --card-foreground: 0 0% 98%;
 
-    /* Bright Cyan Primary - Trust & Technology */
-    --primary: 190 95% 55%;
-    --primary-foreground: 220 40% 8%;
+    --primary: 25 100% 50%;
+    --primary-foreground: 0 0% 0%;
 
-    /* Gold Secondary - Premium & Success */
     --secondary: 45 95% 55%;
-    --secondary-foreground: 220 40% 8%;
+    --secondary-foreground: 0 0% 0%;
 
-    /* Muted Elements */
-    --muted: 220 30% 18%;
+    --muted: 15 20% 16%;
     --muted-foreground: 0 0% 70%;
 
-    /* Electric Blue Accent */
-    --accent: 210 90% 60%;
+    --accent: 0 85% 55%;
     --accent-foreground: 0 0% 100%;
 
-    /* Borders & Inputs */
-    --border: 220 30% 22%;
-    --input: 220 30% 15%;
-    --ring: 190 95% 55%;
+    --border: 15 20% 20%;
+    --input: 15 20% 13%;
+    --ring: 25 100% 50%;
 
-    /* Chart Colors - Premium Palette */
-    --chart-1: 190 95% 55%;
+    --chart-1: 25 100% 50%;
     --chart-2: 45 95% 55%;
-    --chart-3: 280 70% 60%;
+    --chart-3: 0 85% 55%;
     --chart-4: 145 75% 50%;
-    --chart-5: 25 90% 55%;
+    --chart-5: 15 90% 60%;
   }
 
-  /* Admin Cyberpunk Theme - Neon Purple/Cyan */
+  /* Admin Cyberpunk Theme */
   .admin-cyber {
-    --background: 280 35% 10%;
+    --background: 0 20% 8%;
     --foreground: 0 0% 98%;
     
-    --card: 280 30% 14%;
+    --card: 0 18% 12%;
     --card-foreground: 0 0% 98%;
     
-    --primary: 180 100% 50%;
-    --primary-foreground: 280 35% 10%;
+    --primary: 25 100% 55%;
+    --primary-foreground: 0 0% 0%;
     
-    --secondary: 280 100% 65%;
+    --secondary: 0 100% 60%;
     --secondary-foreground: 0 0% 100%;
     
-    --muted: 280 25% 18%;
+    --muted: 0 15% 16%;
     --muted-foreground: 0 0% 70%;
     
-    --accent: 320 100% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 45 100% 55%;
+    --accent-foreground: 0 0% 0%;
     
-    --border: 280 30% 22%;
-    --input: 280 30% 15%;
-    --ring: 180 100% 50%;
+    --border: 0 18% 20%;
+    --input: 0 18% 13%;
+    --ring: 25 100% 55%;
     
-    /* Chart Colors */
-    --chart-1: 180 100% 50%;
-    --chart-2: 280 100% 65%;
-    --chart-3: 320 100% 60%;
-    --chart-4: 140 100% 55%;
-    --chart-5: 45 100% 55%;
+    --chart-1: 25 100% 55%;
+    --chart-2: 0 100% 60%;
+    --chart-3: 45 100% 55%;
+    --chart-4: 15 90% 60%;
+    --chart-5: 350 85% 55%;
   }
 
-  /* Admin Pure Dark Theme - Minimalist Black */
+  /* Admin Pure Dark Theme */
   .admin-dark {
     --background: 0 0% 5%;
     --foreground: 0 0% 98%;
@@ -152,114 +143,95 @@
     --card: 0 0% 8%;
     --card-foreground: 0 0% 98%;
     
-    --primary: 210 70% 55%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 25 90% 55%;
+    --primary-foreground: 0 0% 0%;
     
-    --secondary: 260 60% 55%;
+    --secondary: 0 75% 55%;
     --secondary-foreground: 0 0% 100%;
     
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 70%;
     
-    --accent: 280 65% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 45 85% 55%;
+    --accent-foreground: 0 0% 0%;
     
     --border: 0 0% 15%;
     --input: 0 0% 10%;
-    --ring: 210 70% 55%;
+    --ring: 25 90% 55%;
     
-    /* Chart Colors */
-    --chart-1: 210 70% 55%;
-    --chart-2: 260 60% 55%;
-    --chart-3: 280 65% 60%;
-    --chart-4: 180 60% 50%;
-    --chart-5: 45 70% 50%;
+    --chart-1: 25 90% 55%;
+    --chart-2: 0 75% 55%;
+    --chart-3: 45 85% 55%;
+    --chart-4: 15 80% 55%;
+    --chart-5: 350 70% 50%;
   }
 
-  /* Admin Elite Theme - Emerald & Gold Luxury ($500M Gaming Platform) */
+  /* Admin Elite Theme - Fire & Gold Luxury */
   .admin-elite {
-    /* Rich Dark Background */
-    --background: 160 30% 6%;
+    --background: 15 25% 5%;
     --foreground: 45 20% 95%;
     
-    /* Luxury Glass Cards */
-    --card: 160 25% 10%;
+    --card: 15 20% 9%;
     --card-foreground: 45 20% 95%;
     
-    /* Emerald Primary - Wealth & Success */
-    --primary: 155 75% 45%;
-    --primary-foreground: 160 30% 6%;
+    --primary: 30 90% 50%;
+    --primary-foreground: 0 0% 0%;
     
-    /* Pure Gold Secondary - Luxury */
     --secondary: 45 95% 55%;
-    --secondary-foreground: 160 30% 6%;
+    --secondary-foreground: 0 0% 0%;
     
-    /* Muted Elements */
-    --muted: 160 20% 14%;
-    --muted-foreground: 160 10% 65%;
+    --muted: 15 15% 14%;
+    --muted-foreground: 15 10% 65%;
     
-    /* Emerald Accent */
-    --accent: 165 80% 40%;
+    --accent: 0 80% 50%;
     --accent-foreground: 0 0% 100%;
     
-    /* Borders & Inputs */
-    --border: 160 25% 18%;
-    --input: 160 25% 12%;
-    --ring: 155 75% 45%;
+    --border: 15 20% 16%;
+    --input: 15 20% 11%;
+    --ring: 30 90% 50%;
     
-    /* Success & Destructive */
-    --success: 155 75% 45%;
+    --success: 145 75% 45%;
     --destructive: 0 75% 55%;
     
-    /* Chart Colors - Elite Palette */
-    --chart-1: 155 75% 45%;
+    --chart-1: 30 90% 50%;
     --chart-2: 45 95% 55%;
-    --chart-3: 165 80% 40%;
-    --chart-4: 35 85% 50%;
-    --chart-5: 140 65% 50%;
+    --chart-3: 0 80% 50%;
+    --chart-4: 15 85% 55%;
+    --chart-5: 350 75% 50%;
   }
 
-  /* Admin Valorant Theme - Red & Black Esports (Riot Games Inspired) */
+  /* Admin Valorant Theme - Red & Black */
   .admin-valorant {
-    /* Deep Black Background */
     --background: 0 0% 4%;
     --foreground: 0 0% 98%;
     
-    /* Dark Steel Cards */
     --card: 0 5% 9%;
     --card-foreground: 0 0% 98%;
     
-    /* Valorant Red Primary */
     --primary: 355 90% 55%;
     --primary-foreground: 0 0% 100%;
     
-    /* Cyan Accent Secondary */
-    --secondary: 185 85% 50%;
-    --secondary-foreground: 0 0% 5%;
+    --secondary: 25 90% 55%;
+    --secondary-foreground: 0 0% 0%;
     
-    /* Muted Elements */
     --muted: 0 5% 14%;
     --muted-foreground: 0 0% 65%;
     
-    /* Bright Red Accent */
     --accent: 0 100% 60%;
     --accent-foreground: 0 0% 100%;
     
-    /* Borders & Inputs */
     --border: 0 5% 18%;
     --input: 0 5% 12%;
     --ring: 355 90% 55%;
     
-    /* Success & Destructive */
     --success: 145 70% 45%;
     --destructive: 355 90% 55%;
     
-    /* Chart Colors - Valorant Palette */
     --chart-1: 355 90% 55%;
-    --chart-2: 185 85% 50%;
+    --chart-2: 25 90% 55%;
     --chart-3: 0 100% 60%;
     --chart-4: 45 90% 55%;
-    --chart-5: 270 70% 55%;
+    --chart-5: 15 80% 55%;
   }
 }
 
@@ -272,124 +244,103 @@
     @apply bg-background text-foreground overflow-x-hidden;
     --secondary-foreground: 0 0% 100%;
 
-    /* Very Dark Muted */
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 75%;
 
-    /* Neon Yellow Accent */
-    --accent: 60 100% 50%;
+    --accent: 45 100% 55%;
     --accent-foreground: 0 0% 0%;
 
-    /* RGB Borders */
     --border: 0 0% 15%;
     --input: 0 0% 10%;
-    --ring: 180 100% 50%;
+    --ring: 25 100% 50%;
 
-    /* Admin RGB Colors */
-    --admin-primary: 180 100% 50%;
-    --admin-secondary: 300 100% 50%;
-    --admin-accent: 60 100% 50%;
+    /* Admin Fire Colors */
+    --admin-primary: 25 100% 50%;
+    --admin-secondary: 0 85% 50%;
+    --admin-accent: 45 100% 55%;
     --admin-primary-foreground: 0 0% 0%;
     --admin-secondary-foreground: 0 0% 100%;
 
-    /* Chart Colors - RGB Theme */
-    --chart-1: 180 100% 50%;
-    --chart-2: 300 100% 50%;
-    --chart-3: 60 100% 50%;
-    --chart-4: 120 100% 50%;
-    --chart-5: 0 100% 50%;
+    /* Chart Colors - Fire Theme */
+    --chart-1: 25 100% 50%;
+    --chart-2: 0 85% 50%;
+    --chart-3: 45 100% 55%;
+    --chart-4: 15 90% 55%;
+    --chart-5: 350 80% 55%;
   }
 
-  /* Gaming Theme - Neon Cyberpunk */
+  /* Gaming Theme - Fire Neon */
   .admin-gaming {
-    /* Dark Gaming Background */
-    --background: 280 40% 8%;
+    --background: 0 30% 7%;
     --foreground: 0 0% 100%;
 
-    /* Gaming Glass Card */
-    --card: 280 30% 12%;
+    --card: 0 25% 11%;
     --card-foreground: 0 0% 98%;
 
-    /* Neon Green Primary */
-    --primary: 142 100% 50%;
-    --primary-foreground: 280 40% 8%;
+    --primary: 25 100% 55%;
+    --primary-foreground: 0 0% 0%;
 
-    /* Neon Magenta Secondary */
-    --secondary: 320 100% 60%;
+    --secondary: 0 100% 55%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Dark Muted */
-    --muted: 280 30% 18%;
+    --muted: 0 20% 16%;
     --muted-foreground: 0 0% 70%;
 
-    /* Electric Purple Accent */
-    --accent: 270 100% 65%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 45 100% 60%;
+    --accent-foreground: 0 0% 0%;
 
-    /* Borders & Inputs */
-    --border: 280 40% 25%;
-    --input: 280 40% 15%;
-    --ring: 142 100% 50%;
+    --border: 0 25% 22%;
+    --input: 0 25% 13%;
+    --ring: 25 100% 55%;
 
-    /* Admin Gaming Colors */
-    --admin-primary: 142 100% 50%;
-    --admin-secondary: 320 100% 60%;
-    --admin-accent: 270 100% 65%;
-    --admin-primary-foreground: 0 0% 100%;
+    --admin-primary: 25 100% 55%;
+    --admin-secondary: 0 100% 55%;
+    --admin-accent: 45 100% 60%;
+    --admin-primary-foreground: 0 0% 0%;
     --admin-secondary-foreground: 0 0% 100%;
 
-    /* Chart Colors - Gaming Theme */
-    --chart-1: 142 100% 50%;
-    --chart-2: 320 100% 60%;
-    --chart-3: 45 100% 55%;
-    --chart-4: 270 100% 65%;
-    --chart-5: 200 100% 55%;
+    --chart-1: 25 100% 55%;
+    --chart-2: 0 100% 55%;
+    --chart-3: 45 100% 60%;
+    --chart-4: 15 90% 55%;
+    --chart-5: 350 85% 55%;
   }
 
-  /* Sunset Theme - Warm Purple/Orange */
+  /* Sunset Theme - Warm Fire/Orange */
   .admin-sunset {
-    /* Dark Sunset Background */
-    --background: 260 35% 10%;
+    --background: 10 30% 8%;
     --foreground: 0 0% 98%;
 
-    /* Sunset Card */
-    --card: 260 30% 14%;
+    --card: 10 25% 12%;
     --card-foreground: 0 0% 98%;
 
-    /* Warm Orange Primary */
     --primary: 25 85% 55%;
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
 
-    /* Deep Purple Secondary */
-    --secondary: 270 60% 55%;
+    --secondary: 0 70% 55%;
     --secondary-foreground: 0 0% 100%;
 
-    /* Sunset Muted */
-    --muted: 260 30% 18%;
-    --muted-foreground: 260 15% 75%;
+    --muted: 10 25% 16%;
+    --muted-foreground: 10 15% 75%;
 
-    /* Pink Accent */
-    --accent: 340 70% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 45 80% 55%;
+    --accent-foreground: 0 0% 0%;
 
-    /* Sunset Borders */
-    --border: 260 30% 22%;
-    --input: 260 30% 16%;
+    --border: 10 25% 20%;
+    --input: 10 25% 14%;
     --ring: 25 85% 55%;
 
-    /* Admin Sunset Colors */
     --admin-primary: 25 85% 55%;
-    --admin-secondary: 270 60% 55%;
-    --admin-accent: 340 70% 60%;
-    --admin-primary-foreground: 0 0% 100%;
+    --admin-secondary: 0 70% 55%;
+    --admin-accent: 45 80% 55%;
+    --admin-primary-foreground: 0 0% 0%;
     --admin-secondary-foreground: 0 0% 100%;
 
-    /* Chart Colors - Sunset Theme */
     --chart-1: 25 85% 55%;
-    --chart-2: 340 70% 60%;
+    --chart-2: 0 70% 55%;
     --chart-3: 45 80% 55%;
-    --chart-4: 270 60% 55%;
-    --chart-5: 300 65% 55%;
+    --chart-4: 15 75% 55%;
+    --chart-5: 350 65% 55%;
   }
 }
 
@@ -564,41 +515,41 @@
     @apply bg-gradient-to-r from-admin-primary via-admin-accent to-admin-secondary bg-clip-text text-transparent;
   }
 
-  /* RGB Neon Hover Effects */
+  /* Fire Neon Hover Effects */
   .admin-rgb-neon .admin-card:hover {
-    animation: rgb-border 3s linear infinite;
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), 0 0 30px rgba(255, 0, 255, 0.2);
+    animation: fire-border 3s linear infinite;
+    box-shadow: 0 0 20px rgba(255, 120, 0, 0.3), 0 0 30px rgba(255, 50, 0, 0.2);
   }
 
   .admin-rgb-neon .admin-glow:hover {
-    animation: rgb-glow 3s ease-in-out infinite;
+    animation: fire-glow 3s ease-in-out infinite;
   }
 
-  @keyframes rgb-border {
-    0% { border-color: hsl(180, 100%, 50%); }
-    33% { border-color: hsl(300, 100%, 50%); }
-    66% { border-color: hsl(60, 100%, 50%); }
-    100% { border-color: hsl(180, 100%, 50%); }
+  @keyframes fire-border {
+    0% { border-color: hsl(25, 100%, 50%); }
+    33% { border-color: hsl(0, 85%, 50%); }
+    66% { border-color: hsl(45, 100%, 55%); }
+    100% { border-color: hsl(25, 100%, 50%); }
   }
 
-  @keyframes rgb-glow {
-    0% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.4), 0 0 30px rgba(0, 255, 255, 0.2); }
-    33% { box-shadow: 0 0 20px rgba(255, 0, 255, 0.4), 0 0 30px rgba(255, 0, 255, 0.2); }
-    66% { box-shadow: 0 0 20px rgba(255, 255, 0, 0.4), 0 0 30px rgba(255, 255, 0, 0.2); }
-    100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.4), 0 0 30px rgba(0, 255, 255, 0.2); }
+  @keyframes fire-glow {
+    0% { box-shadow: 0 0 20px rgba(255, 120, 0, 0.4), 0 0 30px rgba(255, 120, 0, 0.2); }
+    33% { box-shadow: 0 0 20px rgba(255, 50, 0, 0.4), 0 0 30px rgba(255, 50, 0, 0.2); }
+    66% { box-shadow: 0 0 20px rgba(255, 200, 0, 0.4), 0 0 30px rgba(255, 200, 0, 0.2); }
+    100% { box-shadow: 0 0 20px rgba(255, 120, 0, 0.4), 0 0 30px rgba(255, 120, 0, 0.2); }
   }
 
-  /* RGB Button Hover */
+  /* Fire Button Hover */
   .admin-rgb-neon button:hover,
   .admin-rgb-neon a:hover {
-    animation: rgb-text 3s linear infinite;
+    animation: fire-text 3s linear infinite;
   }
 
-  @keyframes rgb-text {
-    0% { color: hsl(180, 100%, 60%); }
-    33% { color: hsl(300, 100%, 60%); }
-    66% { color: hsl(60, 100%, 60%); }
-    100% { color: hsl(180, 100%, 60%); }
+  @keyframes fire-text {
+    0% { color: hsl(25, 100%, 55%); }
+    33% { color: hsl(0, 85%, 55%); }
+    66% { color: hsl(45, 100%, 55%); }
+    100% { color: hsl(25, 100%, 55%); }
   }
 
   /* Gradient animation for announcement bar */

@@ -1,18 +1,8 @@
 import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { 
-  LayoutDashboard, 
-  Trophy, 
-  Wallet, 
-  Users, 
-  Settings,
-  LogOut,
-  Shield,
-  UserPlus,
-  CreditCard,
-  TrendingUp,
-  MessageSquare,
-  BarChart
+  LayoutDashboard, Trophy, Wallet, Users, Settings, LogOut, Shield,
+  UserPlus, CreditCard, TrendingUp, MessageSquare, BarChart, UserCog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,22 +12,15 @@ import ThemeToggle from "@/components/admin/ThemeToggle";
 const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  // CHANGE 1: 'user' add kiya taaki email check kar sakein
-  const { signOut, isAdmin, loading, user } = useAuth();
+  const { signOut, isAdmin, isSuperAdmin, permissions, loading, user } = useAuth();
 
-  // CRITICAL SECURITY: Protect admin routes
   useEffect(() => {
-    // CHANGE 2: Owner Logic (VIP Bypass)
-    const isOwner = user?.email === 'selfashad@gmail.com' || user?.email === 'ashadislam333@gmail.com';
-    
-    // Agar Admin nahi hai AUR Owner bhi nahi hai tabhi bahar nikalna
-    if (!loading && !isAdmin && !isOwner) {
+    if (!loading && !isAdmin) {
       toast.error("Unauthorized Access");
       navigate("/");
     }
-  }, [isAdmin, loading, navigate, user]);
+  }, [isAdmin, loading, navigate]);
 
-  // Show loading state while checking authentication
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -46,28 +29,29 @@ const AdminLayout = () => {
     );
   }
 
-  // CHANGE 3: Render blocking logic fix
-  const isOwner = user?.email === 'selfashad@gmail.com' || user?.email === 'ashadislam333@gmail.com';
-  
-  // Return null if not admin AND not owner (prevents any rendering)
-  if (!isAdmin && !isOwner) {
-    return null;
-  }
+  if (!isAdmin) return null;
 
-  const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
-    { icon: Trophy, label: "Tournaments", path: "/admin/tournaments" },
-    { icon: BarChart, label: "Analytics", path: "/admin/tournament-analytics" },
-    { icon: Wallet, label: "Withdrawals", path: "/admin/withdrawals" },
-    { icon: Users, label: "Users", path: "/admin/users" },
-    { icon: UserPlus, label: "Referrals", path: "/admin/referrals" },
-    { icon: CreditCard, label: "UTR Verify", path: "/admin/utr" },
-    { icon: TrendingUp, label: "Fraud Analytics", path: "/admin/fraud-analytics" },
-    { icon: MessageSquare, label: "Support", path: "/admin/support" },
-    { icon: Settings, label: "Settings", path: "/admin/settings" },
+  const allMenuItems = [
+    { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard", permKey: "dashboard" },
+    { icon: Trophy, label: "Tournaments", path: "/admin/tournaments", permKey: "tournaments" },
+    { icon: BarChart, label: "Analytics", path: "/admin/tournament-analytics", permKey: "tournament-analytics" },
+    { icon: Wallet, label: "Withdrawals", path: "/admin/withdrawals", permKey: "withdrawals" },
+    { icon: Users, label: "Users", path: "/admin/users", permKey: "users" },
+    { icon: UserPlus, label: "Referrals", path: "/admin/referrals", permKey: "referrals" },
+    { icon: CreditCard, label: "UTR Verify", path: "/admin/utr", permKey: "utr" },
+    { icon: TrendingUp, label: "Fraud Analytics", path: "/admin/fraud-analytics", permKey: "fraud-analytics" },
+    { icon: MessageSquare, label: "Support", path: "/admin/support", permKey: "support" },
+    { icon: Settings, label: "Settings", path: "/admin/settings", permKey: "settings" },
+    { icon: UserCog, label: "Manage Admins", path: "/admin/manage-admins", permKey: "manage-admins" },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  // Super admin sees everything, sub-admins see only their permitted sections
+  const menuItems = isSuperAdmin
+    ? allMenuItems
+    : allMenuItems.filter((item) => permissions.includes(item.permKey));
+
+  const isActive = (path: string) => location.pathname === path || 
+    (path === "/admin/dashboard" && location.pathname === "/admin");
 
   return (
     <div className="min-h-screen bg-background flex relative overflow-hidden">
@@ -78,8 +62,6 @@ const AdminLayout = () => {
       
       {/* Sidebar */}
       <aside className="w-64 glass-card border-r border-border/50 flex flex-col relative z-10 shadow-xl">
-        
-        {/* Admin Brand */}
         <div className="p-6 border-b border-border/30">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.3)]">
@@ -91,12 +73,13 @@ const AdminLayout = () => {
                   Admin Panel
                 </span>
               </h1>
-              <p className="text-xs text-muted-foreground">Command Center</p>
+              <p className="text-xs text-muted-foreground">
+                {isSuperAdmin ? "Super Admin" : "Sub Admin"}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1">
           {menuItems.map((item) => (
             <Link key={item.path} to={item.path}>
@@ -115,7 +98,6 @@ const AdminLayout = () => {
           ))}
         </nav>
 
-        {/* Logout */}
         <div className="p-4 border-t border-border/30">
           <Button
             variant="ghost"
@@ -130,7 +112,6 @@ const AdminLayout = () => {
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto relative z-10">
-        {/* Header */}
         <header className="glass-card border-b border-border/50 p-6 shadow-lg sticky top-0 z-20">
           <div className="flex items-center justify-between">
             <div>
@@ -148,14 +129,13 @@ const AdminLayout = () => {
               <div className="glass-card px-4 py-2 border border-primary/30 shadow-[0_0_15px_rgba(0,240,255,0.2)]">
                 <p className="text-xs text-muted-foreground">Role</p>
                 <p className="text-sm font-gaming font-bold text-primary">
-                  SUPER ADMIN
+                  {isSuperAdmin ? "SUPER ADMIN" : "SUB ADMIN"}
                 </p>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Page Content */}
         <div className="p-6">
           <Outlet />
         </div>

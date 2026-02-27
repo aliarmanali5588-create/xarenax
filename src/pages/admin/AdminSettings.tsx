@@ -17,8 +17,6 @@ interface UPIMethod {
 }
 
 const AdminSettings = () => {
-  const [razorpayKeyId, setRazorpayKeyId] = useState("");
-  const [razorpayKeySecret, setRazorpayKeySecret] = useState("");
   const [upiMethods, setUpiMethods] = useState<UPIMethod[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -41,8 +39,6 @@ const AdminSettings = () => {
         .from("platform_settings")
         .select("setting_key, setting_value")
         .in("setting_key", [
-          "razorpay_key_id", 
-          "razorpay_key_secret",
           "announcement_enabled",
           "announcement_text",
           "announcement_influencer"
@@ -51,11 +47,7 @@ const AdminSettings = () => {
       if (settingsError) throw settingsError;
 
       settingsData?.forEach((setting) => {
-        if (setting.setting_key === "razorpay_key_id") {
-          setRazorpayKeyId(setting.setting_value);
-        } else if (setting.setting_key === "razorpay_key_secret") {
-          setRazorpayKeySecret(setting.setting_value);
-        } else if (setting.setting_key === "announcement_enabled") {
+        if (setting.setting_key === "announcement_enabled") {
           setAnnouncementEnabled(setting.setting_value === "true");
         } else if (setting.setting_key === "announcement_text") {
           setAnnouncementText(setting.setting_value);
@@ -196,35 +188,6 @@ const AdminSettings = () => {
   const handleSaveSettings = async () => {
     setSaving(true);
     try {
-      // Save Razorpay settings
-      const { error: keyIdError } = await supabase
-        .from("platform_settings")
-        .upsert(
-          {
-            setting_key: "razorpay_key_id",
-            setting_value: razorpayKeyId,
-            description: "Razorpay Public Key ID",
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "setting_key" }
-        );
-
-      if (keyIdError) throw keyIdError;
-
-      const { error: secretError } = await supabase
-        .from("platform_settings")
-        .upsert(
-          {
-            setting_key: "razorpay_key_secret",
-            setting_value: razorpayKeySecret,
-            description: "Razorpay Private Key Secret",
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "setting_key" }
-        );
-
-      if (secretError) throw secretError;
-
       // Save UPI methods (only non-empty ones)
       for (const method of upiMethods) {
         if (method.upi_id.trim()) {
@@ -461,34 +424,6 @@ const AdminSettings = () => {
                     )}
                   </div>
 
-                  {/* Razorpay Settings */}
-                  <div className="space-y-4 p-4 border border-muted/20 rounded-lg">
-                    <h3 className="text-lg font-gaming text-muted-foreground">Razorpay (Optional)</h3>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="razorpay_key_id">Razorpay Key ID (Public)</Label>
-                      <Input
-                        id="razorpay_key_id"
-                        type="text"
-                        value={razorpayKeyId}
-                        onChange={(e) => setRazorpayKeyId(e.target.value)}
-                        placeholder="rzp_test_XXXXXXXXXXXXXXXX"
-                        className="bg-background/50"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="razorpay_key_secret">Razorpay Key Secret (Private)</Label>
-                      <Input
-                        id="razorpay_key_secret"
-                        type="password"
-                        value={razorpayKeySecret}
-                        onChange={(e) => setRazorpayKeySecret(e.target.value)}
-                        placeholder="YOUR_SECRET_KEY_HERE"
-                        className="bg-background/50"
-                      />
-                    </div>
-                  </div>
                 </div>
 
                 <Button

@@ -258,6 +258,42 @@ export type Database = {
         }
         Relationships: []
       }
+      sub_admins: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          display_name: string
+          email: string
+          id: string
+          is_active: boolean
+          permissions: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          display_name: string
+          email: string
+          id?: string
+          is_active?: boolean
+          permissions?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          display_name?: string
+          email?: string
+          id?: string
+          is_active?: boolean
+          permissions?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       support_tickets: {
         Row: {
           admin_notes: string | null

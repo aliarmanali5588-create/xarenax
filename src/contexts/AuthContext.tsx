@@ -3,10 +3,14 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
+const SUPER_ADMIN_EMAILS = ['ashadislam333@gmail.com', 'selfashad@gmail.com'];
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
+  permissions: string[];
   loading: boolean;
   signUp: (email: string, password: string, username: string, ign: string, bgmiId: string, deviceId?: string, signupIp?: string, referralCode?: string) => Promise<{ data: any, error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
@@ -27,170 +31,147 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [permissions, setPermissions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        // Only synchronous state updates here
-        setSession(session);
-        setUser(session?.user ?? null);
+  const ALL_PERMISSIONS = [
+    'dashboard', 'tournaments', 'tournament-analytics', 'withdrawals',
+    'users', 'referrals', 'utr', 'fraud-analytics', 'support', 'settings', 'manage-admins'
+  ];
 
-        // Check admin role - synchronous for super admin
-        if (session?.user) {
-          if (session.user.email === 'ashadislam333@gmail.com') {
-            setIsAdmin(true);
-          } else {
-            setTimeout(() => {
-              checkAdminRole(session.user.id, session.user.email);
-            }, 0);
-          }
-        } else {
-          setIsAdmin(false);
-        }
-
-        setLoading(false);
-      }
-    );
-
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        if (session.user.email === 'ashadislam333@gmail.com') {
-          setIsAdmin(true);
-        } else {
-          checkAdminRole(session.user.id, session.user.email);
-        }
-      }
-      
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const checkAdminRole = async (userId: string, userEmail?: string) => {
+  const checkRolesAndPermissions = async (userId: string, userEmail?: string) => {
     try {
-      // CRITICAL: Check super admin email synchronously first
-      if (userEmail === 'ashadislam333@gmail.com') {
+      const isSuperAdminUser = SUPER_ADMIN_EMAILS.includes(userEmail || '');
+      
+      if (isSuperAdminUser) {
         setIsAdmin(true);
+        setIsSuperAdmin(true);
+        setPermissions(ALL_PERMISSIONS);
         return;
       }
 
-      // Get user email if not provided
-      if (!userEmail) {
-        const { data: { user: currentUser } } = await supabase.auth.getUser();
-        if (currentUser?.email === 'ashadislam333@gmail.com') {
-          setIsAdmin(true);
-          return;
-        }
-      }
-
-      const { data, error } = await supabase
+      // Check admin role
+      const { data: roleData } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", userId)
         .eq("role", "admin")
         .maybeSingle();
 
-      if (!error && data) {
+      if (roleData) {
         setIsAdmin(true);
+        // Fetch sub-admin permissions
+        const { data: subAdminData } = await supabase
+          .from("sub_admins")
+          .select("permissions, is_active")
+          .eq("user_id", userId)
+          .single();
+
+        if (subAdminData && subAdminData.is_active) {
+          setPermissions(subAdminData.permissions as string[]);
+        } else {
+          setPermissions([]);
+        }
       } else {
         setIsAdmin(false);
+        setIsSuperAdmin(false);
+        setPermissions([]);
       }
     } catch (error) {
-      console.error("Error checking admin role:", error);
+      console.error("Error checking roles:", error);
       setIsAdmin(false);
+      setIsSuperAdmin(false);
+      setPermissions([]);
     }
   };
 
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          setTimeout(() => {
+            checkRolesAndPermissions(session.user.id, session.user.email || undefined);
+          }, 0);
+        } else {
+          setIsAdmin(false);
+          setIsSuperAdmin(false);
+          setPermissions([]);
+        }
+        setLoading(false);
+      }
+    );
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        checkRolesAndPermissions(session.user.id, session.user.email || undefined);
+      }
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const signUp = async (
-    email: string, 
-    password: string, 
-    username: string, 
-    ign: string, 
-    bgmiId: string,
-    deviceId?: string,
-    signupIp?: string,
-    referralCode?: string
+    email: string, password: string, username: string, ign: string, bgmiId: string,
+    deviceId?: string, signupIp?: string, referralCode?: string
   ) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
-      
-      // Step 1: Create auth user
       const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: redirectUrl,
-        }
+        email, password,
+        options: { emailRedirectTo: redirectUrl }
       });
 
       if (error) return { data, error };
       if (!data.user) return { data: null, error: new Error("Signup failed") };
 
-      // Step 2: Get referrer ID if referral code provided
       let referredById = null;
       if (referralCode) {
-        const { data: referrerUuid } = await supabase.rpc(
-          'get_referrer_id', 
-          { code: referralCode.toUpperCase() }
-        );
+        const { data: referrerUuid } = await supabase.rpc('get_referrer_id', { code: referralCode.toUpperCase() });
         if (referrerUuid) referredById = referrerUuid;
       }
 
-      // Step 3: Generate unique referral code
       const newReferralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
 
-      // Step 4: Create profile using secure function
       const { error: profileError } = await supabase.rpc('create_user_profile', {
-        p_user_id: data.user.id,
-        p_username: username,
-        p_ign: ign,
-        p_bgmi_id: bgmiId,
-        p_device_id: deviceId || '',
-        p_signup_ip: signupIp || '',
-        p_referral_code: newReferralCode,
-        p_referred_by: referredById
+        p_user_id: data.user.id, p_username: username, p_ign: ign, p_bgmi_id: bgmiId,
+        p_device_id: deviceId || '', p_signup_ip: signupIp || '',
+        p_referral_code: newReferralCode, p_referred_by: referredById
       });
 
       if (profileError) {
-        console.error("Profile creation error:", profileError);
         return { data: null, error: new Error(`Profile creation failed: ${profileError.message}`) };
       }
 
       return { data, error: null };
     } catch (error: any) {
-      console.error("Signup error:", error);
       return { data: null, error };
     }
   };
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) return { error };
 
-      // Check if user is admin
       if (data.user) {
-        // CRITICAL: Set admin state BEFORE navigation for super admin
-        if (data.user.email === 'ashadislam333@gmail.com') {
+        const isSuperAdminUser = SUPER_ADMIN_EMAILS.includes(data.user.email || '');
+        
+        if (isSuperAdminUser) {
           setIsAdmin(true);
-          await checkAdminRole(data.user.id, data.user.email);
+          setIsSuperAdmin(true);
+          setPermissions(ALL_PERMISSIONS);
           navigate("/admin/dashboard");
           return { error: null };
         }
 
-        // Regular admin check
         const { data: roleData } = await supabase
           .from("user_roles")
           .select("role")
@@ -200,6 +181,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (roleData) {
           setIsAdmin(true);
+          await checkRolesAndPermissions(data.user.id, data.user.email || undefined);
           navigate("/admin/dashboard");
         } else {
           navigate("/dashboard");
@@ -215,20 +197,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     await supabase.auth.signOut();
     setIsAdmin(false);
+    setIsSuperAdmin(false);
+    setPermissions([]);
     navigate("/auth");
   };
 
   const value = {
-    user,
-    session,
-    isAdmin,
-    loading,
-    signUp,
-    signIn,
-    signOut,
+    user, session, isAdmin, isSuperAdmin, permissions, loading,
+    signUp, signIn, signOut,
   };
 
-  // Don't render children until we've verified auth state
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">

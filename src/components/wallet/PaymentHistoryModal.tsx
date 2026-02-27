@@ -23,8 +23,6 @@ interface Transaction {
   type: string;
   status: string;
   description: string | null;
-  razorpay_payment_id: string | null;
-  razorpay_order_id: string | null;
   created_at: string;
 }
 
@@ -134,13 +132,6 @@ const PaymentHistoryModal = ({ open, onOpenChange }: PaymentHistoryModalProps) =
                         <p className="text-xs text-muted-foreground mb-2">
                           {format(new Date(transaction.created_at), "MMM dd, yyyy 'at' hh:mm a")}
                         </p>
-                        {transaction.razorpay_payment_id && (
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <span className="font-mono bg-muted/50 px-2 py-1 rounded">
-                              ID: {transaction.razorpay_payment_id}
-                            </span>
-                          </div>
-                        )}
                       </div>
                     </div>
                     <div className="text-right ml-4">

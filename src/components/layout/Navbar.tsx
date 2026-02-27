@@ -29,14 +29,14 @@ const Navbar = () => {
             <div className="relative">
               <img 
                 src="/logo.png" 
-                alt="NeroXP" 
-                className="h-11 w-11 object-contain transition-all duration-300 group-hover:scale-110 drop-shadow-[0_0_10px_rgba(0,255,255,0.5)]" 
+                alt="TeamFire" 
+                className="h-11 w-11 object-contain transition-all duration-300 group-hover:scale-110 drop-shadow-[0_0_10px_rgba(255,120,0,0.5)]" 
               />
               <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <span className="text-2xl md:text-3xl font-gaming font-bold">
-              <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(0,255,255,0.3)]">Nero</span>
-              <span className="text-secondary drop-shadow-[0_0_10px_rgba(251,146,60,0.3)]">XP</span>
+              <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(255,120,0,0.3)]">Team</span>
+              <span className="text-secondary drop-shadow-[0_0_10px_rgba(255,50,0,0.3)]">Fire</span>
             </span>
           </Link>
 

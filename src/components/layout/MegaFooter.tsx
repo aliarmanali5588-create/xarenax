@@ -43,7 +43,7 @@ const MegaFooter = () => {
             <Link to="/" className="flex items-center mb-6 group">
               <img 
                 src={trophyIcon} 
-                alt="NeroXP" 
+                alt="TeamFire" 
                 className="h-16 w-16 rounded-xl transition-transform group-hover:scale-110"
               />
             </Link>
@@ -113,7 +113,7 @@ const MegaFooter = () => {
         <div className="pt-8 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <div className="text-muted-foreground">
             <p className="mb-1">
-              © {new Date().getFullYear()} <span className="text-primary font-bold">NeroXP</span>. All rights reserved.
+              © {new Date().getFullYear()} <span className="text-primary font-bold">TeamFire</span>. All rights reserved.
             </p>
             <p className="text-sm">
               Play responsibly • 18+ Only • Skill-based gaming platform

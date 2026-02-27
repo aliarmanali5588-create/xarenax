@@ -74,7 +74,7 @@ const AnnouncementBar = () => {
                       {settings.influencer}
                     </span>
                   </span>
-                  <span className="text-white/90">recommends NeroXP!</span>
+                  <span className="text-white/90">recommends TeamFire!</span>
                   <Sparkles className="w-3.5 h-3.5 md:w-4 md:h-4 text-yellow-300" />
                 </>
               ) : (

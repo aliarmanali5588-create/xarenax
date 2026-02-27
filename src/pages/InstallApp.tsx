@@ -47,7 +47,7 @@ const InstallApp = () => {
         const guideElement = document.querySelector('[data-install-guide]');
         if (guideElement) {
           guideElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          toast.info("Follow the guide below to install NeroXP");
+          toast.info("Follow the guide below to install TeamFire");
         } else {
           toast.info("Use your browser's menu to install the app");
         }
@@ -104,7 +104,7 @@ const InstallApp = () => {
               <Download className="w-12 h-12 text-white" />
             </div>
             <h1 className="text-4xl md:text-6xl font-gaming font-bold mb-4 text-gradient">
-              Install NeroXP App
+              Install TeamFire App
             </h1>
             <p className="text-muted-foreground text-xl max-w-2xl mx-auto mb-8">
               India's most trusted BGMI tournament platform. Join thousands of players competing for real prizes.
@@ -120,7 +120,7 @@ const InstallApp = () => {
                   App Already Installed! 🎉
                 </h3>
                 <p className="text-muted-foreground text-lg">
-                  You're all set! Open NeroXP from your home screen.
+                  You're all set! Open TeamFire from your home screen.
                 </p>
               </CardContent>
             </Card>
@@ -135,7 +135,7 @@ const InstallApp = () => {
                   onClick={handleInstall}
                 >
                   <Download className="w-8 h-8 mr-3" />
-                  {isInstallable ? "Install NeroXP Now" : "View Install Guide"}
+                  {isInstallable ? "Install TeamFire Now" : "View Install Guide"}
                 </Button>
               </div>
               
@@ -182,7 +182,7 @@ const InstallApp = () => {
           <Card className="glass-card border-primary/20 mb-8" data-install-guide>
             <CardContent className="p-8">
               <h3 className="font-gaming font-bold text-3xl mb-6 text-center text-gradient">
-                📱 How to Install NeroXP
+                📱 How to Install TeamFire
               </h3>
               
               <div className="space-y-8">
@@ -199,11 +199,11 @@ const InstallApp = () => {
                   </div>
                   <div className="space-y-3">
                     {[
-                      "Open neroxp.app in Safari browser",
+                      "Open teamfire.app in Safari browser",
                       "Tap the Share button (box with arrow) at the bottom",
                       "Scroll down and tap 'Add to Home Screen'",
                       "Tap 'Add' in the top right corner",
-                      "Done! Open NeroXP from your home screen"
+                      "Done! Open TeamFire from your home screen"
                     ].map((step, index) => (
                       <div key={index} className="flex gap-3">
                         <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm flex-shrink-0">
@@ -228,11 +228,11 @@ const InstallApp = () => {
                   </div>
                   <div className="space-y-3">
                     {[
-                      "Open neroxp.app in Chrome browser",
+                      "Open teamfire.app in Chrome browser",
                       "Tap the menu (three dots) in the top right",
                       "Tap 'Install App' or 'Add to Home screen'",
                       "Tap 'Install' to confirm",
-                      "Done! Open NeroXP from your home screen"
+                      "Done! Open TeamFire from your home screen"
                     ].map((step, index) => (
                       <div key={index} className="flex gap-3">
                         <div className="w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-sm flex-shrink-0">

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Mail, Lock, User, Gamepad2, Hash } from "lucide-react";
+import teamfireLogo from "@/assets/teamfire-logo-new.png";
 import { toast } from "sonner";
 import { z } from "zod";
 import { getDeviceFingerprint } from "@/lib/deviceFingerprint";
@@ -202,9 +203,7 @@ const Auth = () => {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-primary via-accent to-secondary rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(0,240,255,0.5)] hover:shadow-[0_0_40px_rgba(0,240,255,0.7)] transition-shadow">
-              <Trophy className="w-10 h-10 md:w-12 md:h-12 text-background drop-shadow-[0_0_10px_rgba(0,0,0,0.5)]" />
-            </div>
+            <img src={teamfireLogo} alt="TeamFire" className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-[0_0_20px_rgba(255,120,0,0.5)]" />
           </div>
           <h1 className="text-3xl md:text-4xl font-gaming font-bold mb-2">
             <span className="text-gradient bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">

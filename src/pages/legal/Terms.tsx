@@ -212,7 +212,7 @@ const Terms = () => {
                 </p>
                 <div className="glass-panel rounded-lg p-4">
                   <p className="text-foreground">
-                    Email: <a href="mailto:helparenax@zohomail.in" className="text-primary hover:text-primary/80 transition-colors">helparenax@zohomail.in</a>
+                    Telegram: <a href="https://t.me/+6IoFwhsuUkEzMGM9" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">@TeamFireSupport</a>
                   </p>
                   <p className="text-foreground">Address: India</p>
                 </div>

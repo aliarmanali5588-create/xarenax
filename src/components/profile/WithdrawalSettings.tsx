@@ -181,9 +181,9 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
           <div className="text-sm">
             <p className="font-semibold text-primary mb-1">Security Lock Active</p>
             <p className="text-muted-foreground">
-              Your withdrawal details are locked to prevent fraud. Contact support at{" "}
-              <a href="mailto:helparenax@zohomail.in" className="text-primary hover:text-primary/80">
-                helparenax@zohomail.in
+              Your withdrawal details are locked to prevent fraud. Contact support on{" "}
+              <a href="https://t.me/+6IoFwhsuUkEzMGM9" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80">
+                Telegram
               </a>{" "}
               to make changes.
             </p>

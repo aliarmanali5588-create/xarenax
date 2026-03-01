@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import { Mail, MapPin } from "lucide-react";
-import TelegramIcon from "../icons/TelegramIcon";
-import trophyIcon from "@/assets/trophy-icon.png";
+import { MapPin, Send } from "lucide-react";
+import teamfireLogo from "@/assets/teamfire-logo-new.png";
 
 const MegaFooter = () => {
   const footerSections = [
@@ -20,7 +19,7 @@ const MegaFooter = () => {
       links: [
         { name: "FAQ", path: "/support/faq" },
         { name: "Contact Us", path: "/support/contact" },
-        { name: "Telegram Support", path: "https://t.me/helparenaxesports", external: true },
+        { name: "Telegram Support", path: "https://t.me/+6IoFwhsuUkEzMGM9", external: true },
       ],
     },
     {
@@ -36,38 +35,34 @@ const MegaFooter = () => {
   return (
     <footer className="border-t border-border/30 bg-card/30 mt-20">
       <div className="modern-container py-16">
-        {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center mb-6 group">
+            <Link to="/" className="flex items-center gap-3 mb-6 group">
               <img 
-                src={trophyIcon} 
+                src={teamfireLogo} 
                 alt="TeamFire" 
                 className="h-16 w-16 rounded-xl transition-transform group-hover:scale-110"
               />
+              <span className="text-2xl font-gaming font-bold">
+                <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Team</span>
+                <span className="text-secondary">Fire</span>
+              </span>
             </Link>
             <p className="text-muted-foreground mb-6 leading-relaxed">
               India's most trusted BGMI tournament platform. Join thousands of players competing for real prizes.
             </p>
             
-            {/* Contact Info */}
+            {/* Contact Info - Only Telegram */}
             <div className="space-y-3">
-              <a 
-                href="mailto:helparenax@zohomail.in"
-                className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Mail className="w-5 h-5" />
-                <span>helparenax@zohomail.in</span>
-              </a>
               <a 
                 href="https://t.me/+6IoFwhsuUkEzMGM9" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
               >
-                <TelegramIcon className="w-5 h-5" />
-                <span>Join Telegram</span>
+                <Send className="w-5 h-5" />
+                <span>Join Telegram Support</span>
               </a>
               <div className="flex items-center gap-3 text-muted-foreground">
                 <MapPin className="w-5 h-5" />

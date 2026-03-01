@@ -1,4 +1,4 @@
-import { Target, Trophy, Shield, Users, Mail, MapPin } from "lucide-react";
+import { Target, Trophy, Shield, Users, Send, MapPin } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import MegaFooter from "@/components/layout/MegaFooter";
 
@@ -129,17 +129,15 @@ const AboutUs = () => {
               Get In Touch
             </h2>
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
+              <a href="https://t.me/+6IoFwhsuUkEzMGM9" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Mail className="w-6 h-6 text-primary" />
+                  <Send className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="font-semibold">Email</p>
-                  <a href="mailto:helparenax@zohomail.in" className="text-primary hover:underline">
-                    helparenax@zohomail.in
-                  </a>
+                  <p className="font-semibold">Telegram Support</p>
+                  <p className="text-primary">Join our Telegram</p>
                 </div>
-              </div>
+              </a>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                   <MapPin className="w-6 h-6 text-primary" />

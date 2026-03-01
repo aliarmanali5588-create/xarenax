@@ -6,6 +6,7 @@ import { NavLink } from "@/components/NavLink";
 import NotificationBell from "./NotificationBell";
 import UserMenu from "./UserMenu";
 import { useAuth } from "@/contexts/AuthContext";
+import teamfireLogo from "@/assets/teamfire-logo-new.png";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -24,11 +25,11 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-border/40 shadow-[0_4px_24px_0_rgba(0,0,0,0.3)]">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-18">
-          {/* Logo - Enhanced */}
+          {/* Logo */}
           <Link to="/" className="flex items-center space-x-2.5 group">
             <div className="relative">
               <img 
-                src="/logo.png" 
+                src={teamfireLogo} 
                 alt="TeamFire" 
                 className="h-11 w-11 object-contain transition-all duration-300 group-hover:scale-110 drop-shadow-[0_0_10px_rgba(255,120,0,0.5)]" 
               />
@@ -59,7 +60,6 @@ const Navbar = () => {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
-            {/* Desktop Actions - Authenticated */}
             {user && (
               <div className="hidden lg:flex items-center gap-2">
                 <NotificationBell />
@@ -69,13 +69,12 @@ const Navbar = () => {
                   </Link>
                 </Button>
                 <UserMenu />
-                <Button variant="neon" size="sm" asChild className="shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]">
+                <Button variant="neon" size="sm" asChild className="shadow-[0_0_20px_rgba(255,120,0,0.3)] hover:shadow-[0_0_30px_rgba(255,120,0,0.5)]">
                   <Link to="/tournaments">Join Now</Link>
                 </Button>
               </div>
             )}
 
-            {/* Desktop Actions - Guest */}
             {!user && (
               <div className="hidden lg:flex items-center gap-2">
                 <Button variant="outline" size="sm" asChild>
@@ -87,7 +86,6 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Mobile Icons (Tablet and below) - Authenticated */}
             {user && (
               <div className="flex lg:hidden items-center gap-2">
                 <NotificationBell />
@@ -100,7 +98,6 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Mobile Icons - Guest */}
             {!user && (
               <div className="flex lg:hidden items-center gap-2">
                 <Button variant="outline" size="sm" asChild>
@@ -109,7 +106,6 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Mobile Menu Button */}
             <button
               className="lg:hidden p-2 text-foreground hover:bg-muted rounded-md transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -140,7 +136,6 @@ const Navbar = () => {
               </Link>
             ))}
             
-            {/* Authenticated User Actions */}
             {user && (
               <div className="border-t border-border/30 pt-3 mt-3 space-y-2 px-4">
                 <Button variant="outline" size="sm" className="w-full justify-start sm:hidden" asChild>
@@ -164,7 +159,6 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Guest Actions */}
             {!user && (
               <div className="border-t border-border/30 pt-3 mt-3 space-y-2 px-4">
                 <Button variant="outline" size="sm" className="w-full" asChild>

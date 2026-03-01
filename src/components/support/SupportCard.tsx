@@ -1,5 +1,4 @@
-import { Mail, MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Send } from "lucide-react";
 
 const SupportCard = () => {
   return (
@@ -12,33 +11,19 @@ const SupportCard = () => {
       </p>
 
       <div className="space-y-4">
-        {/* Email Support */}
-        <a
-          href="mailto:helparenax@zohomail.in"
-          className="glass-panel-hover rounded-xl p-6 flex items-center gap-4 group block"
-        >
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center neon-glow-cyan group-hover:scale-110 transition-transform">
-            <Mail className="w-7 h-7 text-background" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-heading font-semibold text-lg mb-1">Email Support</h3>
-            <p className="text-sm text-primary">helparenax@zohomail.in</p>
-          </div>
-        </a>
-
-        {/* Telegram Channel */}
+        {/* Telegram Support */}
         <a
           href="https://t.me/+6IoFwhsuUkEzMGM9"
           target="_blank"
           rel="noopener noreferrer"
           className="glass-panel-hover rounded-xl p-6 flex items-center gap-4 group block"
         >
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-secondary to-primary flex items-center justify-center neon-glow-orange group-hover:scale-110 transition-transform">
-            <MessageCircle className="w-7 h-7 text-background" />
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center neon-glow-cyan group-hover:scale-110 transition-transform">
+            <Send className="w-7 h-7 text-background" />
           </div>
           <div className="flex-1">
-            <h3 className="font-heading font-semibold text-lg mb-1">Telegram Community</h3>
-            <p className="text-sm text-secondary">Join for Room IDs & Updates</p>
+            <h3 className="font-heading font-semibold text-lg mb-1">Telegram Support</h3>
+            <p className="text-sm text-primary">Get instant help on Telegram</p>
           </div>
         </a>
       </div>

@@ -238,6 +238,11 @@
 @layer base {
   * {
     @apply border-border;
+    cursor: url('/cursor.png') 0 0, auto;
+  }
+
+  a, button, [role="button"], input[type="submit"], select, label[for], .cursor-pointer {
+    cursor: url('/cursor.png') 0 0, pointer;
   }
 
   body {

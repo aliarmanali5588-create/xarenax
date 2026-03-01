@@ -149,7 +149,7 @@ const RefundPolicy = () => {
                   <div className="glass-panel rounded-lg p-4">
                     <p className="font-heading font-semibold mb-2">Step 1: Contact Support</p>
                     <p className="text-muted-foreground text-sm">
-                      Email us at <strong className="text-foreground">helparenax@zohomail.in</strong>
+                      Message us on <a href="https://t.me/+6IoFwhsuUkEzMGM9" target="_blank" rel="noopener noreferrer" className="text-primary font-semibold">Telegram</a>
                     </p>
                   </div>
 
@@ -218,15 +218,11 @@ const RefundPolicy = () => {
                 </p>
                 <div className="glass-panel rounded-lg p-4">
                   <p className="text-foreground">
-                    Email:{" "}
-                    <a
-                      href="mailto:helparenax@zohomail.in"
-                      className="text-primary hover:text-primary/80 transition-colors"
-                    >
-                      helparenax@zohomail.in
+                    Telegram:{" "}
+                    <a href="https://t.me/+6IoFwhsuUkEzMGM9" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">
+                      @TeamFireSupport
                     </a>
                   </p>
-                  <p className="text-foreground">Telegram: <a href="https://t.me/+6IoFwhsuUkEzMGM9" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 transition-colors">@TeamFireSupport</a></p>
                   <p className="text-muted-foreground text-sm mt-2">Response Time: Within 24-48 hours</p>
                 </div>
               </section>

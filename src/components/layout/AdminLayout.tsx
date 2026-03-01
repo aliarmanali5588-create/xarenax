@@ -64,9 +64,7 @@ const AdminLayout = () => {
       <aside className="w-64 glass-card border-r border-border/50 flex flex-col relative z-10 shadow-xl">
         <div className="p-6 border-b border-border/30">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_20px_rgba(0,240,255,0.3)]">
-              <Shield className="h-6 w-6 text-background" />
-            </div>
+            <img src="/teamfire-logo-new.png" alt="TeamFire" className="w-10 h-10 rounded-lg object-contain" />
             <div>
               <h1 className="text-xl font-gaming font-bold">
                 <span className="text-gradient bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">

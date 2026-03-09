@@ -306,23 +306,23 @@ const Home = () => {
       {/* ======================================
           TRUST SECTION
           ====================================== */}
-      <section className="py-24 px-4 section-light relative overflow-hidden">
+      <section className="py-16 md:py-24 px-4 section-light relative overflow-hidden">
         <div className="modern-container relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-gaming font-bold mb-4">
+          <div className="text-center mb-10 md:mb-16">
+            <h2 className="text-2xl md:text-5xl font-gaming font-bold mb-3 md:mb-4">
               Built on <span className="text-gradient-gold">Trust</span>
             </h2>
-            <p className="text-muted-foreground text-lg">Your safety is our top priority</p>
+            <p className="text-muted-foreground text-sm md:text-lg">Your safety is our top priority</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
             {trustBadges.map((badge, index) => (
-              <div key={index} className="glass-card p-8 text-center hover-lift group">
-                <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-gradient-to-br from-primary/15 to-accent/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-all duration-500">
-                  <badge.icon className="w-8 h-8 text-primary" />
+              <div key={index} className="glass-card p-4 md:p-8 text-center hover-lift group">
+                <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-5 rounded-full bg-gradient-to-br from-primary/15 to-accent/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-all duration-500">
+                  <badge.icon className="w-6 h-6 md:w-8 md:h-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-heading font-bold mb-2">{badge.text}</h3>
-                <p className="text-sm text-muted-foreground">{badge.desc}</p>
+                <h3 className="text-sm md:text-lg font-heading font-bold mb-1 md:mb-2">{badge.text}</h3>
+                <p className="text-xs text-muted-foreground">{badge.desc}</p>
               </div>
             ))}
           </div>

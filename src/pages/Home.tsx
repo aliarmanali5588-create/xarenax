@@ -239,12 +239,12 @@ const Home = () => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6" ref={playersCount.ref}>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6" ref={statsRef}>
             {[
-              { label: "Active Players", value: playersCount.count.toLocaleString() + "+", icon: Users, suffix: "" },
-              { label: "Prize Distributed", value: "₹" + prizeCount.count + "L+", icon: IndianRupee, suffix: "" },
-              { label: "Tournaments", value: tournamentsCount.count + "+", icon: Trophy, suffix: "" },
-              { label: "User Rating", value: (ratingCount.count / 10).toFixed(1), icon: Star, suffix: "⭐" },
+              { label: "Active Players", value: playersCount.toLocaleString() + "+", icon: Users, suffix: "" },
+              { label: "Prize Distributed", value: "₹" + prizeCount + "L+", icon: IndianRupee, suffix: "" },
+              { label: "Tournaments", value: tournamentsCount + "+", icon: Trophy, suffix: "" },
+              { label: "User Rating", value: (ratingCount / 10).toFixed(1), icon: Star, suffix: "⭐" },
             ].map((stat, index) => (
               <div
                 key={stat.label}

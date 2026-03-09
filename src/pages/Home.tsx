@@ -9,23 +9,11 @@ import MegaFooter from "@/components/layout/MegaFooter";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 
 /* ====== Animated Counter Hook ====== */
-const useCountUp = (end: number, duration = 2000, startOnView = true) => {
+const useCountUp = (end: number, duration = 2000, trigger = false) => {
   const [count, setCount] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!startOnView) { setStarted(true); return; }
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setStarted(true); },
-      { threshold: 0.3 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [startOnView]);
-
-  useEffect(() => {
-    if (!started) return;
+    if (!trigger) return;
     let start = 0;
     const increment = end / (duration / 16);
     const timer = setInterval(() => {
@@ -34,9 +22,9 @@ const useCountUp = (end: number, duration = 2000, startOnView = true) => {
       else setCount(Math.floor(start));
     }, 16);
     return () => clearInterval(timer);
-  }, [started, end, duration]);
+  }, [trigger, end, duration]);
 
-  return { count, ref };
+  return count;
 };
 
 /* ====== Smoke Particles Component ====== */

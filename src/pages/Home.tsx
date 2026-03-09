@@ -365,27 +365,26 @@ const Home = () => {
       {/* ======================================
           CTA SECTION - PREMIUM
           ====================================== */}
-      <section className="py-28 px-4 section-light">
+      <section className="py-16 md:py-28 px-4 section-light">
         <div className="modern-container">
-          <div className="glass-card p-12 md:p-20 text-center relative overflow-hidden border-glow">
-            {/* Background Glow */}
+          <div className="glass-card p-8 md:p-20 text-center relative overflow-hidden border-glow">
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-primary/8 rounded-full blur-[150px]" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-primary/8 rounded-full blur-[150px]" />
             
             <div className="relative z-10">
-              <div className="w-20 h-20 mx-auto mb-8 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/15 border border-primary/30 flex items-center justify-center animate-float">
-                <Trophy className="w-10 h-10 text-primary" />
+              <div className="w-14 h-14 md:w-20 md:h-20 mx-auto mb-6 md:mb-8 rounded-xl md:rounded-2xl bg-gradient-to-br from-primary/20 to-accent/15 border border-primary/30 flex items-center justify-center animate-float">
+                <Trophy className="w-7 h-7 md:w-10 md:h-10 text-primary" />
               </div>
-              <h2 className="text-3xl md:text-6xl font-gaming font-bold mb-8">
+              <h2 className="text-2xl md:text-6xl font-gaming font-bold mb-5 md:mb-8">
                 Ready to Start <span className="text-gradient-gold">Winning</span>?
               </h2>
-              <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
+              <p className="text-sm md:text-xl text-muted-foreground mb-8 md:mb-12 max-w-2xl mx-auto px-2">
                 Join your first tournament today and compete with the best players in India
               </p>
               <Button 
                 size="lg" 
                 asChild 
-                className="bg-gradient-to-r from-primary via-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground px-12 py-7 text-lg font-bold rounded-2xl pulse-glow hover:scale-105 transition-all duration-300 btn-luxury"
+                className="bg-gradient-to-r from-primary via-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground px-8 md:px-12 py-6 md:py-7 text-base md:text-lg font-bold rounded-2xl pulse-glow hover:scale-105 transition-all duration-300 btn-luxury"
               >
                 <Link to="/tournaments" className="flex items-center gap-3">
                   <Flame className="w-5 h-5" />
@@ -394,23 +393,22 @@ const Home = () => {
                 </Link>
               </Button>
               
-              {/* Trust Footer */}
-              <div className="mt-12 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
+              <div className="mt-8 md:mt-12 flex flex-wrap justify-center gap-4 md:gap-8 text-xs md:text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-success" />
+                  <Shield className="w-3.5 h-3.5 md:w-4 md:h-4 text-success" />
                   <span>100% Secure</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-primary" />
+                  <Zap className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
                   <span>Instant Withdrawal</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-accent" />
+                  <Clock className="w-3.5 h-3.5 md:w-4 md:h-4 text-accent" />
                   <span>24/7 Support</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-success" />
-                  <span>Fair Play Guaranteed</span>
+                  <Check className="w-3.5 h-3.5 md:w-4 md:h-4 text-success" />
+                  <span>Fair Play</span>
                 </div>
               </div>
             </div>

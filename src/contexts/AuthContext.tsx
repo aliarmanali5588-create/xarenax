@@ -162,30 +162,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (error) return { error };
 
       if (data.user) {
-        const isSuperAdminUser = SUPER_ADMIN_EMAILS.includes(data.user.email || '');
-        
-        if (isSuperAdminUser) {
-          setIsAdmin(true);
-          setIsSuperAdmin(true);
-          setPermissions(ALL_PERMISSIONS);
-          navigate("/admin/dashboard");
-          return { error: null };
-        }
-
-        const { data: roleData } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", data.user.id)
-          .eq("role", "admin")
-          .maybeSingle();
-
-        if (roleData) {
-          setIsAdmin(true);
-          await checkRolesAndPermissions(data.user.id, data.user.email || undefined);
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/dashboard");
-        }
+        await checkRolesAndPermissions(data.user.id, data.user.email || undefined);
       }
 
       return { error: null };

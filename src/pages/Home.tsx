@@ -126,10 +126,33 @@ const Home = () => {
     { name: "ClutchMaster", amount: "₹12,000", game: "BGMI TDM", avatar: "🔥" },
   ];
 
-  const playersCount = useCountUp(50000, 2000);
-  const prizeCount = useCountUp(25, 2000);
-  const tournamentsCount = useCountUp(500, 2000);
-  const ratingCount = useCountUp(49, 2000);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setStatsVisible(true); },
+      { threshold: 0.2 }
+    );
+    if (statsRef.current) observer.observe(statsRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const playersCount = useCountUp(50000, 2000, false);
+  const prizeCount = useCountUp(25, 2000, false);
+  const tournamentsCount = useCountUp(500, 2000, false);
+  const ratingCount = useCountUp(49, 2000, false);
+
+  // Trigger all counters when section is visible
+  useEffect(() => {
+    if (statsVisible) {
+      // Force start all counters by re-triggering
+      playersCount.ref.current = null;
+      prizeCount.ref.current = null;
+      tournamentsCount.ref.current = null;
+      ratingCount.ref.current = null;
+    }
+  }, [statsVisible]);
 
   return (
     <div className="min-h-screen pb-20 lg:pb-0">

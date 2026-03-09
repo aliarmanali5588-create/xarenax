@@ -81,6 +81,8 @@ const App = () => {
               <Route path="/install-app" element={<InstallApp />} />
               <Route path="/notification-preferences" element={<ProtectedRoute><NotificationPreferences /></ProtectedRoute>} />
               <Route path="/teamfire-spec" element={<TeamFireSpec />} />
+              {/* Admin Auth - Separate Login */}
+              <Route path="/adminsh/auth" element={<AdminAuth />} />
               {/* Admin Routes - Protected */}
               <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
                 <Route index element={<Navigate to="/admin/dashboard" replace />} />

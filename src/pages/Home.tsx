@@ -139,7 +139,7 @@ const Home = () => {
       {/* ======================================
           HERO SECTION - CINEMATIC
           ====================================== */}
-      <section className="relative pt-28 pb-32 px-4 overflow-hidden min-h-[95vh] flex items-center noise-overlay">
+      <section className="relative pt-24 pb-16 md:pt-28 md:pb-32 px-4 overflow-hidden min-h-[85vh] md:min-h-[95vh] flex items-center noise-overlay">
         {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"

@@ -226,7 +226,7 @@ const Home = () => {
       {/* ======================================
           SOCIAL PROOF - ANIMATED COUNTERS
           ====================================== */}
-      <section className="py-24 px-4 section-light relative overflow-hidden">
+      <section className="py-16 md:py-24 px-4 section-light relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/3 to-transparent" />
         <div className="modern-container relative z-10">
           <div className="text-center mb-16">

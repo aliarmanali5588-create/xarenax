@@ -332,30 +332,29 @@ const Home = () => {
       {/* ======================================
           WINNERS SHOWCASE
           ====================================== */}
-      <section className="py-28 px-4 relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[200px]" />
+      <section className="py-16 md:py-28 px-4 relative overflow-hidden">
+        <div className="absolute bottom-0 left-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-accent/5 rounded-full blur-[200px]" />
         <div className="modern-container relative z-10">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 md:mb-16">
             <Badge className="mb-4 px-4 py-2 bg-accent/10 text-accent border-accent/20">
               <Award className="w-3.5 h-3.5 mr-1.5" />
               Recent Winners
             </Badge>
-            <h2 className="text-3xl md:text-5xl font-gaming font-bold mb-4">
+            <h2 className="text-2xl md:text-5xl font-gaming font-bold mb-3 md:mb-4">
               Winners <span className="text-gradient-gold">Spotlight</span>
             </h2>
-            <p className="text-muted-foreground text-lg">Real players, real winnings</p>
+            <p className="text-muted-foreground text-sm md:text-lg">Real players, real winnings</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
             {winners.map((winner, index) => (
-              <div key={index} className="glass-card p-8 text-center hover-lift group relative overflow-hidden" style={{ animationDelay: `${index * 100}ms` }}>
-                {/* Spotlight effect */}
+              <div key={index} className="glass-card p-4 md:p-8 text-center hover-lift group relative overflow-hidden" style={{ animationDelay: `${index * 100}ms` }}>
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-accent/10 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10">
-                  <div className="text-5xl mb-4">{winner.avatar}</div>
-                  <h3 className="text-lg font-heading font-bold mb-1">{winner.name}</h3>
-                  <p className="text-xs text-muted-foreground mb-3">{winner.game}</p>
-                  <div className="text-2xl font-gaming font-bold text-gradient-gold">{winner.amount}</div>
+                  <div className="text-3xl md:text-5xl mb-2 md:mb-4">{winner.avatar}</div>
+                  <h3 className="text-sm md:text-lg font-heading font-bold mb-1">{winner.name}</h3>
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-2 md:mb-3">{winner.game}</p>
+                  <div className="text-lg md:text-2xl font-gaming font-bold text-gradient-gold">{winner.amount}</div>
                 </div>
               </div>
             ))}

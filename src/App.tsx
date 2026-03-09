@@ -41,6 +41,7 @@ import FraudAnalytics from "./pages/admin/FraudAnalytics";
 import AdminSupport from "./pages/admin/AdminSupport";
 import TournamentAnalytics from "./pages/admin/TournamentAnalytics";
 import ManageAdmins from "./pages/admin/ManageAdmins";
+import AdminAuth from "./pages/admin/AdminAuth";
 
 
 const queryClient = new QueryClient();

@@ -248,16 +248,16 @@ const Home = () => {
             ].map((stat, index) => (
               <div
                 key={stat.label}
-                className="glass-card p-8 text-center group hover-lift"
+                className="glass-card p-4 md:p-8 text-center group hover-lift"
                 style={{ animationDelay: `${index * 150}ms` }}
               >
-                <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 group-hover:glow-primary transition-all duration-500">
-                  <stat.icon className="w-8 h-8 text-primary" />
+                <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-5 rounded-xl md:rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 group-hover:glow-primary transition-all duration-500">
+                  <stat.icon className="w-6 h-6 md:w-8 md:h-8 text-primary" />
                 </div>
-                <div className="text-3xl md:text-4xl font-gaming font-bold mb-2 text-gradient-gold">
+                <div className="text-xl md:text-4xl font-gaming font-bold mb-1 md:mb-2 text-gradient-gold">
                   {stat.value} {stat.suffix}
                 </div>
-                <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
+                <div className="text-xs md:text-sm text-muted-foreground font-medium">{stat.label}</div>
               </div>
             ))}
           </div>

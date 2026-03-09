@@ -126,21 +126,10 @@ const Home = () => {
     return () => observer.disconnect();
   }, []);
 
-  const playersCount = useCountUp(50000, 2000, false);
-  const prizeCount = useCountUp(25, 2000, false);
-  const tournamentsCount = useCountUp(500, 2000, false);
-  const ratingCount = useCountUp(49, 2000, false);
-
-  // Trigger all counters when section is visible
-  useEffect(() => {
-    if (statsVisible) {
-      // Force start all counters by re-triggering
-      playersCount.ref.current = null;
-      prizeCount.ref.current = null;
-      tournamentsCount.ref.current = null;
-      ratingCount.ref.current = null;
-    }
-  }, [statsVisible]);
+  const playersCount = useCountUp(50000, 2000, statsVisible);
+  const prizeCount = useCountUp(25, 2000, statsVisible);
+  const tournamentsCount = useCountUp(500, 2000, statsVisible);
+  const ratingCount = useCountUp(49, 2000, statsVisible);
 
   return (
     <div className="min-h-screen pb-20 lg:pb-0">

@@ -167,24 +167,24 @@ const Home = () => {
             </div>
 
             {/* Main Heading - Luxury Typography */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-gaming font-black mb-4 leading-[0.9] fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-gaming font-black mb-4 leading-[0.9] fade-in-up" style={{ animationDelay: '0.1s' }}>
               <span className="block text-foreground text-glow-white">COMPETE.</span>
               <span className="block bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(255,90,0,0.5)] py-2">PLAY.</span>
               <span className="block text-foreground text-glow-white">WIN.</span>
             </h1>
 
             {/* Description */}
-            <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <p className="text-base md:text-xl text-muted-foreground mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed fade-in-up px-2" style={{ animationDelay: '0.2s' }}>
               Join <span className="text-primary font-bold">50,000+ players</span> competing in fair, skill-based tournaments. 
               Entry from just <span className="text-accent font-bold">₹30</span>.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-5 justify-center items-center mb-16 fade-in-up" style={{ animationDelay: '0.3s' }}>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-10 md:mb-16 fade-in-up px-2" style={{ animationDelay: '0.3s' }}>
               <Button 
                 size="lg" 
                 asChild 
-                className="bg-gradient-to-r from-primary via-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground px-12 py-7 text-lg font-bold pulse-glow hover:scale-105 transition-all duration-300 min-w-[260px] btn-luxury animate-float"
+                className="bg-gradient-to-r from-primary via-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground px-8 md:px-12 py-6 md:py-7 text-base md:text-lg font-bold pulse-glow hover:scale-105 transition-all duration-300 w-full sm:w-auto sm:min-w-[260px] btn-luxury animate-float"
               >
                 <Link to="/tournaments">
                   <Flame className="mr-2 w-5 h-5" />

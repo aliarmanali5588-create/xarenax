@@ -229,12 +229,12 @@ const Home = () => {
       <section className="py-16 md:py-24 px-4 section-light relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/3 to-transparent" />
         <div className="modern-container relative z-10">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 md:mb-16">
             <Badge className="mb-4 px-4 py-2 bg-primary/10 text-primary border-primary/20">
               <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
               Platform Stats
             </Badge>
-            <h2 className="text-3xl md:text-5xl font-gaming font-bold">
+            <h2 className="text-2xl md:text-5xl font-gaming font-bold">
               Numbers That <span className="text-gradient-gold">Speak</span>
             </h2>
           </div>

@@ -36,16 +36,10 @@ const Auth = () => {
   const { signIn, signUp, user } = useAuth();
   const [searchParams] = useSearchParams();
   
-  const SUPER_ADMIN_EMAILS = ['ashadislam333@gmail.com', 'selfashad@gmail.com'];
-
   // Redirect logged-in users away from auth pages
   useEffect(() => {
     if (user) {
-      if (SUPER_ADMIN_EMAILS.includes(user.email || '')) {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/dashboard");
-      }
+      navigate("/dashboard");
     }
   }, [user, navigate]);
   

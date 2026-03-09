@@ -196,7 +196,7 @@ const Home = () => {
                 size="lg" 
                 variant="outline" 
                 asChild 
-                className="px-12 py-7 text-lg font-semibold border-2 border-border/50 hover:border-primary/50 hover:bg-primary/5 min-w-[260px] backdrop-blur-sm animate-neon-border"
+                className="px-8 md:px-12 py-6 md:py-7 text-base md:text-lg font-semibold border-2 border-border/50 hover:border-primary/50 hover:bg-primary/5 w-full sm:w-auto sm:min-w-[260px] backdrop-blur-sm animate-neon-border"
               >
                 <Link to="/how-it-works">How It Works</Link>
               </Button>

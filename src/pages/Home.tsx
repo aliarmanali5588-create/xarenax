@@ -267,35 +267,35 @@ const Home = () => {
       {/* ======================================
           WHY CHOOSE US - FEATURES
           ====================================== */}
-      <section className="py-28 px-4 relative">
-        <div className="absolute top-20 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[150px]" />
+      <section className="py-16 md:py-28 px-4 relative">
+        <div className="absolute top-20 right-0 w-[300px] md:w-[400px] h-[300px] md:h-[400px] bg-primary/5 rounded-full blur-[150px]" />
         <div className="modern-container relative z-10">
-          <div className="text-center mb-20">
+          <div className="text-center mb-12 md:mb-20">
             <Badge className="mb-4 px-4 py-2 bg-accent/10 text-accent border-accent/20">
               Why 50,000+ Players Trust Us
             </Badge>
-            <h2 className="text-3xl md:text-6xl font-gaming font-bold mb-6">
+            <h2 className="text-2xl md:text-6xl font-gaming font-bold mb-4 md:mb-6">
               Why Choose <span className="text-gradient-gold">TeamFire</span>?
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm md:text-lg text-muted-foreground max-w-2xl mx-auto px-2">
               India's most trusted and secure skill-based gaming platform
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8">
             {features.map((feature, index) => (
               <div
                 key={feature.title}
-                className="glass-card p-10 hover-lift group relative overflow-hidden"
+                className="glass-card p-6 md:p-10 hover-lift group relative overflow-hidden"
                 style={{ animationDelay: `${index * 150}ms` }}
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                 <div className="relative z-10">
-                  <div className={`w-20 h-20 mx-auto mb-8 rounded-2xl bg-gradient-to-br ${feature.gradient} border ${feature.borderColor} flex items-center justify-center group-hover:scale-110 transition-all duration-500`}>
-                    <feature.icon className="w-10 h-10 text-primary" />
+                  <div className={`w-14 h-14 md:w-20 md:h-20 mx-auto mb-5 md:mb-8 rounded-xl md:rounded-2xl bg-gradient-to-br ${feature.gradient} border ${feature.borderColor} flex items-center justify-center group-hover:scale-110 transition-all duration-500`}>
+                    <feature.icon className="w-7 h-7 md:w-10 md:h-10 text-primary" />
                   </div>
-                  <h3 className="text-2xl font-heading font-bold mb-4 text-center">{feature.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed text-center">{feature.description}</p>
+                  <h3 className="text-lg md:text-2xl font-heading font-bold mb-3 md:mb-4 text-center">{feature.title}</h3>
+                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed text-center">{feature.description}</p>
                 </div>
               </div>
             ))}

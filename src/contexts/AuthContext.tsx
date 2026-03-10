@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkRolesAndPermissions = async (userId: string, userEmail?: string) => {
     try {
-      const isSuperAdminUser = SUPER_ADMIN_EMAILS.includes(userEmail || '');
+      const isSuperAdminUser = SUPER_ADMIN_EMAILS.includes((userEmail || '').toLowerCase());
       
       if (isSuperAdminUser) {
         setIsAdmin(true);
@@ -62,6 +62,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (roleData) {
         setIsAdmin(true);
+        setIsSuperAdmin(false);
+
         // Fetch sub-admin permissions
         const { data: subAdminData } = await supabase
           .from("sub_admins")
@@ -89,31 +91,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        setLoading(true);
 
-        if (session?.user) {
-          setTimeout(() => {
-            checkRolesAndPermissions(session.user.id, session.user.email || undefined);
-          }, 0);
-        } else {
-          setIsAdmin(false);
-          setIsSuperAdmin(false);
-          setPermissions([]);
-        }
-        setLoading(false);
+        void (async () => {
+          if (session?.user) {
+            await checkRolesAndPermissions(session.user.id, session.user.email || undefined);
+          } else {
+            setIsAdmin(false);
+            setIsSuperAdmin(false);
+            setPermissions([]);
+          }
+          setLoading(false);
+        })();
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    void (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
+
       if (session?.user) {
-        checkRolesAndPermissions(session.user.id, session.user.email || undefined);
+        await checkRolesAndPermissions(session.user.id, session.user.email || undefined);
+      } else {
+        setIsAdmin(false);
+        setIsSuperAdmin(false);
+        setPermissions([]);
       }
+
       setLoading(false);
-    });
+    })();
 
     return () => subscription.unsubscribe();
   }, []);

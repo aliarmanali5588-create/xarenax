@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkRolesAndPermissions = async (userId: string, userEmail?: string) => {
     try {
-      const isSuperAdminUser = SUPER_ADMIN_EMAILS.includes(userEmail || '');
+      const isSuperAdminUser = SUPER_ADMIN_EMAILS.includes((userEmail || '').toLowerCase());
       
       if (isSuperAdminUser) {
         setIsAdmin(true);
@@ -62,6 +62,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (roleData) {
         setIsAdmin(true);
+        setIsSuperAdmin(false);
+
         // Fetch sub-admin permissions
         const { data: subAdminData } = await supabase
           .from("sub_admins")

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://teamfire.live/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://teamfire.live/tournaments</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teamfire.live/leaderboard</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teamfire.live/how-it-works</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://teamfire.live/about</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://teamfire.live/support/faq</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://teamfire.live/support/contact</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://teamfire.live/install-app</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://teamfire.live/legal/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://teamfire.live/legal/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://teamfire.live/legal/refund</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://teamfire.live/login</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://teamfire.live/signup</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+</urlset>

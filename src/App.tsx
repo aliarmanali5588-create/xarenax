@@ -44,7 +44,16 @@ import ManageAdmins from "./pages/admin/ManageAdmins";
 import AdminAuth from "./pages/admin/AdminAuth";
 
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 2,
+      gcTime: 1000 * 60 * 10,
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => {
   const [showLoading, setShowLoading] = useState(true);

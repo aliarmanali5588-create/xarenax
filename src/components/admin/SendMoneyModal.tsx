@@ -49,7 +49,6 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
       return;
     }
 
-    // Check if penalty amount exceeds wallet balance
     if (type === "penalty" && amountNum > user.walletBalance) {
       toast.error(`Cannot deduct ₹${amountNum}. User only has ₹${user.walletBalance} in wallet.`);
       return;
@@ -63,72 +62,26 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
     try {
       setLoading(true);
 
-      // Fetch current profile data
-      const { data: currentProfile, error: fetchError } = await supabase
-        .from("profiles")
-        .select("wallet_balance, total_winnings")
-        .eq("id", user.id)
-        .single();
+      // Use edge function to bypass RLS - admin operations need service role
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
 
-      if (fetchError) throw fetchError;
-
-      // Calculate new balance (add for credit types, subtract for penalty)
-      const balanceChange = type === "penalty" ? -amountNum : amountNum;
-      
-      // Update user's wallet balance and total_winnings if it's a winning
-      const updateData: any = {
-        wallet_balance: Math.max(0, (currentProfile.wallet_balance || 0) + balanceChange),
-      };
-
-      if (type === "winning") {
-        updateData.total_winnings = (currentProfile.total_winnings || 0) + amountNum;
+      if (!token) {
+        toast.error("Authentication error. Please re-login.");
+        return;
       }
 
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update(updateData)
-        .eq("id", user.id);
-
-      if (updateError) throw updateError;
-
-      // Create transaction record
-      const { error: transactionError } = await supabase
-        .from("transactions")
-        .insert({
-          user_id: user.id,
+      const response = await supabase.functions.invoke("admin-send-money", {
+        body: {
+          userId: user.id,
           amount: amountNum,
-          type: type,
-          status: "success",
+          type,
           description: description.trim(),
-        });
+        },
+      });
 
-      if (transactionError) throw transactionError;
-
-      // Send notification to user
-      const notificationMessage = type === "winning" 
-        ? `Congratulations! You received ₹${amountNum} as tournament winnings. ${description.trim()}`
-        : type === "refund"
-        ? `Your refund of ₹${amountNum} has been processed. ${description.trim()}`
-        : type === "bonus"
-        ? `You received a bonus of ₹${amountNum}! ${description.trim()}`
-        : `₹${amountNum} has been deducted from your wallet. Reason: ${description.trim()}`;
-
-      const { error: notificationError } = await supabase
-        .from("notifications")
-        .insert({
-          user_id: user.id,
-          title: type === "winning" 
-            ? "🏆 Tournament Winning!" 
-            : type === "refund" 
-            ? "💰 Refund Processed" 
-            : type === "bonus"
-            ? "🎁 Bonus Received"
-            : "⚠️ Wallet Deduction",
-          message: notificationMessage,
-          type: type === "penalty" ? "system" : "payment",
-        });
-
-      if (notificationError) console.error("Notification error:", notificationError);
+      if (response.error) throw response.error;
+      if (response.data?.error) throw new Error(response.data.error);
 
       toast.success(
         type === "penalty" 
@@ -136,7 +89,6 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
           : `₹${amountNum} sent to ${user.username} successfully!`
       );
       
-      // Reset form
       setAmount("");
       setType("winning");
       setDescription("");
@@ -174,7 +126,6 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6 py-4">
-          {/* Current Balance Display */}
           <div className="bg-background/50 border border-admin-red/20 rounded-lg p-4">
             <div className="text-sm text-muted-foreground mb-1">Current Wallet Balance</div>
             <div className="text-2xl font-gaming font-bold text-admin-gold">
@@ -182,11 +133,8 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
             </div>
           </div>
 
-          {/* Amount Input */}
           <div className="space-y-2">
-            <Label htmlFor="amount" className="text-foreground font-semibold">
-              Amount (₹)
-            </Label>
+            <Label htmlFor="amount" className="text-foreground font-semibold">Amount (₹)</Label>
             <div className="relative">
               <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-admin-gold" />
               <Input
@@ -203,37 +151,23 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
             </div>
           </div>
 
-          {/* Type Selector */}
           <div className="space-y-2">
-            <Label htmlFor="type" className="text-foreground font-semibold">
-              Transaction Type
-            </Label>
+            <Label htmlFor="type" className="text-foreground font-semibold">Transaction Type</Label>
             <Select value={type} onValueChange={(value: any) => setType(value)}>
               <SelectTrigger className="h-12 border-admin-red/30 focus:border-admin-gold">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-card/95 backdrop-blur-xl border-admin-gold/30">
-                <SelectItem value="winning" className="text-green-400 font-semibold">
-                  🏆 Tournament Winning
-                </SelectItem>
-                <SelectItem value="refund" className="text-blue-400 font-semibold">
-                  💰 Refund
-                </SelectItem>
-                <SelectItem value="bonus" className="text-yellow-400 font-semibold">
-                  🎁 Bonus
-                </SelectItem>
-                <SelectItem value="penalty" className="text-red-400 font-semibold">
-                  ⚠️ Penalty / Fraud Deduction
-                </SelectItem>
+                <SelectItem value="winning" className="text-green-400 font-semibold">🏆 Tournament Winning</SelectItem>
+                <SelectItem value="refund" className="text-blue-400 font-semibold">💰 Refund</SelectItem>
+                <SelectItem value="bonus" className="text-yellow-400 font-semibold">🎁 Bonus</SelectItem>
+                <SelectItem value="penalty" className="text-red-400 font-semibold">⚠️ Penalty / Fraud Deduction</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          {/* Description Input */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-foreground font-semibold">
-              Description
-            </Label>
+            <Label htmlFor="description" className="text-foreground font-semibold">Description</Label>
             <Textarea
               id="description"
               placeholder="E.g., Tournament #15 Winner - 1st Place"
@@ -244,41 +178,28 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
             />
           </div>
 
-          {/* Preview of New Balance */}
           {amount && !isNaN(parseFloat(amount)) && parseFloat(amount) > 0 && (
             <div className={`border rounded-lg p-4 ${
-              type === "penalty" 
-                ? "bg-red-500/10 border-red-500/30" 
-                : "bg-green-500/10 border-green-500/30"
+              type === "penalty" ? "bg-red-500/10 border-red-500/30" : "bg-green-500/10 border-green-500/30"
             }`}>
               <div className="text-sm text-muted-foreground mb-1">
                 {type === "penalty" ? "New Balance After Deduction" : "New Balance After Transaction"}
               </div>
-              <div className={`text-2xl font-gaming font-bold ${
-                type === "penalty" ? "text-red-400" : "text-green-400"
-              }`}>
+              <div className={`text-2xl font-gaming font-bold ${type === "penalty" ? "text-red-400" : "text-green-400"}`}>
                 ₹{(type === "penalty" 
                   ? Math.max(0, user.walletBalance - parseFloat(amount))
                   : user.walletBalance + parseFloat(amount)
                 ).toLocaleString()}
               </div>
               {type === "penalty" && parseFloat(amount) > user.walletBalance && (
-                <div className="text-xs text-red-400 mt-2">
-                  ⚠️ Amount exceeds current balance
-                </div>
+                <div className="text-xs text-red-400 mt-2">⚠️ Amount exceeds current balance</div>
               )}
             </div>
           )}
         </form>
 
         <DialogFooter className="gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleClose}
-            disabled={loading}
-            className="border-admin-red/30"
-          >
+          <Button type="button" variant="outline" onClick={handleClose} disabled={loading} className="border-admin-red/30">
             Cancel
           </Button>
           <Button
@@ -291,9 +212,7 @@ const SendMoneyModal = ({ isOpen, onClose, user, onSuccess }: SendMoneyModalProp
                 : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-gaming"
             }
           >
-            {loading ? (
-              "Processing..."
-            ) : (
+            {loading ? "Processing..." : (
               <>
                 <Send className="w-4 h-4 mr-2" />
                 {type === "penalty" ? `Deduct ₹${amount || "0"}` : `Send ₹${amount || "0"}`}

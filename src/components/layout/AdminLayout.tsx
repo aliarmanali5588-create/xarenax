@@ -40,7 +40,7 @@ const AdminLayout = () => {
     { icon: UserPlus, label: "Referrals", path: "/admin/referrals", permKey: "referrals" },
     { icon: CreditCard, label: "UTR Verify", path: "/admin/utr", permKey: "utr" },
     { icon: TrendingUp, label: "Fraud Analytics", path: "/admin/fraud-analytics", permKey: "fraud-analytics" },
-    { icon: MessageSquare, label: "Support", path: "/admin/support", permKey: "support" },
+    
     { icon: Settings, label: "Settings", path: "/admin/settings", permKey: "settings" },
     { icon: UserCog, label: "Manage Admins", path: "/admin/manage-admins", permKey: "manage-admins" },
   ];

@@ -102,7 +102,7 @@ const App = () => {
               <Route path="referrals" element={<AdminReferrals />} />
               <Route path="utr" element={<AdminUTR />} />
               <Route path="fraud-analytics" element={<FraudAnalytics />} />
-              <Route path="support" element={<AdminSupport />} />
+              
               <Route path="tournament-analytics" element={<TournamentAnalytics />} />
               <Route path="manage-admins" element={<ManageAdmins />} />
               <Route path="settings" element={<AdminSettings />} />

@@ -17,25 +17,26 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-// SECURITY: Payment Details Validation Schema
+// Only UPI ID #1 is required, everything else optional
 const paymentDetailsSchema = z.object({
   upiId1: z.string()
     .trim()
+    .min(1, "UPI ID is required")
     .regex(/^[\w.+-]+@[\w.-]+$/, "Invalid UPI format (e.g., name@upi)"),
-  upiId2: z.string().optional(),
-  accountNumber: z.string()
-    .trim()
-    .regex(/^\d{9,18}$/, "Account number must be 9-18 digits"),
-  bankName: z.string()
-    .trim()
-    .min(2, "Bank name too short")
-    .max(50, "Bank name too long")
-    .regex(/^[a-zA-Z\s]+$/, "Only letters and spaces allowed in bank name"),
-  ifscCode: z.string()
-    .trim()
-    .length(11, "IFSC code must be exactly 11 characters")
-    .regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, "Invalid IFSC format (e.g., HDFC0001234)")
-});
+  upiId2: z.string().optional().or(z.literal("")),
+  accountNumber: z.string().optional().or(z.literal("")),
+  bankName: z.string().optional().or(z.literal("")),
+  ifscCode: z.string().optional().or(z.literal("")),
+}).refine((data) => {
+  // If any bank field is filled, validate all bank fields
+  const hasAnyBank = data.accountNumber || data.bankName || data.ifscCode;
+  if (hasAnyBank) {
+    if (!data.accountNumber || !/^\d{9,18}$/.test(data.accountNumber)) return false;
+    if (!data.bankName || data.bankName.length < 2) return false;
+    if (!data.ifscCode || !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(data.ifscCode)) return false;
+  }
+  return true;
+}, { message: "If filling bank details, all bank fields must be valid" });
 
 interface WithdrawalSettingsProps {
   userId: string;
@@ -86,17 +87,15 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
   };
 
   const handleSave = () => {
-    // Validate all fields are filled
-    if (!formData.upiId1 || !formData.accountNumber || !formData.bankName || !formData.ifscCode) {
+    if (!formData.upiId1.trim()) {
       toast({
-        title: "Incomplete Information",
-        description: "Please fill all mandatory fields before locking.",
+        title: "UPI ID Required",
+        description: "Please enter at least your primary UPI ID.",
         variant: "destructive",
       });
       return;
     }
 
-    // SECURITY: Validate payment details format
     try {
       paymentDetailsSchema.parse(formData);
     } catch (error) {
@@ -122,12 +121,12 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
             user_id: userId,
             upi_id_1: formData.upiId1,
             upi_id_2: formData.upiId2 || null,
-            bank_account_no: formData.accountNumber,
-            bank_name: formData.bankName,
-            bank_ifsc: formData.ifscCode,
+            bank_account_no: formData.accountNumber || null,
+            bank_name: formData.bankName || null,
+            bank_ifsc: formData.ifscCode || null,
             is_locked: true,
           },
-          { onConflict: 'user_id' } // <-- CRITICAL: Resolve conflict on user_id
+          { onConflict: 'user_id' }
         );
 
       if (error) throw error;
@@ -229,15 +228,15 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
           </div>
         </div>
 
-        {/* Bank Details Section */}
+        {/* Bank Details Section - All Optional */}
         <div className="space-y-4 pt-4 border-t border-border/50">
           <h3 className="text-base sm:text-lg font-heading font-semibold text-foreground">
-            Bank Account Details
+            Bank Account Details <span className="text-muted-foreground text-sm font-normal">(Optional)</span>
           </h3>
 
           <div>
             <Label htmlFor="accountNumber" className="text-sm font-medium mb-2 block">
-              Account Number <span className="text-destructive">*</span>
+              Account Number <span className="text-muted-foreground">(Optional)</span>
             </Label>
             <Input
               id="accountNumber"
@@ -252,7 +251,7 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
 
           <div>
             <Label htmlFor="bankName" className="text-sm font-medium mb-2 block">
-              Bank Name <span className="text-destructive">*</span>
+              Bank Name <span className="text-muted-foreground">(Optional)</span>
             </Label>
             <Input
               id="bankName"
@@ -267,7 +266,7 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
 
           <div>
             <Label htmlFor="ifscCode" className="text-sm font-medium mb-2 block">
-              IFSC Code <span className="text-destructive">*</span>
+              IFSC Code <span className="text-muted-foreground">(Optional)</span>
             </Label>
             <Input
               id="ifscCode"
@@ -282,12 +281,7 @@ const WithdrawalSettings = ({ userId }: WithdrawalSettingsProps) => {
         </div>
 
         {!isLocked && (
-          <Button
-            onClick={handleSave}
-            variant="gaming"
-            size="lg"
-            className="w-full text-sm sm:text-base"
-          >
+          <Button onClick={handleSave} variant="gaming" size="lg" className="w-full text-sm sm:text-base">
             <Unlock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
             Save & Lock Details
           </Button>

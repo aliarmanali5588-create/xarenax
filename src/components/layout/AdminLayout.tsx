@@ -2,7 +2,7 @@ import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { 
   LayoutDashboard, Trophy, Wallet, Users, Settings, LogOut, Shield,
-  UserPlus, CreditCard, TrendingUp, MessageSquare, BarChart, UserCog
+  UserPlus, CreditCard, TrendingUp, BarChart, UserCog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";

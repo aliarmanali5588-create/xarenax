@@ -38,7 +38,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminUTR from "./pages/admin/AdminUTR";
 import AdminReferrals from "./pages/admin/AdminReferrals";
 import FraudAnalytics from "./pages/admin/FraudAnalytics";
-import AdminSupport from "./pages/admin/AdminSupport";
+
 import TournamentAnalytics from "./pages/admin/TournamentAnalytics";
 import ManageAdmins from "./pages/admin/ManageAdmins";
 import AdminAuth from "./pages/admin/AdminAuth";

@@ -29,7 +29,7 @@ const ALL_PERMISSIONS = [
   { key: "referrals", label: "Referrals" },
   { key: "utr", label: "UTR Verify" },
   { key: "fraud-analytics", label: "Fraud Analytics" },
-  { key: "support", label: "Support" },
+  
   { key: "settings", label: "Settings" },
 ];
 

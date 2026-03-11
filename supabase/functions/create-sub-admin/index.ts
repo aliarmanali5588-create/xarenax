@@ -1,4 +1,4 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.7'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,37 +7,55 @@ const corsHeaders = {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
     const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
     )
 
     // Verify caller is super admin
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
     }
 
     const token = authHeader.replace('Bearer ', '')
     const { data: claims, error: claimsError } = await supabaseAdmin.auth.getUser(token)
     if (claimsError || !claims.user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
     }
 
     // Only super admin emails allowed
     const superAdminEmails = ['ashadislam333@gmail.com', 'selfashad@gmail.com']
-    if (!superAdminEmails.includes(claims.user.email || '')) {
-      return new Response(JSON.stringify({ error: 'Forbidden: Super admin only' }), { status: 403, headers: corsHeaders })
+    if (!superAdminEmails.includes(claims.user.email?.toLowerCase() || '')) {
+      return new Response(JSON.stringify({ error: 'Forbidden: Super admin only' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
     }
 
     const { email, password, display_name, permissions } = await req.json()
 
     if (!email || !password || !display_name || !permissions) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400, headers: corsHeaders })
+      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
     }
 
     // 1. Create auth user
@@ -48,7 +66,11 @@ Deno.serve(async (req) => {
     })
 
     if (createError) {
-      return new Response(JSON.stringify({ error: createError.message }), { status: 400, headers: corsHeaders })
+      console.error('Auth user creation error:', createError)
+      return new Response(JSON.stringify({ error: createError.message }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
     }
 
     const userId = newUser.user.id
@@ -66,9 +88,11 @@ Deno.serve(async (req) => {
 
     if (profileError) {
       console.error('Profile creation error:', profileError)
-      // Cleanup: delete auth user
       await supabaseAdmin.auth.admin.deleteUser(userId)
-      return new Response(JSON.stringify({ error: 'Failed to create profile' }), { status: 500, headers: corsHeaders })
+      return new Response(JSON.stringify({ error: 'Failed to create profile: ' + profileError.message }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
     }
 
     // 3. Assign admin role
@@ -101,8 +125,9 @@ Deno.serve(async (req) => {
     )
   } catch (error) {
     console.error('Error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

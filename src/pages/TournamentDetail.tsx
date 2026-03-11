@@ -22,12 +22,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-// SECURITY: PUBG ID Validation Schema
 const pubgIdSchema = z.string()
   .trim()
   .min(3, "PUBG ID must be at least 3 characters")
   .max(20, "PUBG ID must be less than 20 characters")
-  .regex(/^[a-zA-Z0-9_-]+$/, "Only letters, numbers, hyphens, and underscores allowed");
+  .regex(/^[0-9]+$/, "BGMI ID must contain only numbers");
 
 interface Tournament {
   id: string;
@@ -53,13 +52,14 @@ const TournamentDetail = () => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pubgId, setPubgId] = useState("");
   const [walletBalance, setWalletBalance] = useState(0);
+  const [savedBgmiId, setSavedBgmiId] = useState("");
 
   useEffect(() => {
     if (id) {
       fetchTournament();
     }
     if (user) {
-      fetchWalletBalance();
+      fetchWalletAndProfile();
     }
   }, [id, user]);
 
@@ -81,16 +81,20 @@ const TournamentDetail = () => {
     }
   };
 
-  const fetchWalletBalance = async () => {
+  const fetchWalletAndProfile = async () => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("wallet_balance")
+        .select("wallet_balance, bgmi_id")
         .eq("id", user?.id)
         .single();
 
       if (error) throw error;
       setWalletBalance(data?.wallet_balance || 0);
+      if (data?.bgmi_id) {
+        setSavedBgmiId(data.bgmi_id);
+        setPubgId(data.bgmi_id);
+      }
     } catch (error) {
       console.error("Error fetching wallet:", error);
     }
@@ -106,7 +110,7 @@ const TournamentDetail = () => {
     if (!tournament) return;
 
     if (walletBalance < tournament.entry_fee) {
-      toast.error(`Insufficient balance! You need ₹${tournament.entry_fee}`);
+      toast.error(`Insufficient balance! You need ₹${tournament.entry_fee}. Please deposit first.`);
       navigate("/wallet");
       return;
     }
@@ -116,11 +120,10 @@ const TournamentDetail = () => {
 
   const handleConfirmJoin = async () => {
     if (!user || !tournament || !pubgId.trim()) {
-      toast.error("Please enter your PUBG ID");
+      toast.error("Please enter your BGMI ID");
       return;
     }
 
-    // SECURITY: Validate PUBG ID format
     try {
       pubgIdSchema.parse(pubgId);
     } catch (error) {
@@ -147,7 +150,7 @@ const TournamentDetail = () => {
         return;
       }
 
-      // Deduct entry fee from wallet
+      // Deduct entry fee
       const newBalance = walletBalance - tournament.entry_fee;
       const { error: walletError } = await supabase
         .from("profiles")
@@ -155,6 +158,14 @@ const TournamentDetail = () => {
         .eq("id", user.id);
 
       if (walletError) throw walletError;
+
+      // Save BGMI ID to profile if not saved yet
+      if (!savedBgmiId && pubgId.trim()) {
+        await supabase
+          .from("profiles")
+          .update({ bgmi_id: pubgId.trim() })
+          .eq("id", user.id);
+      }
 
       // Insert participant
       const { error: participantError } = await supabase
@@ -225,49 +236,38 @@ const TournamentDetail = () => {
                   <Badge variant={isFull ? "destructive" : "default"} className="text-sm">
                     {isFull ? "Full" : "Open"}
                   </Badge>
-                  <Badge variant="outline" className="text-sm">
-                    {tournament.match_type}
-                  </Badge>
-                  <Badge variant="outline" className="text-sm">
-                    {tournament.map}
-                  </Badge>
+                  <Badge variant="outline" className="text-sm">{tournament.match_type}</Badge>
+                  <Badge variant="outline" className="text-sm">{tournament.map}</Badge>
                 </div>
               </div>
               <Trophy className="w-12 h-12 text-admin-gold" />
             </div>
 
-            {/* Prize Info */}
             <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
               <div className="glass-panel rounded-xl p-4 border-l-4 border-secondary">
                 <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                  <Trophy className="w-4 h-4" />
-                  <span>Prize Pool</span>
+                  <Trophy className="w-4 h-4" /><span>Prize Pool</span>
                 </div>
                 <div className="flex items-center text-3xl font-gaming font-bold text-secondary text-glow-orange">
-                  <IndianRupee className="w-6 h-6" />
-                  {tournament.prize_pool.toLocaleString()}
+                  <IndianRupee className="w-6 h-6" />{tournament.prize_pool.toLocaleString()}
                 </div>
               </div>
 
               <div className="glass-panel rounded-xl p-4 border-l-4 border-primary">
                 <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                  <IndianRupee className="w-4 h-4" />
-                  <span>Entry Fee</span>
+                  <IndianRupee className="w-4 h-4" /><span>Entry Fee</span>
                 </div>
                 <div className="flex items-center text-3xl font-gaming font-bold text-primary text-glow-cyan">
-                  <IndianRupee className="w-6 h-6" />
-                  {tournament.entry_fee}
+                  <IndianRupee className="w-6 h-6" />{tournament.entry_fee}
                 </div>
               </div>
 
               <div className="glass-panel rounded-xl p-4 border-l-4 border-admin-gold">
                 <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                  <Target className="w-4 h-4" />
-                  <span>Per Kill</span>
+                  <Target className="w-4 h-4" /><span>Per Kill</span>
                 </div>
                 <div className="flex items-center text-3xl font-gaming font-bold text-admin-gold">
-                  <IndianRupee className="w-6 h-6" />
-                  {tournament.per_kill_prize}
+                  <IndianRupee className="w-6 h-6" />{tournament.per_kill_prize}
                 </div>
               </div>
             </div>
@@ -275,21 +275,15 @@ const TournamentDetail = () => {
 
           {/* Details */}
           <div className="glass-panel rounded-xl p-4 sm:p-6 mb-6 md:mb-8">
-            <h2 className="text-xl sm:text-2xl font-gaming font-bold mb-4 sm:mb-6 text-primary">
-              Tournament Details
-            </h2>
-
+            <h2 className="text-xl sm:text-2xl font-gaming font-bold mb-4 sm:mb-6 text-primary">Tournament Details</h2>
             <div className="space-y-4">
               <div className="flex items-center gap-3 p-4 glass-panel rounded-lg">
                 <Clock className="w-5 h-5 text-primary" />
                 <div>
                   <p className="text-sm text-muted-foreground">Start Time</p>
-                  <p className="font-heading font-bold">
-                    {new Date(tournament.start_time).toLocaleString()}
-                  </p>
+                  <p className="font-heading font-bold">{new Date(tournament.start_time).toLocaleString()}</p>
                 </div>
               </div>
-
               <div className="flex items-center gap-3 p-4 glass-panel rounded-lg">
                 <MapPin className="w-5 h-5 text-primary" />
                 <div>
@@ -297,7 +291,6 @@ const TournamentDetail = () => {
                   <p className="font-heading font-bold">{tournament.map}</p>
                 </div>
               </div>
-
               <div className="flex items-center gap-3 p-4 glass-panel rounded-lg">
                 <Gamepad2 className="w-5 h-5 text-primary" />
                 <div>
@@ -305,26 +298,16 @@ const TournamentDetail = () => {
                   <p className="font-heading font-bold">{tournament.match_type}</p>
                 </div>
               </div>
-
               <div className="flex items-center gap-3 p-4 glass-panel rounded-lg">
                 <Users className="w-5 h-5 text-primary" />
                 <div className="flex-1">
                   <p className="text-sm text-muted-foreground mb-2">Slots Available</p>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-heading font-bold">
-                      {tournament.current_slots} / {tournament.max_slots}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {tournament.max_slots - tournament.current_slots} left
-                    </span>
+                    <span className="font-heading font-bold">{tournament.current_slots} / {tournament.max_slots}</span>
+                    <span className="text-sm text-muted-foreground">{tournament.max_slots - tournament.current_slots} left</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className={`h-full transition-all ${
-                        slotsPercentage > 80 ? "bg-secondary" : "bg-primary"
-                      }`}
-                      style={{ width: `${slotsPercentage}%` }}
-                    />
+                    <div className={`h-full transition-all ${slotsPercentage > 80 ? "bg-secondary" : "bg-primary"}`} style={{ width: `${slotsPercentage}%` }} />
                   </div>
                 </div>
               </div>
@@ -337,8 +320,7 @@ const TournamentDetail = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Your Wallet Balance</p>
                 <p className="text-xl sm:text-2xl font-gaming font-bold text-primary flex items-center">
-                  <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5" />
-                  {walletBalance}
+                  <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5" />{walletBalance}
                 </p>
               </div>
               {walletBalance < tournament.entry_fee && (
@@ -381,26 +363,27 @@ const TournamentDetail = () => {
                   <div className="border-t border-border/30 my-2"></div>
                   <p className="flex justify-between text-primary">
                     <span>Balance After:</span>
-                    <span className="font-bold">
-                      ₹{walletBalance - tournament.entry_fee}
-                    </span>
+                    <span className="font-bold">₹{walletBalance - tournament.entry_fee}</span>
                   </p>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="pubg-id" className="text-foreground">
-                  Enter your PUBG/BGMI ID
+                  {savedBgmiId ? "Your BGMI ID (saved from profile)" : "Enter your BGMI ID"}
                 </Label>
                 <Input
                   id="pubg-id"
-                  placeholder="e.g., YourGameName123"
+                  placeholder="e.g., 5123456789"
                   value={pubgId}
                   onChange={(e) => setPubgId(e.target.value)}
                   className="glass-panel border-border/50"
+                  inputMode="numeric"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Make sure this matches your in-game name exactly
+                  {savedBgmiId 
+                    ? "This is your saved BGMI ID. You can change it if needed."
+                    : "Enter your numeric BGMI ID. It will be saved for future matches."}
                 </p>
               </div>
             </AlertDialogDescription>

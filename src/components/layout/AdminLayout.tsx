@@ -2,7 +2,7 @@ import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { 
   LayoutDashboard, Trophy, Wallet, Users, Settings, LogOut, Shield,
-  UserPlus, CreditCard, TrendingUp, MessageSquare, BarChart, UserCog
+  UserPlus, CreditCard, TrendingUp, BarChart, UserCog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,7 +40,7 @@ const AdminLayout = () => {
     { icon: UserPlus, label: "Referrals", path: "/admin/referrals", permKey: "referrals" },
     { icon: CreditCard, label: "UTR Verify", path: "/admin/utr", permKey: "utr" },
     { icon: TrendingUp, label: "Fraud Analytics", path: "/admin/fraud-analytics", permKey: "fraud-analytics" },
-    { icon: MessageSquare, label: "Support", path: "/admin/support", permKey: "support" },
+    
     { icon: Settings, label: "Settings", path: "/admin/settings", permKey: "settings" },
     { icon: UserCog, label: "Manage Admins", path: "/admin/manage-admins", permKey: "manage-admins" },
   ];

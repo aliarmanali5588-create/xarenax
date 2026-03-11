@@ -38,7 +38,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminUTR from "./pages/admin/AdminUTR";
 import AdminReferrals from "./pages/admin/AdminReferrals";
 import FraudAnalytics from "./pages/admin/FraudAnalytics";
-import AdminSupport from "./pages/admin/AdminSupport";
+
 import TournamentAnalytics from "./pages/admin/TournamentAnalytics";
 import ManageAdmins from "./pages/admin/ManageAdmins";
 import AdminAuth from "./pages/admin/AdminAuth";
@@ -102,7 +102,7 @@ const App = () => {
               <Route path="referrals" element={<AdminReferrals />} />
               <Route path="utr" element={<AdminUTR />} />
               <Route path="fraud-analytics" element={<FraudAnalytics />} />
-              <Route path="support" element={<AdminSupport />} />
+              
               <Route path="tournament-analytics" element={<TournamentAnalytics />} />
               <Route path="manage-admins" element={<ManageAdmins />} />
               <Route path="settings" element={<AdminSettings />} />

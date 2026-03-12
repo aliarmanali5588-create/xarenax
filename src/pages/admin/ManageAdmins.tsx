@@ -121,8 +121,20 @@ const ManageAdmins = () => {
       setSelectedPermissions([]);
       fetchSubAdmins();
     } catch (error: any) {
-      toast.error(error.message || "Sub-admin create karne me error aaya");
-    } finally {
+      let errorMessage = error?.message || "Sub-admin create karne me error aaya";
+
+      if (error?.context) {
+        try {
+          const parsed = await error.context.json();
+          if (parsed?.error) {
+            errorMessage = parsed.error;
+          }
+        } catch {
+          // ignore parse failure
+        }
+      }
+
+      toast.error(errorMessage);
       setCreating(false);
     }
   };

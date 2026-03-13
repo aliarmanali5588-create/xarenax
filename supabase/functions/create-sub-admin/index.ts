@@ -62,6 +62,35 @@ Deno.serve(async (req) => {
       })
     }
 
+    const findAuthUserByEmail = async (targetEmail: string) => {
+      const perPage = 200
+
+      for (let page = 1; page <= 20; page += 1) {
+        const { data: listedUsers, error: listError } = await supabaseAdmin.auth.admin.listUsers({
+          page,
+          perPage,
+        })
+
+        if (listError) {
+          return { user: null, error: listError }
+        }
+
+        const existingUser = listedUsers.users.find(
+          (u) => (u.email || '').toLowerCase() === targetEmail
+        )
+
+        if (existingUser) {
+          return { user: existingUser, error: null }
+        }
+
+        if (listedUsers.users.length < perPage) {
+          break
+        }
+      }
+
+      return { user: null, error: null }
+    }
+
     let userId: string | null = null
     let createdNewUser = false
 
@@ -73,22 +102,30 @@ Deno.serve(async (req) => {
     })
 
     if (createError) {
+      const normalizedErrorMessage = createError.message?.toLowerCase() || ''
+      const duplicateEmailSignals = [
+        'already been registered',
+        'already registered',
+        'already exists',
+        'email exists',
+        'email address has already been registered',
+      ]
+
       const isDuplicateEmail =
-        createError.status === 422 &&
-        createError.message?.toLowerCase().includes('already been registered')
+        createError.status === 422 ||
+        createError.status === 400 ||
+        createError.code === 'email_exists' ||
+        duplicateEmailSignals.some((signal) => normalizedErrorMessage.includes(signal))
 
       if (!isDuplicateEmail) {
         console.error('Auth user creation error:', createError)
-        return new Response(JSON.stringify({ error: createError.message }), {
+        return new Response(JSON.stringify({ error: createError.message || 'Failed to create auth user' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
       }
 
-      const { data: listedUsers, error: listError } = await supabaseAdmin.auth.admin.listUsers({
-        page: 1,
-        perPage: 1000,
-      })
+      const { user: existingUser, error: listError } = await findAuthUserByEmail(email)
 
       if (listError) {
         console.error('List users error:', listError)
@@ -98,10 +135,6 @@ Deno.serve(async (req) => {
         })
       }
 
-      const existingUser = listedUsers.users.find(
-        (u) => (u.email || '').toLowerCase() === email
-      )
-
       if (!existingUser) {
         return new Response(JSON.stringify({ error: 'Email already exists but user could not be linked' }), {
           status: 500,
@@ -110,6 +143,15 @@ Deno.serve(async (req) => {
       }
 
       userId = existingUser.id
+
+      const { error: updateExistingUserError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+        password,
+        email_confirm: true,
+      })
+
+      if (updateExistingUserError) {
+        console.warn('Existing user password update warning:', updateExistingUserError.message)
+      }
     } else {
       userId = newUser.user.id
       createdNewUser = true

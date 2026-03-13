@@ -125,9 +125,20 @@ const ManageAdmins = () => {
 
       if (error?.context) {
         try {
-          const parsed = await error.context.json();
-          if (parsed?.error) {
-            errorMessage = parsed.error;
+          const rawBody = await error.context.text();
+          if (rawBody) {
+            try {
+              const parsed = JSON.parse(rawBody);
+              if (parsed?.error) {
+                errorMessage = parsed.error;
+              }
+            } catch {
+              errorMessage = rawBody;
+            }
+          }
+
+          if (error.context.status) {
+            errorMessage = `${errorMessage} (HTTP ${error.context.status})`;
           }
         } catch {
           // ignore parse failure

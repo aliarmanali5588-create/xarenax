@@ -53,7 +53,7 @@ const HowItWorks = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20 lg:pb-0">
       <Navbar />
 
       {/* Hero Section */}

@@ -33,12 +33,12 @@ const MegaFooter = () => {
   ];
 
   return (
-    <footer className="border-t border-border/20 bg-gradient-to-b from-card/20 to-background mt-20 relative overflow-hidden">
+    <footer className="border-t border-border/20 bg-gradient-to-b from-card/20 to-background mt-12 md:mt-20 relative overflow-hidden">
       {/* Decorative top glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
       
-      <div className="modern-container py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+      <div className="modern-container py-10 md:py-20 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-12 mb-10 md:mb-16">
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-3 mb-6 group">

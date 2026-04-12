@@ -135,7 +135,8 @@ Deno.serve(async (req) => {
       .from('notifications')
       .insert({
         user_id: userId,
-        title: type === 'winning' ? '🏆 Tournament Winning!'
+        title: type === 'deposit' ? '💰 Deposit Approved!'
+          : type === 'winning' ? '🏆 Tournament Winning!'
           : type === 'refund' ? '💰 Refund Processed'
           : type === 'bonus' ? '🎁 Bonus Received'
           : '⚠️ Wallet Deduction',

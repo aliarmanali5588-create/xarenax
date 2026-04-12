@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
     // Fetch current profile using service role (bypasses RLS)
     const { data: currentProfile, error: fetchError } = await supabaseAdmin
       .from('profiles')
-      .select('wallet_balance, total_winnings')
+      .select('wallet_balance, total_winnings, total_deposited')
       .eq('id', userId)
       .single()
 
@@ -121,7 +121,9 @@ Deno.serve(async (req) => {
     }
 
     // Send notification
-    const notificationMessage = type === 'winning'
+    const notificationMessage = type === 'deposit'
+      ? `Your deposit of ₹${amount} has been approved and credited to your wallet. ${description}`
+      : type === 'winning'
       ? `Congratulations! You received ₹${amount} as tournament winnings. ${description}`
       : type === 'refund'
       ? `Your refund of ₹${amount} has been processed. ${description}`

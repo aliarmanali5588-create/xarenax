@@ -264,11 +264,17 @@ const AdminUTR = () => {
       if (!submission || submission.status !== "pending") continue;
 
       try {
-        await supabase.rpc("handle_razorpay_success", {
-          p_amount: submission.amount,
-          p_order_id: `UTR_${submission.utr_number}`,
-          p_payment_id: submission.utr_number,
+        const { data, error: fnError } = await supabase.functions.invoke("admin-send-money", {
+          body: {
+            userId: submission.user_id,
+            amount: submission.amount,
+            type: "deposit",
+            description: `Manual UPI Deposit approved - UTR: ${submission.utr_number}`,
+          },
         });
+
+        if (fnError) throw fnError;
+        if (data?.error) throw new Error(data.error);
 
         await supabase
           .from("utr_submissions")

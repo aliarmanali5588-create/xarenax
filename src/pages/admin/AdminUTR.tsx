@@ -153,20 +153,6 @@ const AdminUTR = () => {
       if (fnError) throw fnError;
       if (data?.error) throw new Error(data.error);
 
-      // Update total_deposited separately
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("total_deposited")
-        .eq("id", submission.user_id)
-        .single();
-
-      if (profile) {
-        await supabase
-          .from("profiles")
-          .update({ total_deposited: (profile.total_deposited || 0) + submission.amount })
-          .eq("id", submission.user_id);
-      }
-
       // Update UTR submission status
       const { error: utrError } = await supabase
         .from("utr_submissions")

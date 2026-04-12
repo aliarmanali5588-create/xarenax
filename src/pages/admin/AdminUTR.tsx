@@ -140,14 +140,32 @@ const AdminUTR = () => {
     setProcessingId(submission.id);
 
     try {
-      // Update user's wallet balance
-      const { error: profileError } = await supabase.rpc("handle_razorpay_success", {
-        p_amount: submission.amount,
-        p_order_id: `UTR_${submission.utr_number}`,
-        p_payment_id: submission.utr_number,
+      // Credit user's wallet via admin edge function (uses service role, bypasses RLS)
+      const { data, error: fnError } = await supabase.functions.invoke("admin-send-money", {
+        body: {
+          userId: submission.user_id,
+          amount: submission.amount,
+          type: "deposit",
+          description: `Manual UPI Deposit approved - UTR: ${submission.utr_number}`,
+        },
       });
 
-      if (profileError) throw profileError;
+      if (fnError) throw fnError;
+      if (data?.error) throw new Error(data.error);
+
+      // Update total_deposited separately
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("total_deposited")
+        .eq("id", submission.user_id)
+        .single();
+
+      if (profile) {
+        await supabase
+          .from("profiles")
+          .update({ total_deposited: (profile.total_deposited || 0) + submission.amount })
+          .eq("id", submission.user_id);
+      }
 
       // Update UTR submission status
       const { error: utrError } = await supabase
@@ -156,6 +174,7 @@ const AdminUTR = () => {
           status: "approved",
           processed_at: new Date().toISOString(),
           processed_by: (await supabase.auth.getUser()).data.user?.id,
+          verification_status: "verified",
         })
         .eq("id", submission.id);
 

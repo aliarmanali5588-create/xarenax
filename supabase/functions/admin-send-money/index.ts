@@ -87,6 +87,10 @@ Deno.serve(async (req) => {
       updateData.total_winnings = (currentProfile.total_winnings || 0) + amount
     }
 
+    if (type === 'deposit') {
+      updateData.total_deposited = (currentProfile.total_deposited || 0) + amount
+    }
+
     // Update profile using service role
     const { error: updateError } = await supabaseAdmin
       .from('profiles')

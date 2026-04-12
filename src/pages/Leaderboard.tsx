@@ -131,14 +131,14 @@ const Leaderboard = () => {
         
         <div className="container mx-auto max-w-7xl relative z-10">
           <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Trophy className="w-12 h-12 md:w-14 md:h-14 text-primary animate-pulse drop-shadow-[0_0_20px_rgba(0,240,255,0.6)]" />
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-gaming font-bold">
+            <div className="flex items-center justify-center gap-2 md:gap-3 mb-4">
+              <Trophy className="w-8 h-8 md:w-14 md:h-14 text-primary animate-pulse drop-shadow-[0_0_20px_rgba(0,240,255,0.6)] hidden sm:block" />
+              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-gaming font-bold">
                 <span className="text-gradient bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
                   Leaderboard
                 </span>
               </h1>
-              <Trophy className="w-12 h-12 md:w-14 md:h-14 text-primary animate-pulse drop-shadow-[0_0_20px_rgba(0,240,255,0.6)]" />
+              <Trophy className="w-8 h-8 md:w-14 md:h-14 text-primary animate-pulse drop-shadow-[0_0_20px_rgba(0,240,255,0.6)] hidden sm:block" />
             </div>
             <p className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto">
               Compete with the best and climb to the top

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Trophy, Wallet, User, Award } from "lucide-react";
+import { Trophy, Wallet, User, Award, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const MobileBottomNav = () => {
@@ -19,9 +19,9 @@ const MobileBottomNav = () => {
   }
 
   const navItems = [
-    { name: "Home", path: "/", icon: Home },
     { name: "Tournaments", path: "/tournaments", icon: Trophy },
     { name: "Leaderboard", path: "/leaderboard", icon: Award },
+    { name: "Affiliate", path: "/affiliate", icon: Users },
     { name: "Wallet", path: "/wallet", icon: Wallet },
     { name: "Profile", path: "/profile", icon: User },
   ];

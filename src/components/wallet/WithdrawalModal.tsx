@@ -106,7 +106,19 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModal
         paymentMethod = newPM;
       }
 
-      // 2. Deduct from wallet balance
+      // 2. Create withdrawal request FIRST (so if constraint fails, no money is lost)
+      const { error: withdrawalError } = await supabase
+        .from("withdrawal_requests")
+        .insert({
+          user_id: user?.id,
+          amount: withdrawalAmount,
+          payment_method_id: paymentMethod.id,
+          status: "pending"
+        });
+
+      if (withdrawalError) throw withdrawalError;
+
+      // 3. Deduct from wallet balance (only after request succeeds)
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("wallet_balance")
@@ -121,18 +133,6 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModal
         .eq("id", user?.id);
 
       if (updateError) throw updateError;
-
-      // 3. Create withdrawal request
-      const { error: withdrawalError } = await supabase
-        .from("withdrawal_requests")
-        .insert({
-          user_id: user?.id,
-          amount: withdrawalAmount,
-          payment_method_id: paymentMethod.id,
-          status: "pending"
-        });
-
-      if (withdrawalError) throw withdrawalError;
 
       // 4. Log transaction
       await supabase.from("transactions").insert({

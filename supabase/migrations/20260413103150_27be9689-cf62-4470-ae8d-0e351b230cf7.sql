@@ -1,0 +1,2 @@
+ALTER TABLE public.withdrawal_requests DROP CONSTRAINT withdrawal_requests_amount_check;
+ALTER TABLE public.withdrawal_requests ADD CONSTRAINT withdrawal_requests_amount_check CHECK (amount >= 50 AND amount <= 10000);

@@ -19,9 +19,10 @@ interface WithdrawalModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentBalance: number;
+  onSuccess?: (newBalance: number) => void;
 }
 
-const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModalProps) => {
+const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: WithdrawalModalProps) => {
   const { user } = useAuth();
   const [amount, setAmount] = useState("");
   const [totalDeposited, setTotalDeposited] = useState(0);
@@ -127,12 +128,15 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModal
 
       if (profileError) throw profileError;
 
-      const { error: updateError } = await supabase
+      const { data: updatedProfile, error: updateError } = await supabase
         .from("profiles")
         .update({ wallet_balance: profile.wallet_balance - withdrawalAmount })
-        .eq("id", user?.id);
+        .eq("id", user?.id)
+        .select("wallet_balance")
+        .single();
 
       if (updateError) throw updateError;
+      if (!updatedProfile) throw new Error("Wallet balance could not be updated");
 
       // 4. Log transaction
       await supabase.from("transactions").insert({
@@ -152,6 +156,7 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance }: WithdrawalModal
       });
 
       toast.success("Withdrawal request submitted! Processing within 24-48 hours.");
+      onSuccess?.(updatedProfile.wallet_balance);
       onOpenChange(false);
       setAmount("");
     } catch (error: any) {

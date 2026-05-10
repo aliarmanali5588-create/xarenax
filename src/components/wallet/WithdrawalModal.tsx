@@ -302,6 +302,7 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
               parseFloat(amount) < MIN_WITHDRAWAL ||
               parseFloat(amount) > MAX_WITHDRAWAL ||
               parseFloat(amount) > currentBalance ||
+              !hasPaymentMethod ||
               (totalDeposited === 0 && totalWinnings < 100)
             }
           >

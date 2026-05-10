@@ -708,6 +708,10 @@ export type Database = {
       }
       is_referral_valid: { Args: { code: string }; Returns: boolean }
       is_super_admin: { Args: { user_email: string }; Returns: boolean }
+      join_tournament: {
+        Args: { p_pubg_id: string; p_tournament_id: string }
+        Returns: string
+      }
       lookup_referral_code: {
         Args: { code: string }
         Returns: {
@@ -718,6 +722,10 @@ export type Database = {
       process_new_referral: {
         Args: { code_used: string; new_user_id: string }
         Returns: undefined
+      }
+      request_withdrawal: {
+        Args: { p_amount: number; p_payment_method_id: string }
+        Returns: string
       }
       user_is_tournament_participant: {
         Args: { p_tournament_id: string; p_user_id: string }

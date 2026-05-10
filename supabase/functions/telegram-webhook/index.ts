@@ -16,21 +16,43 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Validate webhook authenticity using Telegram secret token header
+    const expectedSecret = Deno.env.get("TELEGRAM_WEBHOOK_SECRET");
+    if (expectedSecret) {
+      const headerSecret = req.headers.get("x-telegram-bot-api-secret-token");
+      if (headerSecret !== expectedSecret) {
+        console.warn("Telegram webhook: invalid secret token");
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
     const update = await req.json();
     console.log("Telegram webhook received:", JSON.stringify(update));
 
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
     // Handle callback query (button clicks)
     if (update.callback_query) {
-      const callbackData = update.callback_query.data;
-      const messageId = update.callback_query.message.message_id;
-      const chatId = update.callback_query.message.chat.id;
+      const callbackData = String(update.callback_query.data ?? "");
+      const messageId = update.callback_query.message?.message_id;
+      const chatId = update.callback_query.message?.chat?.id;
 
       console.log("Processing callback:", callbackData);
 
-      // Parse callback data: "approve_uuid" or "reject_uuid"
-      const [action, submissionId] = callbackData.split("_");
+      const sepIdx = callbackData.indexOf("_");
+      const action = sepIdx > -1 ? callbackData.slice(0, sepIdx) : "";
+      const submissionId = sepIdx > -1 ? callbackData.slice(sepIdx + 1) : "";
 
-      if (action === "approve" || action === "reject") {
+      if (!["approve", "reject"].includes(action) || !UUID_REGEX.test(submissionId)) {
+        return new Response(JSON.stringify({ ok: true, ignored: true }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      {
         const newStatus = action === "approve" ? "approved" : "rejected";
 
         // Update UTR submission status
@@ -137,7 +159,7 @@ Status: ${newStatus === "approved" ? "Wallet credited successfully!" : "Rejected
   } catch (error: any) {
     console.error("Telegram webhook error:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Internal error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

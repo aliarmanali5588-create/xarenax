@@ -29,10 +29,33 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
+    // ---- AUTH: require a valid JWT ----
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authErr } = await supabase.auth.getUser(token)
+    if (authErr || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    // ---- AUTHZ: admins can target anyone; users can only target themselves ----
+    const { data: adminRole } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle()
+    const isAdmin = !!adminRole
+
     const payload: PushPayload = await req.json()
     const { title, message, type, url, userId, userIds } = payload
 
-    // Determine which users to notify
     let targetUserIds: string[] = []
     if (userId) {
       targetUserIds = [userId]
@@ -43,6 +66,14 @@ Deno.serve(async (req) => {
         JSON.stringify({ error: 'Either userId or userIds must be provided' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
+    }
+
+    if (!isAdmin) {
+      if (targetUserIds.length !== 1 || targetUserIds[0] !== user.id) {
+        return new Response(JSON.stringify({ error: 'Forbidden' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
     }
 
     // Get push subscriptions for target users
@@ -135,9 +166,8 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Error in send-push-notification:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: 'Failed to send push notification' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

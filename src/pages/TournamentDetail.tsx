@@ -135,66 +135,21 @@ const TournamentDetail = () => {
 
     setJoining(true);
     try {
-      // Check if already joined
-      const { data: existingParticipant } = await supabase
-        .from("participants")
-        .select("id")
-        .eq("tournament_id", tournament.id)
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (existingParticipant) {
-        toast.error("You have already joined this tournament");
-        setJoining(false);
-        setShowConfirmDialog(false);
-        return;
-      }
-
-      // Deduct entry fee
-      const newBalance = walletBalance - tournament.entry_fee;
-      const { error: walletError } = await supabase
-        .from("profiles")
-        .update({ wallet_balance: newBalance })
-        .eq("id", user.id);
-
-      if (walletError) throw walletError;
-
-      // Save BGMI ID to profile if not saved yet
-      if (!savedBgmiId && pubgId.trim()) {
-        await supabase
-          .from("profiles")
-          .update({ bgmi_id: pubgId.trim() })
-          .eq("id", user.id);
-      }
-
-      // Insert participant
-      const { error: participantError } = await supabase
-        .from("participants")
-        .insert({
-          tournament_id: tournament.id,
-          user_id: user.id,
-          pubg_id: pubgId.trim(),
-          payment_status: "paid",
-        });
-
-      if (participantError) throw participantError;
-
-      // Create transaction record
-      await supabase.from("transactions").insert({
-        user_id: user.id,
-        amount: -tournament.entry_fee,
-        type: "entry_fee",
-        status: "success",
-        description: `Entry fee for ${tournament.title}`,
+      // Atomic server-side join (validates balance, slots, duplicates, deducts fee,
+      // inserts participant + transaction in one transaction).
+      const { error: rpcError } = await supabase.rpc("join_tournament", {
+        p_tournament_id: tournament.id,
+        p_pubg_id: pubgId.trim(),
       });
+      if (rpcError) throw rpcError;
 
-      setWalletBalance(newBalance);
+      setWalletBalance(walletBalance - tournament.entry_fee);
       toast.success("Successfully joined tournament! 🎉");
       setShowConfirmDialog(false);
       navigate("/profile");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error joining tournament:", error);
-      toast.error("Failed to join tournament. Please try again.");
+      toast.error(error?.message || "Failed to join tournament. Please try again.");
     } finally {
       setJoining(false);
     }

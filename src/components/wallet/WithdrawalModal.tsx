@@ -27,6 +27,7 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
   const [amount, setAmount] = useState("");
   const [totalDeposited, setTotalDeposited] = useState(0);
   const [totalWinnings, setTotalWinnings] = useState(0);
+  const [hasPaymentMethod, setHasPaymentMethod] = useState(false);
   const [loading, setLoading] = useState(true);
   const MIN_WITHDRAWAL = 50;
   const MAX_WITHDRAWAL = 5000;

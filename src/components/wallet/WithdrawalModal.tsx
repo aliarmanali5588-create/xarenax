@@ -77,6 +77,15 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
       return;
     }
 
+    // Require UPI or bank account before allowing withdrawal
+    if (!hasPaymentMethod) {
+      toast.error("Please add a UPI ID or bank account first", {
+        description: "Go to Profile → Payment Methods to add your withdrawal details",
+        duration: 5000,
+      });
+      return;
+    }
+
     // Anti-fraud check: Must have deposited or won to withdraw
     if (totalDeposited === 0 && totalWinnings < 100) {
       toast.error("You must play matches or deposit to unlock withdrawals", {

@@ -128,7 +128,7 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
 
       if (profileError) throw profileError;
 
-      const { error: updateError } = await supabase
+      const { data: updatedProfile, error: updateError } = await supabase
         .from("profiles")
         .update({ wallet_balance: profile.wallet_balance - withdrawalAmount })
         .eq("id", user?.id)
@@ -136,6 +136,7 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
         .single();
 
       if (updateError) throw updateError;
+      if (!updatedProfile) throw new Error("Wallet balance could not be updated");
 
       // 4. Log transaction
       await supabase.from("transactions").insert({
@@ -155,7 +156,7 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
       });
 
       toast.success("Withdrawal request submitted! Processing within 24-48 hours.");
-      onSuccess?.(profile.wallet_balance - withdrawalAmount);
+      onSuccess?.(updatedProfile.wallet_balance);
       onOpenChange(false);
       setAmount("");
     } catch (error: any) {

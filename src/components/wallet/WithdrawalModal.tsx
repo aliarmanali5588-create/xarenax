@@ -27,6 +27,7 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
   const [amount, setAmount] = useState("");
   const [totalDeposited, setTotalDeposited] = useState(0);
   const [totalWinnings, setTotalWinnings] = useState(0);
+  const [hasPaymentMethod, setHasPaymentMethod] = useState(false);
   const [loading, setLoading] = useState(true);
   const MIN_WITHDRAWAL = 50;
   const MAX_WITHDRAWAL = 5000;
@@ -50,6 +51,17 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
       if (error) throw error;
       setTotalDeposited(data?.total_deposited || 0);
       setTotalWinnings(data?.total_winnings || 0);
+
+      // Check if user has added at least one UPI or bank account
+      const { data: pm } = await supabase
+        .from("user_payment_methods")
+        .select("upi_id_1, upi_id_2, bank_account_no, bank_ifsc")
+        .eq("user_id", user?.id)
+        .maybeSingle();
+
+      const hasUpi = !!(pm?.upi_id_1?.trim() || pm?.upi_id_2?.trim());
+      const hasBank = !!(pm?.bank_account_no?.trim() && pm?.bank_ifsc?.trim());
+      setHasPaymentMethod(hasUpi || hasBank);
     } catch (error) {
       console.error("Error fetching user stats:", error);
     } finally {
@@ -62,6 +74,15 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
     
     if (isNaN(withdrawalAmount) || withdrawalAmount < MIN_WITHDRAWAL) {
       toast.error(`Minimum withdrawal amount is ₹${MIN_WITHDRAWAL}`);
+      return;
+    }
+
+    // Require UPI or bank account before allowing withdrawal
+    if (!hasPaymentMethod) {
+      toast.error("Please add a UPI ID or bank account first", {
+        description: "Go to Profile → Payment Methods to add your withdrawal details",
+        duration: 5000,
+      });
       return;
     }
 
@@ -191,6 +212,16 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
             </div>
           </div>
 
+          {/* Missing payment method warning */}
+          {!loading && !hasPaymentMethod && (
+            <Alert className="border-destructive/50 bg-destructive/5">
+              <AlertCircle className="h-4 w-4 text-destructive" />
+              <AlertDescription className="text-sm">
+                <strong>Payment Method Required:</strong> Please add a UPI ID or bank account in your Profile before requesting a withdrawal.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Anti-fraud warning */}
           {totalDeposited === 0 && totalWinnings < 100 && (
             <Alert className="border-destructive/50 bg-destructive/5">
@@ -271,6 +302,7 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
               parseFloat(amount) < MIN_WITHDRAWAL ||
               parseFloat(amount) > MAX_WITHDRAWAL ||
               parseFloat(amount) > currentBalance ||
+              !hasPaymentMethod ||
               (totalDeposited === 0 && totalWinnings < 100)
             }
           >

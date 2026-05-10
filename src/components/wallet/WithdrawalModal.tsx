@@ -212,6 +212,16 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
             </div>
           </div>
 
+          {/* Missing payment method warning */}
+          {!loading && !hasPaymentMethod && (
+            <Alert className="border-destructive/50 bg-destructive/5">
+              <AlertCircle className="h-4 w-4 text-destructive" />
+              <AlertDescription className="text-sm">
+                <strong>Payment Method Required:</strong> Please add a UPI ID or bank account in your Profile before requesting a withdrawal.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Anti-fraud warning */}
           {totalDeposited === 0 && totalWinnings < 100 && (
             <Alert className="border-destructive/50 bg-destructive/5">

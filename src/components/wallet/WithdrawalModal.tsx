@@ -51,6 +51,17 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
       if (error) throw error;
       setTotalDeposited(data?.total_deposited || 0);
       setTotalWinnings(data?.total_winnings || 0);
+
+      // Check if user has added at least one UPI or bank account
+      const { data: pm } = await supabase
+        .from("user_payment_methods")
+        .select("upi_id_1, upi_id_2, bank_account_no, bank_ifsc")
+        .eq("user_id", user?.id)
+        .maybeSingle();
+
+      const hasUpi = !!(pm?.upi_id_1?.trim() || pm?.upi_id_2?.trim());
+      const hasBank = !!(pm?.bank_account_no?.trim() && pm?.bank_ifsc?.trim());
+      setHasPaymentMethod(hasUpi || hasBank);
     } catch (error) {
       console.error("Error fetching user stats:", error);
     } finally {

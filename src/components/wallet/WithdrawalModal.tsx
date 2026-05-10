@@ -116,73 +116,38 @@ const WithdrawalModal = ({ open, onOpenChange, currentBalance, onSuccess }: With
 
       if (pmError) throw pmError;
 
-      // If no payment method exists, create one
       if (!paymentMethod) {
         const { data: newPM, error: createError } = await supabase
           .from("user_payment_methods")
           .insert({ user_id: user?.id })
           .select("id")
           .single();
-
         if (createError) throw createError;
         paymentMethod = newPM;
       }
 
-      // 2. Create withdrawal request FIRST (so if constraint fails, no money is lost)
-      const { error: withdrawalError } = await supabase
-        .from("withdrawal_requests")
-        .insert({
-          user_id: user?.id,
-          amount: withdrawalAmount,
-          payment_method_id: paymentMethod.id,
-          status: "pending"
-        });
+      // 2. Atomic, server-side withdrawal flow (validates balance, deducts wallet,
+      //    creates withdrawal_request, transaction and notification in one transaction).
+      const { error: rpcError } = await supabase.rpc("request_withdrawal", {
+        p_amount: withdrawalAmount,
+        p_payment_method_id: paymentMethod.id,
+      });
+      if (rpcError) throw rpcError;
 
-      if (withdrawalError) throw withdrawalError;
-
-      // 3. Deduct from wallet balance (only after request succeeds)
-      const { data: profile, error: profileError } = await supabase
+      // 3. Read the new wallet balance for UI refresh
+      const { data: updatedProfile } = await supabase
         .from("profiles")
         .select("wallet_balance")
         .eq("id", user?.id)
         .single();
-
-      if (profileError) throw profileError;
-
-      const { data: updatedProfile, error: updateError } = await supabase
-        .from("profiles")
-        .update({ wallet_balance: profile.wallet_balance - withdrawalAmount })
-        .eq("id", user?.id)
-        .select("wallet_balance")
-        .single();
-
-      if (updateError) throw updateError;
-      if (!updatedProfile) throw new Error("Wallet balance could not be updated");
-
-      // 4. Log transaction
-      await supabase.from("transactions").insert({
-        user_id: user?.id,
-        amount: withdrawalAmount,
-        type: "withdrawal",
-        status: "pending",
-        description: "Withdrawal request submitted"
-      });
-
-      // 5. Send notification to user
-      await supabase.from("notifications").insert({
-        user_id: user?.id,
-        title: "💸 Withdrawal Request Submitted",
-        message: `Your withdrawal request of ₹${withdrawalAmount} has been submitted and is being processed. You'll receive the money within 24-48 hours.`,
-        type: "payment"
-      });
 
       toast.success("Withdrawal request submitted! Processing within 24-48 hours.");
-      onSuccess?.(updatedProfile.wallet_balance);
+      onSuccess?.(updatedProfile?.wallet_balance ?? currentBalance - withdrawalAmount);
       onOpenChange(false);
       setAmount("");
     } catch (error: any) {
       console.error("Withdrawal error:", error);
-      toast.error("Failed to submit withdrawal request: " + error.message);
+      toast.error("Failed to submit withdrawal request: " + (error.message || "Unknown error"));
     } finally {
       setLoading(false);
     }

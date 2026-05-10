@@ -324,6 +324,10 @@ const Wallet = () => {
         open={withdrawalModalOpen} 
         onOpenChange={setWithdrawalModalOpen}
         currentBalance={currentBalance}
+        onSuccess={(newBalance) => {
+          setCurrentBalance(newBalance);
+          fetchTransactions();
+        }}
       />
       <PaymentHistoryModal
         open={paymentHistoryOpen}
